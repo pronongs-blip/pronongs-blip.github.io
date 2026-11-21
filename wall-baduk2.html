@@ -1,0 +1,2116 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#070b14">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="벽바둑 2">
+<title>벽바둑 2 · Wall Go Ⅱ</title>
+<style>
+:root{
+  --bg:#070b14; --panel:#0e1526; --panel2:#141d31; --line:rgba(255,255,255,.09);
+  --txt:#e9effb; --dim:#8ea0c0; --gold:#ffd479;
+  --p0:#3d7bf7; --p1:#f2556e; --p2:#f5b83d;
+  --ok:#38d39f; --warn:#ffb347; --bad:#ff5d73;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0;height:100%;overflow:hidden;overscroll-behavior:none}
+body{
+  background:
+    radial-gradient(120% 80% at 50% -10%, #1a2745 0%, #101a2e 38%, #070b14 100%);
+  color:var(--txt);
+  font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Malgun Gothic","Pretendard",system-ui,sans-serif;
+  -webkit-user-select:none;user-select:none;font-size:15px;
+  -webkit-text-size-adjust:100%;
+}
+#app{position:fixed;inset:0;display:block}
+.screen{
+  position:absolute;inset:0;display:none;flex-direction:column;
+  padding:calc(env(safe-area-inset-top,0px) + 8px) 12px calc(env(safe-area-inset-bottom,0px) + 8px);
+}
+.screen.on{display:flex}
+button{font-family:inherit;color:inherit;background:none;border:none;cursor:pointer;touch-action:manipulation}
+button:disabled{opacity:.4}
+input{font-family:inherit}
+.hide{display:none !important}
+
+/* ---------- HOME ---------- */
+#home{justify-content:center}
+.home-wrap{width:100%;max-width:420px;margin:0 auto;display:flex;flex-direction:column;gap:8px}
+.brand{text-align:center;margin-bottom:2px}
+.brand .logo{font-size:30px;line-height:1}
+.brand h1{
+  margin:2px 0 2px;font-size:27px;letter-spacing:-.5px;font-weight:900;
+  background:linear-gradient(180deg,#fff,#b9c9e8);-webkit-background-clip:text;background-clip:text;color:transparent;
+}
+.brand h1 span{color:var(--gold);-webkit-text-fill-color:var(--gold)}
+.brand .sub{margin:0;font-size:11px;color:var(--dim);letter-spacing:.2px}
+
+.modes{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.mode{
+  position:relative;text-align:left;padding:9px 10px;border-radius:13px;min-height:64px;
+  background:linear-gradient(180deg,rgba(255,255,255,.055),rgba(255,255,255,.02));
+  border:1px solid var(--line);display:flex;flex-direction:column;justify-content:center;gap:1px;transition:.15s;
+}
+.mode .mi{position:absolute;right:9px;top:8px;font-size:15px;opacity:.95}
+.mode .mt{font-size:13.5px;font-weight:900;letter-spacing:-.2px}
+.mode .md{font-size:9.5px;color:var(--dim);font-weight:700}
+.mode.on{background:linear-gradient(180deg,rgba(255,212,121,.19),rgba(255,212,121,.06));border-color:rgba(255,212,121,.66);box-shadow:0 0 0 1px rgba(255,212,121,.18) inset}
+.mode.on .md{color:#e4cfa2}
+
+.field{background:linear-gradient(180deg,rgba(255,255,255,.05),rgba(255,255,255,.015));
+  border:1px solid var(--line);border-radius:13px;padding:8px 10px 9px}
+.field-label{font-size:10.5px;color:var(--dim);font-weight:800;margin:0 0 6px 2px;letter-spacing:.4px;display:flex;justify-content:space-between;align-items:center}
+.field-label .hint{font-weight:600;opacity:.6;font-size:9.5px;letter-spacing:0}
+.seg{display:flex;gap:6px}
+.seg button{
+  flex:1;height:36px;border-radius:9px;font-size:13px;font-weight:800;color:#c6d3ea;
+  background:rgba(255,255,255,.05);border:1px solid transparent;transition:.15s;line-height:1.1;
+}
+.seg button em{display:block;font-style:normal;font-size:9px;font-weight:600;color:var(--dim);margin-top:1px}
+.seg button.on{background:linear-gradient(180deg,rgba(255,212,121,.2),rgba(255,212,121,.08));border-color:rgba(255,212,121,.6);color:#fff7e4}
+.seg button.on em{color:#e8cf9b}
+.nick-row{display:flex;align-items:center;gap:8px}
+.nick-row input{
+  flex:1;font-family:inherit;height:36px;border-radius:9px;border:1px solid var(--line);background:rgba(0,0,0,.28);
+  color:#eaf1ff;font-size:16px;font-weight:800;padding:0 11px;outline:none;-webkit-user-select:text;user-select:text;
+}
+.nick-row input:focus{border-color:rgba(255,212,121,.6)}
+.nick-row .vs{font-size:10px;font-weight:800;color:var(--dim);flex:0 0 auto}
+.nick-row .fixed{font-size:12px;font-weight:800;color:#a9b8d4;flex:0 0 auto;padding:0 4px}
+
+.cta{
+  height:50px;border-radius:14px;font-size:16.5px;font-weight:900;letter-spacing:.2px;
+  background:linear-gradient(180deg,#ffe6ab,#efb54a);color:#20180a;
+  box-shadow:0 8px 22px rgba(240,182,74,.26), inset 0 1px 0 rgba(255,255,255,.6);
+}
+.cta:active{transform:translateY(1px);filter:brightness(.97)}
+.cta:disabled{filter:grayscale(.7) brightness(.8)}
+.home-foot{display:flex;gap:8px}
+.ghost{
+  flex:1;height:40px;border-radius:12px;font-size:12.5px;font-weight:800;color:#cbd7ec;
+  background:rgba(255,255,255,.05);border:1px solid var(--line);
+}
+.ghost:active{background:rgba(255,255,255,.1)}
+
+/* ---------- GAME ---------- */
+#game{gap:6px}
+.top{display:flex;flex-direction:column;gap:6px;flex:0 0 auto}
+.top-row{display:flex;align-items:center;gap:6px}
+.icon-btn{
+  width:32px;height:32px;border-radius:9px;font-size:14px;font-weight:800;color:#b9c8e2;
+  background:rgba(255,255,255,.06);border:1px solid var(--line);flex:0 0 auto;line-height:1;
+}
+.icon-btn:active{background:rgba(255,255,255,.13)}
+.turn-chip{
+  flex:1;display:flex;align-items:center;gap:6px;height:32px;padding:0 10px;border-radius:9px;
+  background:rgba(255,255,255,.06);border:1px solid var(--line);font-size:12.5px;font-weight:800;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0;
+}
+.turn-chip .dot{width:8px;height:8px;border-radius:50%;background:var(--p0);flex:0 0 auto}
+.turn-chip .txt{overflow:hidden;text-overflow:ellipsis}
+.timer{
+  min-width:54px;height:32px;padding:0 7px;border-radius:9px;display:flex;align-items:center;justify-content:center;
+  font-variant-numeric:tabular-nums;font-weight:800;font-size:13px;letter-spacing:.4px;
+  background:rgba(255,255,255,.06);border:1px solid var(--line);color:#cfe0ff;flex:0 0 auto;
+}
+.timer.warn{color:#ffb0b0;border-color:rgba(255,90,90,.55);background:rgba(255,80,80,.14);animation:tpulse 1s infinite}
+@keyframes tpulse{50%{opacity:.55}}
+.net-badge{
+  display:flex;align-items:center;gap:4px;height:32px;padding:0 8px;border-radius:9px;flex:0 0 auto;
+  background:rgba(255,255,255,.06);border:1px solid var(--line);font-size:10px;font-weight:900;color:#c6d3ea;letter-spacing:.1px;
+}
+.net-badge .nd{width:7px;height:7px;border-radius:50%;background:var(--dim)}
+.net-badge.ok{border-color:rgba(56,211,159,.55);color:#b7f5df}
+.net-badge.ok .nd{background:var(--ok);box-shadow:0 0 7px var(--ok)}
+.net-badge.wait{border-color:rgba(255,179,71,.5);color:#ffe3b6}
+.net-badge.wait .nd{background:var(--warn);box-shadow:0 0 7px var(--warn)}
+.net-badge.bad{border-color:rgba(255,93,115,.5);color:#ffd0d8}
+.net-badge.bad .nd{background:var(--bad);box-shadow:0 0 7px var(--bad)}
+.scores{display:flex;gap:6px}
+.chip{
+  flex:1;display:flex;align-items:center;justify-content:space-between;gap:5px;height:36px;padding:0 10px;
+  border-radius:10px;background:rgba(255,255,255,.045);border:1px solid var(--line);
+  position:relative;overflow:hidden;transition:.18s;min-width:0;
+}
+.chip .nm{font-size:11px;font-weight:800;color:#c6d3ea;display:flex;align-items:center;gap:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+.chip .nm i{font-style:normal;font-size:8px;font-weight:800;color:#0b1220;background:#9fb4d6;border-radius:4px;padding:1px 3px;flex:0 0 auto}
+.chip .sc{font-size:16px;font-weight:900;font-variant-numeric:tabular-nums;letter-spacing:-.3px;flex:0 0 auto}
+.chip .sc small{font-size:8.5px;font-weight:700;color:var(--dim);margin-left:1px}
+.chip.p0{border-color:rgba(61,123,247,.45)}
+.chip.p1{border-color:rgba(242,85,110,.45)}
+.chip.p2{border-color:rgba(245,184,61,.45)}
+.chip.p0 .sc{color:#8db6ff}.chip.p1 .sc{color:#ff97a8}.chip.p2 .sc{color:#ffd479}
+.chip.act{background:rgba(255,255,255,.1);box-shadow:0 0 0 1.5px rgba(255,255,255,.45) inset}
+.prog{position:relative;height:15px;border-radius:8px;background:rgba(255,255,255,.06);overflow:hidden;border:1px solid var(--line)}
+.prog-bar{height:100%;width:0%;border-radius:8px;background:linear-gradient(90deg,#5f86d6,#ffd479);transition:width .35s ease}
+.prog-txt{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:800;letter-spacing:.4px;color:#e7eefc;text-shadow:0 1px 2px rgba(0,0,0,.6)}
+.board-wrap{flex:1 1 auto;min-height:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px}
+.legend{font-size:10.5px;color:#8698b8;font-weight:800;letter-spacing:.1px;display:flex;align-items:center;gap:4px;white-space:nowrap}
+.legend .lg{width:11px;height:11px;display:inline-block;margin-left:2px}
+.legend .lg.sq{background:linear-gradient(180deg,#7aa5ff,#3d7bf7);border-radius:3px}
+.legend .lg.ci{background:linear-gradient(180deg,#ff8ea0,#f2556e);border-radius:50%}
+.legend .sep{color:#4d5f7d;margin:0 2px}
+#board{display:block;touch-action:manipulation}
+.bottom{flex:0 0 auto;display:flex;flex-direction:column;gap:6px}
+.status{
+  min-height:30px;display:flex;align-items:center;justify-content:center;text-align:center;
+  font-size:12px;font-weight:700;color:#cad8ef;padding:0 6px;line-height:1.25;
+}
+.status b{color:#fff}
+.status .pt{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:5px;vertical-align:1px}
+.btns{display:flex;gap:6px}
+.btn{
+  flex:1;height:42px;border-radius:12px;font-size:12px;font-weight:800;color:#c9d6ec;
+  background:rgba(255,255,255,.055);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;gap:4px;
+  white-space:nowrap;
+}
+.btn:active{background:rgba(255,255,255,.12)}
+.btn.on{background:linear-gradient(180deg,rgba(255,138,60,.3),rgba(255,138,60,.14));border-color:rgba(255,138,60,.75);color:#ffd9bd}
+.btn b{font-size:9.5px;background:rgba(255,255,255,.18);border-radius:5px;padding:1px 4px;font-weight:900}
+
+/* ---------- SVG BOARD ---------- */
+#board text{font-family:inherit}
+#gBg,#gTrack,#gFrame,#gWalls,#gHints,#gPieces,#gWallHint{pointer-events:none}
+#gEdgeHit{pointer-events:auto}
+.cell{transition:fill .2s}
+.cell.placeable{animation:cpulse 1.5s infinite}
+@keyframes cpulse{0%,100%{stroke:rgba(255,212,121,0);stroke-width:2}50%{stroke:rgba(255,212,121,.8);stroke-width:3}}
+.track{stroke:rgba(255,255,255,.055);stroke-width:3}
+.frame{fill:none;stroke:#c9d6ef;stroke-width:15;opacity:.5}
+.wall{fill:url(#wallGrad);filter:url(#wallGlow)}
+.wallhint{fill:rgba(93,224,255,.55);stroke:#c8fbff;stroke-width:3.5;stroke-dasharray:13 9;animation:wpulse 1.05s infinite;filter:url(#hintGlow)}
+@keyframes wpulse{0%,100%{opacity:.72}50%{opacity:1}}
+.wallbreak{fill:#ff8a3c;stroke:#fff0e2;stroke-width:2.5;opacity:.95;filter:url(#brkGlow)}
+.edgehit{fill:rgba(0,0,0,0);cursor:pointer}
+.tdot{fill:rgba(255,255,255,.92);stroke:rgba(10,16,28,.75);stroke-width:2}
+.tdot.brk{fill:#ff9a52;stroke:#fff2e6}
+.tdot.sel{fill:#fff}
+.selring{fill:none;stroke:rgba(255,255,255,.9);stroke-width:3;stroke-dasharray:10 9;opacity:.9;transform-box:fill-box;transform-origin:center;animation:spin 6s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.cellring{fill:none;stroke:rgba(255,255,255,.85);stroke-width:3;stroke-dasharray:8 8;opacity:.75}
+.pc{transition:transform .16s cubic-bezier(.22,.85,.3,1)}
+.pc .tok{stroke:rgba(8,12,22,.55);stroke-width:2.5}
+.pc .glyph{fill:#fff;opacity:.97}
+.pc.p0 .tok{fill:var(--p0)}
+.pc.p1 .tok{fill:var(--p1)}
+.pc.p2 .tok{fill:var(--p2)}
+.pc.sel .tok{stroke:#fff;stroke-width:5}
+.pc.new{animation:pop .22s ease-out}
+@keyframes pop{0%{opacity:.2}60%{opacity:1}100%{opacity:1}}
+
+/* ---------- TOAST ---------- */
+#toast{
+  position:absolute;left:50%;bottom:118px;transform:translate(-50%,10px);z-index:60;
+  background:rgba(16,24,40,.96);border:1px solid rgba(255,255,255,.16);border-radius:12px;
+  padding:9px 15px;font-size:12.5px;font-weight:700;color:#e6eefc;white-space:nowrap;
+  opacity:0;pointer-events:none;transition:.2s;box-shadow:0 10px 30px rgba(0,0,0,.5);max-width:92vw;
+  overflow:hidden;text-overflow:ellipsis;
+}
+#toast.on{opacity:1;transform:translate(-50%,0)}
+
+/* ---------- OVERLAYS ---------- */
+.overlay{
+  position:absolute;inset:0;z-index:50;display:none;
+  background:rgba(4,7,14,.78);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);
+  padding:calc(env(safe-area-inset-top,0px) + 12px) 14px calc(env(safe-area-inset-bottom,0px) + 12px);
+  overflow:auto;-webkit-overflow-scrolling:touch;
+}
+.overlay.on{display:flex}
+.card{
+  width:100%;max-width:390px;margin:auto;flex:0 0 auto;
+  background:linear-gradient(180deg,#141d31,#0d1424);border:1px solid rgba(255,255,255,.12);
+  border-radius:20px;padding:16px 15px;box-shadow:0 24px 60px rgba(0,0,0,.6);
+}
+.card h2{margin:0 0 10px;font-size:18px;font-weight:900;letter-spacing:-.3px}
+.card h3{margin:13px 0 5px;font-size:12px;font-weight:900;color:var(--gold);letter-spacing:.3px}
+.card p{margin:0 0 6px;font-size:12px;line-height:1.5;color:#c6d3e8}
+.card ul{margin:0;padding-left:15px}
+.card li{font-size:12px;line-height:1.55;color:#c6d3e8;margin-bottom:2px}
+.card li b{color:#fff}
+.rules-close{margin-top:13px;display:flex;gap:8px}
+.rules-close .cta{height:46px;font-size:15px}
+.kv{display:flex;gap:8px;font-size:12px;margin-bottom:5px;align-items:flex-start;line-height:1.5}
+.kv .k{flex:0 0 auto;font-weight:900;color:var(--gold);min-width:48px}
+
+/* 온라인 로비 */
+.lobby-net{display:flex;align-items:center;gap:6px;font-size:11px;font-weight:800;color:#c6d3ea;margin:-4px 0 12px}
+.lobby-net .nd{width:8px;height:8px;border-radius:50%;background:var(--dim)}
+.lobby-net.ok .nd{background:var(--ok);box-shadow:0 0 8px var(--ok)}
+.lobby-net.wait .nd{background:var(--warn);box-shadow:0 0 8px var(--warn)}
+.lobby-net.bad .nd{background:var(--bad)}
+.or{text-align:center;font-size:11px;color:var(--dim);font-weight:800;margin:11px 0;position:relative}
+.join-row{display:flex;gap:7px}
+.join-row input{
+  flex:1;font-family:inherit;height:48px;border-radius:12px;border:1px solid var(--line);background:rgba(0,0,0,.3);
+  color:#fff;font-size:20px;font-weight:900;letter-spacing:6px;text-align:center;outline:none;
+  -webkit-user-select:text;user-select:text;
+}
+.join-row input:focus{border-color:rgba(255,212,121,.6)}
+.join-row .ghost{flex:0 0 96px;height:48px;font-size:14px}
+.code-box{text-align:center;background:rgba(255,212,121,.08);border:1px solid rgba(255,212,121,.35);border-radius:14px;padding:11px 10px;margin-bottom:9px}
+.code-lbl{font-size:10px;font-weight:800;color:#e4cfa2;letter-spacing:.6px}
+.code{font-size:38px;font-weight:900;letter-spacing:11px;color:#fff3d6;line-height:1.15;padding-left:11px;font-variant-numeric:tabular-nums}
+.link-box{width:100%;font-family:inherit;height:38px;border-radius:10px;border:1px solid var(--line);background:rgba(0,0,0,.3);color:#9fb4d6;font-size:11px;padding:0 10px;outline:none;-webkit-user-select:text;user-select:text}
+.row2{display:flex;gap:7px;margin-top:9px}
+.row2 .cta{flex:1;height:46px;font-size:15px}
+.row2 .ghost{flex:0 0 124px;height:46px;font-size:12px}
+.big-status{text-align:center;font-size:13px;font-weight:800;color:#dbe6f8;padding:14px 6px;line-height:1.5}
+.big-status .sm{display:block;font-size:11px;color:var(--dim);font-weight:700;margin-top:4px}
+.ov-head{text-align:center;margin-bottom:10px}
+.ov-head .em{font-size:38px;line-height:1}
+.ov-head .tt{font-size:22px;font-weight:900;margin-top:3px;letter-spacing:-.5px}
+.ov-head .rs{font-size:11.5px;color:var(--dim);margin-top:3px;line-height:1.4}
+.ov-rows{display:flex;flex-direction:column;gap:5px;margin:11px 0 3px}
+.ov-row{display:flex;align-items:center;gap:8px;padding:8px 11px;border-radius:11px;background:rgba(255,255,255,.05);border:1px solid var(--line)}
+.ov-row.win{border-color:rgba(255,212,121,.6);background:rgba(255,212,121,.12)}
+.ov-row .dt{width:9px;height:9px;border-radius:50%;flex:0 0 auto}
+.ov-row .nm{flex:1;font-size:12.5px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ov-row .mr{font-size:9.5px;color:var(--dim);font-weight:700;flex:0 0 auto}
+.ov-row .ar{font-size:16px;font-weight:900;font-variant-numeric:tabular-nums;flex:0 0 auto}
+.ov-row .ar small{font-size:8.5px;color:var(--dim);font-weight:700;margin-left:1px}
+</style>
+</head>
+<body>
+<div id="app">
+
+  <!-- ============ HOME ============ -->
+  <section class="screen on" id="home">
+    <div class="home-wrap">
+      <div class="brand">
+        <div class="logo">♟️</div>
+        <h1>벽바둑 <span>2</span></h1>
+        <p class="sub">WALL GO Ⅱ · 벽으로 길을 막고 영역을 차지하라</p>
+      </div>
+
+      <div class="modes" id="modeSeg">
+        <button class="mode on" data-val="online">
+          <span class="mi">🤝</span><span class="mt">온라인 1:1</span><span class="md">각자 폰으로 실시간</span>
+        </button>
+        <button class="mode" data-val="local1">
+          <span class="mi">📱</span><span class="mt">한 기기 1:1</span><span class="md">번갈아 두기</span>
+        </button>
+        <button class="mode" data-val="ai">
+          <span class="mi">🤖</span><span class="mt">혼자 하기</span><span class="md">vs AI</span>
+        </button>
+        <button class="mode" data-val="three">
+          <span class="mi">🎲</span><span class="mt">3인전</span><span class="md">벽 부수기 1회</span>
+        </button>
+      </div>
+
+      <div class="field" id="nickField">
+        <div class="field-label">닉네임 <span class="hint" id="nickHint">상대 폰에 이 이름으로 표시됩니다</span></div>
+        <div class="nick-row">
+          <input id="nickInput" maxlength="10" placeholder="Player 1" value="Player 1">
+          <span class="vs">VS</span>
+          <span class="fixed" id="oppName">Player 2</span>
+        </div>
+      </div>
+
+      <div class="field hide" id="threeField">
+        <div class="field-label">3인전 상대</div>
+        <div class="seg" data-group="threeOpp">
+          <button data-val="local" class="on">3명 같이</button>
+          <button data-val="ai">나 + AI 2</button>
+        </div>
+      </div>
+
+      <div class="field" id="diffField">
+        <div class="field-label">AI 난이도</div>
+        <div class="seg" data-group="diff">
+          <button data-val="normal" class="on">보통<em>탐욕 1수</em></button>
+          <button data-val="hard">어려움<em>2수 읽기</em></button>
+        </div>
+      </div>
+
+      <div class="field">
+        <div class="field-label">제한시간 <span class="hint">턴당 · 초과 시 자동 랜덤 수</span></div>
+        <div class="seg" data-group="time">
+          <button data-val="60">60초</button>
+          <button data-val="90" class="on">90초</button>
+          <button data-val="0">무제한</button>
+        </div>
+      </div>
+
+      <button class="cta" id="startBtn">방 만들기 / 참가하기</button>
+      <div class="home-foot">
+        <button class="ghost" id="rulesBtnHome">? 게임 규칙</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ GAME ============ -->
+  <section class="screen" id="game">
+    <div class="top">
+      <div class="top-row">
+        <button class="icon-btn" id="homeBtn" aria-label="처음으로">⌂</button>
+        <div class="turn-chip" id="turnChip"><span class="dot"></span><span class="txt">P1 차례</span></div>
+        <div class="timer" id="timerChip">1:30</div>
+        <div class="net-badge hide" id="netBadge"><span class="nd"></span><span class="nt">연결됨</span></div>
+        <button class="icon-btn" id="helpBtn" aria-label="규칙">?</button>
+      </div>
+      <div class="scores" id="scores"></div>
+      <div class="prog"><div class="prog-bar" id="progBar"></div><div class="prog-txt" id="progTxt">분리 0%</div></div>
+    </div>
+
+    <main class="board-wrap">
+      <div class="legend"><span class="lg sq"></span>직진 1~2칸 <span class="sep">·</span> <span class="lg ci"></span>1칸 또는 꺾기 <span class="sep">·</span> 벽은 도착한 칸 옆에</div>
+      <svg id="board" viewBox="-18 -18 736 736" xmlns="http://www.w3.org/2000/svg" aria-label="벽바둑 보드">
+        <defs>
+          <linearGradient id="wallGrad" x1="0" y1="0" x2="0.3" y2="1">
+            <stop offset="0" stop-color="#ffffff"/>
+            <stop offset="0.45" stop-color="#ffe9bb"/>
+            <stop offset="1" stop-color="#d9ae62"/>
+          </linearGradient>
+          <filter id="wallGlow" x="-60%" y="-60%" width="220%" height="220%">
+            <feDropShadow dx="0" dy="0" stdDeviation="3.2" flood-color="#ffcf72" flood-opacity="0.45"/>
+          </filter>
+          <filter id="hintGlow" x="-70%" y="-70%" width="240%" height="240%">
+            <feDropShadow dx="0" dy="0" stdDeviation="4" flood-color="#5de0ff" flood-opacity="0.9"/>
+          </filter>
+          <filter id="brkGlow" x="-80%" y="-80%" width="260%" height="260%">
+            <feDropShadow dx="0" dy="0" stdDeviation="5" flood-color="#ff8a3c" flood-opacity="0.9"/>
+          </filter>
+        </defs>
+        <g id="gBg"></g>
+        <g id="gTrack"></g>
+        <g id="gCells"></g>
+        <g id="gFrame"></g>
+        <g id="gWalls"></g>
+        <g id="gHints"></g>
+        <g id="gWallHint"></g>
+        <g id="gPieces"></g>
+        <g id="gEdgeHit"></g>
+      </svg>
+    </main>
+
+    <div class="bottom">
+      <div class="status" id="status"></div>
+      <div class="btns">
+        <button class="btn" id="undoBtn">↩ 되돌리기</button>
+        <button class="btn hide" id="breakBtn">🔨 벽 부수기 <b id="breakCnt">1</b></button>
+        <button class="btn" id="newBtn">⟲ 새 게임</button>
+      </div>
+    </div>
+  </section>
+
+  <div id="toast"></div>
+
+  <!-- ============ LOBBY (온라인 1:1) ============ -->
+  <div class="overlay" id="lobbyModal">
+    <div class="card">
+      <h2>🤝 온라인 1:1</h2>
+      <div class="lobby-net" id="lobbyNet"><span class="nd"></span><span id="lobbyStatus">연결 중…</span></div>
+
+      <div id="lobbyChoose">
+        <button class="cta" id="mkRoomBtn" style="width:100%">방 만들기</button>
+        <div class="or">— 또는 —</div>
+        <div class="join-row">
+          <input id="codeInput" inputmode="numeric" maxlength="4" placeholder="0000" autocomplete="off">
+          <button class="ghost" id="joinBtn">참가</button>
+        </div>
+        <div class="rules-close"><button class="ghost" id="lobbyCancel">닫기</button></div>
+      </div>
+
+      <div id="lobbyHost" class="hide">
+        <div class="code-box">
+          <div class="code-lbl">방 코드</div>
+          <div class="code" id="roomCode">0000</div>
+        </div>
+        <input class="link-box" id="inviteLink" readonly>
+        <div class="row2">
+          <button class="cta" id="hostStartBtn" disabled>시작</button>
+          <button class="ghost" id="copyBtn">링크 복사</button>
+        </div>
+        <div class="big-status" id="hostStatus">상대를 기다리는 중…<span class="sm">초대 링크를 보내면 바로 연결됩니다</span></div>
+        <button class="ghost" id="lobbyLeave" style="width:100%">나가기</button>
+      </div>
+
+      <div id="lobbyGuest" class="hide">
+        <div class="big-status" id="guestStatus">방에 접속하는 중…<span class="sm" id="guestSub">잠시만 기다려 주세요</span></div>
+        <button class="ghost" id="lobbyLeave2" style="width:100%">나가기</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ RULES ============ -->
+  <div class="overlay" id="rulesModal">
+    <div class="card">
+      <h2>? 벽바둑 2 규칙</h2>
+      <p>7×7 격자에서 말을 옮기고, <b>이동한 칸에 붙은 벽 한 면</b>을 세웁니다. 모두의 말이 서로 다른 구역으로 완전히 갈라지면 끝나고, <b>내 말만 있는 구역의 칸 수</b>가 점수입니다.</p>
+
+      <h3>말 두 종류</h3>
+      <div class="kv"><span class="k">■ 사각</span><span><b>직진 전용</b> — 상하좌우 한 방향으로 1칸 또는 2칸. 90도 꺾기 불가, 제자리 불가.</span></div>
+      <div class="kv"><span class="k">● 원형</span><span><b>꺾기 전용</b> — 1칸 이동, 또는 1칸 간 뒤 좌·우로 90도 꺾어 1칸 더(ㄱ자). 직진 2칸 불가.</span></div>
+      <p style="margin-top:5px">경로에 벽이나 다른 말이 있으면 지나갈 수 없습니다.</p>
+
+      <h3>한 턴</h3>
+      <ul>
+        <li>내 말 탭 → 이동 가능한 칸 확인 → 칸 탭</li>
+        <li>도착 칸의 <b>벽 없는 4면</b>이 반짝입니다 → 놓을 면 탭 (턴 종료)</li>
+        <li>벽을 놓기 전에는 <b>되돌리기</b>로 이동을 취소할 수 있습니다.</li>
+        <li>움직일 수 있는 말이 없으면 자동으로 턴이 넘어갑니다.</li>
+      </ul>
+
+      <h3>모드</h3>
+      <ul>
+        <li><b>1:1 (2인)</b> — 각 사각 2 + 원형 2 = 4말. 고정 2말(대칭) + 나머지 2말 교대 배치.</li>
+        <li><b>3인전</b> — 각 사각 1 + 원형 1 = 2말. 스네이크 순서(1→2→3→3→2→1) 배치. 각자 <b>🔨 벽 부수기 1회</b>: 토글 후 이동하면 경로의 벽 1개를 부수고 지나갑니다(주황 표시).</li>
+        <li><b>온라인 1:1</b> — 방을 만들면 4자리 코드와 초대 링크가 생깁니다. 링크를 열면 바로 같은 판에 연결되고, 배치·이동·벽 설치·차례가 실시간으로 동기화됩니다. 인터넷이 막혀도 한 기기 대전과 AI 대전은 그대로 동작합니다. <span style="color:#8ea0c0">(공개 중계 서버를 쓰므로 방 코드를 아는 사람이면 접속할 수 있습니다. 개인정보는 넣지 마세요.)</span></li>
+      </ul>
+
+      <h3>점수와 종료</h3>
+      <ul>
+        <li>어느 구역에도 <b>2명 이상의 말이 함께 있지 않으면</b> 즉시 종료.</li>
+        <li>점수 = 내 말만 있는 구역들의 칸 수 합(말 칸 포함).</li>
+        <li>동점이면 <b>가장 넓은 단일 구역</b>이 큰 쪽 승리, 그것도 같으면 무승부.</li>
+        <li>상단 진행바는 이미 한 사람만의 구역이 된 비율(분리 진행도)입니다.</li>
+      </ul>
+
+      <h3>기타</h3>
+      <ul>
+        <li>제한시간은 턴당이며, 초과하면 합법 수 중 무작위로 둡니다.</li>
+        <li>외곽 테두리는 처음부터 벽입니다.</li>
+      </ul>
+
+      <div class="rules-close"><button class="cta" id="rulesClose" style="flex:1">알겠습니다</button></div>
+    </div>
+  </div>
+
+  <!-- ============ GAME OVER ============ -->
+  <div class="overlay" id="overModal">
+    <div class="card">
+      <div class="ov-head">
+        <div class="em" id="ovEmoji">🏆</div>
+        <div class="tt" id="ovTitle">P1 승리</div>
+        <div class="rs" id="ovReason"></div>
+      </div>
+      <div class="ov-rows" id="ovRows"></div>
+      <div class="rules-close">
+        <button class="cta" id="againBtn" style="flex:1">다시 하기</button>
+        <button class="ghost" id="toHomeBtn" style="flex:0 0 96px">처음으로</button>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+"use strict";
+/* =========================================================
+   벽바둑 2 (Wall Go Ⅱ) — 단일 파일 / 외부 라이브러리 없음
+   온라인 1:1 = 내장 MQTT 3.1.1 over WebSocket(공개 브로커)
+                + 같은 브라우저 탭용 BroadcastChannel 폴백
+   ========================================================= */
+const N = 7, CELL = 100, B = N * CELL;
+const DIRS = [[1,0],[-1,0],[0,1],[0,-1]];
+const COLORS = ['#3d7bf7', '#f2556e', '#f5b83d'];
+const PNAME = i => 'P' + (i + 1);
+
+const idx = (c, r) => r * N + c;
+const cx = i => i % N;
+const cy = i => (i / N) | 0;
+const inB = (c, r) => c >= 0 && c < N && r >= 0 && r < N;
+/* 경계(edge) 키: 'V:c:r' = (c,r)-(c+1,r) 세로면 / 'H:c:r' = (c,r)-(c,r+1) 가로면 */
+const edgeAt = (c1, r1, c2, r2) => (c1 === c2)
+  ? 'H:' + c1 + ':' + Math.min(r1, r2)
+  : 'V:' + Math.min(c1, c2) + ':' + r1;
+const edgeParts = k => { const a = k.split(':'); return { t: a[0], c: +a[1], r: +a[2] }; };
+const hexA = (hex, a) => {
+  const n = parseInt(hex.slice(1), 16);
+  return 'rgba(' + ((n >> 16) & 255) + ',' + ((n >> 8) & 255) + ',' + (n & 255) + ',' + a + ')';
+};
+const clampStr = (s, n) => (s && s.length > n) ? s.slice(0, n) : s;
+
+/* ---------------- 규칙: 이동 생성 ---------------- */
+function occupancy(st) {
+  const s = new Set();
+  for (const p of st.pieces) if (p.cell != null) s.add(p.cell);
+  return s;
+}
+
+/** 말 하나의 가능한 경로 전부(벽 통과 포함). 각 항목 {to, edges[], walls[]} */
+function genPieceMoves(st, pc) {
+  const out = [];
+  const occ = occupancy(st);
+  occ.delete(pc.cell);
+  const step = (c0, r0, dc, dr) => {
+    const c1 = c0 + dc, r1 = r0 + dr;
+    if (!inB(c1, r1)) return null;              // 외곽 = 벽
+    const j = idx(c1, r1);
+    if (occ.has(j)) return null;                // 말 통과 불가
+    return { cell: j, edge: edgeAt(c0, r0, c1, r1) };
+  };
+  const c0 = cx(pc.cell), r0 = cy(pc.cell);
+
+  if (pc.type === 'S') {
+    /* 사각: 한 방향 1칸 또는 2칸 (꺾기 없음) */
+    for (const [dc, dr] of DIRS) {
+      let c = c0, r = r0;
+      const edges = [], walls = [];
+      for (let len = 1; len <= 2; len++) {
+        const s = step(c, r, dc, dr);
+        if (!s) break;
+        edges.push(s.edge);
+        if (st.walls.has(s.edge)) walls.push(s.edge);
+        out.push({ to: s.cell, edges: edges.slice(), walls: walls.slice() });
+        c = cx(s.cell); r = cy(s.cell);
+      }
+    }
+  } else {
+    /* 원형: 1칸, 또는 1칸 → 좌/우 90도 꺾어 1칸 (직진 2칸 불가) */
+    for (const [dc, dr] of DIRS) {
+      const s1 = step(c0, r0, dc, dr);
+      if (!s1) continue;
+      const w1 = st.walls.has(s1.edge) ? [s1.edge] : [];
+      out.push({ to: s1.cell, edges: [s1.edge], walls: w1 });
+      const p1c = cx(s1.cell), p1r = cy(s1.cell);
+      for (const [dc2, dr2] of DIRS) {
+        if (dc * dc2 + dr * dr2 !== 0) continue;   // 수직 방향만
+        const s2 = step(p1c, p1r, dc2, dr2);
+        if (!s2) continue;
+        const w2 = st.walls.has(s2.edge) ? [s2.edge] : [];
+        out.push({ to: s2.cell, edges: [s1.edge, s2.edge], walls: w1.concat(w2) });
+      }
+    }
+  }
+  return out;
+}
+
+/** 도착 칸 기준, 벽을 놓을 수 있는(아직 벽이 없는) 인접 내부 면 */
+function wallOptionsFor(st, cell) {
+  const c = cx(cell), r = cy(cell), out = [];
+  if (c > 0) out.push('V:' + (c - 1) + ':' + r);
+  if (c < N - 1) out.push('V:' + c + ':' + r);
+  if (r > 0) out.push('H:' + c + ':' + (r - 1));
+  if (r < N - 1) out.push('H:' + c + ':' + r);
+  return out.filter(k => !st.walls.has(k));
+}
+
+/** 실제 채택 가능한 이동. 도착 칸별로 최적 경로 1개만. */
+function legalMoves(st, pc, allowBreak) {
+  if (!pc || pc.cell == null) return [];
+  const can = (allowBreak !== undefined)
+    ? !!allowBreak
+    : (st.players === 3 && st.breakLeft[pc.p] > 0 && !!st.breakMode);
+  const best = new Map();
+  for (const m of genPieceMoves(st, pc)) {
+    if (m.walls.length > 0 && !(can && m.walls.length === 1)) continue;
+    const cur = best.get(m.to);
+    if (!cur || m.walls.length < cur.walls.length) best.set(m.to, m);
+  }
+  return Array.from(best.values());
+}
+function aiMovesFor(st, pc) { return legalMoves(st, pc, st.players === 3 && st.breakLeft[pc.p] > 0); }
+
+/* ---------------- 영역 분석 ---------------- */
+function analyze(st) {
+  const reg = new Int16Array(N * N).fill(-1);
+  const regions = [];
+  for (let s = 0; s < N * N; s++) {
+    if (reg[s] >= 0) continue;
+    const rid = regions.length;
+    const cells = [s];
+    reg[s] = rid;
+    for (let k = 0; k < cells.length; k++) {
+      const i = cells[k], c = cx(i), r = cy(i);
+      for (const [dc, dr] of DIRS) {
+        const c2 = c + dc, r2 = r + dr;
+        if (!inB(c2, r2)) continue;
+        const j = idx(c2, r2);
+        if (reg[j] >= 0) continue;
+        if (st.walls.has(edgeAt(c, r, c2, r2))) continue;
+        reg[j] = rid; cells.push(j);
+      }
+    }
+    regions.push({ id: rid, cells: cells, size: cells.length, players: new Set() });
+  }
+  for (const pc of st.pieces) if (pc.cell != null) regions[reg[pc.cell]].players.add(pc.p);
+
+  const pure = new Array(st.players).fill(0);
+  const maxReg = new Array(st.players).fill(0);
+  const reach = new Array(st.players).fill(0);
+  let shared = 0, pieceArea = 0, pureArea = 0, separated = true;
+
+  for (const rg of regions) {
+    if (rg.players.size === 0) continue;
+    pieceArea += rg.size;
+    for (const p of rg.players) reach[p] += rg.size;
+    if (rg.players.size === 1) {
+      const p = rg.players.values().next().value;
+      pure[p] += rg.size;
+      pureArea += rg.size;
+      if (rg.size > maxReg[p]) maxReg[p] = rg.size;
+    } else {
+      shared += rg.size;
+      separated = false;
+    }
+  }
+  const progress = pieceArea ? Math.round((pureArea / pieceArea) * 100) : 0;
+  return { regions, reg, pure, maxReg, reach, shared, pieceArea, pureArea, separated, progress };
+}
+
+function decideWinner(A, players) {
+  let best = -1, bv = -1, tie = false;
+  for (let p = 0; p < players; p++) {
+    if (A.pure[p] > bv) { bv = A.pure[p]; best = p; tie = false; }
+    else if (A.pure[p] === bv) tie = true;
+  }
+  if (!tie) return best;
+  let best2 = -1, bv2 = -1, tie2 = false;
+  for (let p = 0; p < players; p++) {
+    if (A.maxReg[p] > bv2) { bv2 = A.maxReg[p]; best2 = p; tie2 = false; }
+    else if (A.maxReg[p] === bv2) tie2 = true;
+  }
+  return tie2 ? -1 : best2;
+}
+
+/* =========================================================
+   상태
+   ========================================================= */
+let st = null;
+
+function cloneState(g) {
+  return {
+    players: g.players, ai: g.ai, difficulty: g.difficulty, timeLimit: g.timeLimit,
+    phase: g.phase, turn: g.turn, walls: new Set(g.walls),
+    pieces: g.pieces.map(p => ({ id: p.id, p: p.p, type: p.type, cell: p.cell })),
+    breakLeft: g.breakLeft.slice(), breakMode: g.breakMode,
+    analysis: g.analysis, winner: g.winner, overReason: g.overReason, seq: g.seq,
+    names: g.names
+  };
+}
+
+function stateShell(cfg) {
+  const players = cfg.players === 3 ? 3 : 2;
+  return {
+    seq: (st ? st.seq + 1 : 1), token: 0,
+    players: players,
+    ai: cfg.ai || Array.from({ length: players }, () => false),
+    difficulty: cfg.diff || 'normal',
+    timeLimit: cfg.time === undefined ? 90 : cfg.time,
+    net: cfg.net || null,
+    names: cfg.names ? cfg.names.slice(0, players) : null,
+    phase: 'place', turn: 0,
+    walls: new Set(), pieces: [],
+    placeQueue: [], placeIdx: 0,
+    breakLeft: new Array(players).fill(players === 3 ? 1 : 0),
+    breakMode: false,
+    selPiece: null, moves: [], move: null, wallOpts: [],
+    analysis: null, winner: -2, overReason: null,
+    passes: 0, moveCount: 0, busy: false,
+    timeLeft: 0, timer: null, paused: false,
+    lastMove: null, landed: null
+  };
+}
+
+function newGame(cfg) {
+  cfg = cfg || {};
+  stopTimer();
+  const seq = st ? st.seq + 1 : 1;
+  st = stateShell(cfg);
+  st.seq = seq;
+
+  const players = st.players;
+  const fixed = [], queue = [];
+  if (players === 2) {
+    /* 고정 2말(180도 대칭) */
+    fixed.push({ p: 0, type: 'S', cell: idx(2, 5) }, { p: 0, type: 'C', cell: idx(4, 5) });
+    fixed.push({ p: 1, type: 'S', cell: idx(4, 1) }, { p: 1, type: 'C', cell: idx(2, 1) });
+    /* 나머지 2말씩 교대 배치 */
+    queue.push({ p: 0, type: 'S' }, { p: 1, type: 'S' }, { p: 0, type: 'C' }, { p: 1, type: 'C' });
+  } else {
+    /* 3인전: 스네이크 1→2→3→3→2→1 */
+    queue.push({ p: 0, type: 'S' }, { p: 1, type: 'S' }, { p: 2, type: 'S' },
+               { p: 2, type: 'C' }, { p: 1, type: 'C' }, { p: 0, type: 'C' });
+  }
+  let id = 0;
+  for (const f of fixed) st.pieces.push({ id: 'k' + (id++), p: f.p, type: f.type, cell: f.cell });
+  st.placeQueue = queue;
+  st.analysis = analyze(st);
+
+  pieceNodes.forEach(n => n.remove());
+  pieceNodes.clear();
+  buildStatic();
+  turnSetup();
+}
+
+/* =========================================================
+   진행 (턴)
+   ========================================================= */
+function stopTimer() { if (st && st.timer) { clearInterval(st.timer); st.timer = null; } }
+
+function schedule(fn, ms) {
+  const tok = st.token, seq = st.seq;
+  setTimeout(() => { if (!st || st.token !== tok || st.seq !== seq) return; fn(); }, ms);
+}
+
+function finalizeAnalysis(g) {
+  g.analysis = analyze(g);
+  if (g.phase === 'play' && g.analysis.separated) {
+    g.phase = 'over';
+    g.overReason = 'separated';
+    g.winner = decideWinner(g.analysis, g.players);
+  }
+}
+
+function piecesOf(g, p) { return g.pieces.filter(x => x.p === p); }
+
+function hasAnyMove(g, p) {
+  for (const pc of piecesOf(g, p)) if (aiMovesFor(g, pc).length) return true;
+  return false;
+}
+
+/* 온라인 역할 */
+const isHost = () => !!(Net.room && Net.role === 'host');
+const isGuest = () => !!(Net.room && Net.role === 'guest');
+const mySeat = () => (isGuest() ? 1 : 0);
+
+function dispName(p) {
+  const n = (st && st.names && st.names[p]) ? st.names[p] : PNAME(p);
+  return clampStr(n, 9);
+}
+
+function turnSetup() {
+  stopTimer();
+  if (!st) return;
+  st.selPiece = null; st.moves = []; st.move = null; st.wallOpts = [];
+  st.busy = false; st.landed = null;
+
+  if (st.phase === 'over') { renderAll(); return; }
+
+  if (st.phase === 'place') {
+    const q = st.placeQueue[st.placeIdx];
+    st.turn = q.p;
+    renderAll();
+    if (st.net === 'online') {
+      if (st.turn === mySeat()) startTimer();
+      return;
+    }
+    if (st.ai[q.p]) { st.busy = true; renderAll(); schedule(aiAct, 420 + Math.random() * 300); }
+    else startTimer();
+    return;
+  }
+
+  renderAll();
+  if (st.net === 'online') {
+    if (st.turn !== mySeat()) return;             // 상대 차례: 입력 대기
+    if (!hasAnyMove(st, st.turn)) {
+      st.busy = true; renderAll();
+      toast('이동 가능한 수가 없습니다 · 턴 넘김');
+      schedule(() => {
+        if (isGuest()) { netSend({ t: 'act', a: 'pass' }); }
+        else { passTurn(); }
+      }, 900);
+      return;
+    }
+    startTimer();
+    return;
+  }
+
+  if (st.ai[st.turn]) {
+    st.busy = true; renderAll();
+    schedule(aiAct, 430 + Math.random() * 320);
+    return;
+  }
+  if (!hasAnyMove(st, st.turn)) {
+    st.busy = true;
+    toast(PNAME(st.turn) + ' 이동 가능한 수가 없습니다 · 턴 넘김');
+    renderAll();
+    schedule(() => {
+      st.passes++;
+      if (st.passes >= st.players) { finishByScore('blocked'); return; }
+      st.turn = (st.turn + 1) % st.players;
+      st.breakMode = false;
+      turnSetup();
+    }, 1000);
+    return;
+  }
+  st.passes = 0;
+  startTimer();
+}
+
+function passTurn() {
+  st.passes++;
+  if (st.passes >= st.players) { finishByScore('blocked'); netPush(); return; }
+  st.turn = (st.turn + 1) % st.players;
+  st.breakMode = false;
+  turnSetup();
+  netPush();
+}
+
+function finishByScore(reason) {
+  st.phase = 'over';
+  st.overReason = reason || 'blocked';
+  st.winner = decideWinner(st.analysis, st.players);
+  stopTimer();
+  renderAll();
+  showOver();
+  netPush();
+}
+
+function commitTurn(pieceId, mv, wallKey) {
+  const pc = st.pieces.find(x => x.id === pieceId);
+  if (!pc || !mv) return;
+  if (isGuest()) {                       /* 게스트: 호스트에게 위임 */
+    netSend({ t: 'act', a: 'turn', pieceId: pieceId, to: mv.to, wall: wallKey || null });
+    st.selPiece = null; st.moves = []; st.move = null; st.wallOpts = [];
+    guestAwait();
+    return;
+  }
+  const from = pc.cell;
+  let broke = [];
+  if (mv.walls && mv.walls.length) {
+    broke = mv.walls.slice();
+    for (const k of broke) st.walls.delete(k);
+    st.breakLeft[pc.p] = Math.max(0, st.breakLeft[pc.p] - 1);
+  }
+  pc.cell = mv.to;
+  if (wallKey) st.walls.add(wallKey);
+  st.lastMove = { p: pc.p, from: from, to: mv.to, wall: wallKey || null, broke: broke, pieceId: pc.id };
+  st.moveCount++;
+  st.passes = 0;
+  st.breakMode = false;
+  st.selPiece = null; st.moves = []; st.move = null; st.wallOpts = [];
+  st.landed = mv.to;
+
+  finalizeAnalysis(st);
+  if (st.phase === 'over') { stopTimer(); renderAll(); showOver(); netPush(); return; }
+  st.turn = (st.turn + 1) % st.players;
+  turnSetup();
+  netPush();
+}
+
+function canPlaceAt(g, cell) { return !g.pieces.some(x => x.cell === cell); }
+
+function doPlace(cell) {
+  const q = st.placeQueue[st.placeIdx];
+  if (!q || !canPlaceAt(st, cell)) return false;
+  if (isGuest()) { netSend({ t: 'act', a: 'place', cell: cell }); guestAwait(); return true; }
+  st.pieces.push({ id: 'k' + (st.pieces.length + 1), p: q.p, type: q.type, cell: cell });
+  st.placeIdx++;
+  st.analysis = analyze(st);
+  if (st.placeIdx >= st.placeQueue.length) {
+    st.phase = 'play';
+    st.turn = 0;
+    finalizeAnalysis(st);
+  } else {
+    st.turn = st.placeQueue[st.placeIdx].p;
+  }
+  turnSetup();
+  netPush();
+  return true;
+}
+
+/* ---------------- 타이머 ---------------- */
+function fmtTime(s) {
+  const m = Math.floor(s / 60), r = s % 60;
+  return m + ':' + (r < 10 ? '0' + r : r);
+}
+function renderTimer() {
+  const el = document.getElementById('timerChip');
+  if (!el) return;
+  if (!st || st.phase === 'over') { el.textContent = '--'; el.classList.remove('warn'); return; }
+  if (!st.timeLimit) { el.textContent = '∞'; el.classList.remove('warn'); return; }
+  if (st.net === 'online' && st.turn !== mySeat()) { el.textContent = '···'; el.classList.remove('warn'); return; }
+  el.textContent = fmtTime(Math.max(0, st.timeLeft));
+  el.classList.toggle('warn', st.timeLeft <= 10);
+}
+function startTimer() {
+  stopTimer();
+  if (!st || st.phase === 'over') return renderTimer();
+  if (!st.timeLimit) { renderTimer(); return; }
+  st.timeLeft = st.timeLimit;
+  renderTimer();
+  const seq = st.seq;
+  st.timer = setInterval(() => {
+    if (!st || st.seq !== seq) return;
+    if (st.paused || st.phase === 'over' || st.busy) return;
+    st.timeLeft--;
+    renderTimer();
+    if (st.timeLeft <= 0) { stopTimer(); autoAct(); }
+  }, 1000);
+}
+
+/* ---------------- 자동(랜덤) 수 ---------------- */
+function autoAct() {
+  if (!st || st.phase === 'over' || st.busy) return;
+  if (st.net === 'online' && st.turn !== mySeat()) return;
+  if (st.phase === 'place') {
+    const q = st.placeQueue[st.placeIdx];
+    if (!q || st.ai[q.p]) return;
+    const cells = [];
+    for (let i = 0; i < N * N; i++) if (canPlaceAt(st, i)) cells.push(i);
+    if (!cells.length) return;
+    toast('시간 초과 · 무작위 배치');
+    doPlace(cells[(Math.random() * cells.length) | 0]);
+    return;
+  }
+  if (st.ai[st.turn]) return;
+  const cands = [];
+  for (const pc of piecesOf(st, st.turn)) {
+    for (const m of aiMovesFor(st, pc)) {
+      const wo = wallOptionsFor(st, m.to);
+      if (!wo.length) cands.push({ pieceId: pc.id, move: m, wall: null });
+      else for (const w of wo) cands.push({ pieceId: pc.id, move: m, wall: w });
+    }
+  }
+  if (!cands.length) { if (isGuest()) netSend({ t: 'act', a: 'pass' }); else passTurn(); return; }
+  const c = cands[(Math.random() * cands.length) | 0];
+  toast('시간 초과 · 무작위 수');
+  if (c.move.walls.length) st.breakMode = true;
+  commitTurn(c.pieceId, c.move, c.wall);
+}
+
+/* =========================================================
+   AI
+   ========================================================= */
+function simApply(g, cand) {
+  const pc = g.pieces.find(x => x.id === cand.pieceId);
+  if (!pc) return;
+  if (cand.move.walls && cand.move.walls.length) {
+    for (const k of cand.move.walls) g.walls.delete(k);
+    g.breakLeft[pc.p] = Math.max(0, g.breakLeft[pc.p] - 1);
+  }
+  pc.cell = cand.move.to;
+  if (cand.wall) g.walls.add(cand.wall);
+  finalizeAnalysis(g);
+  g.turn = (g.turn + 1) % g.players;
+}
+
+function evalFor(g, me) {
+  const A = g.analysis || analyze(g);
+  if (g.phase === 'over') {
+    if (g.winner === me) return 100000 + A.pure[me] * 4;
+    if (g.winner === -1) return 0;
+    return -100000 + A.pure[me] * 4;
+  }
+  let oppPure = 0, oppReach = 0;
+  for (let q = 0; q < g.players; q++) {
+    if (q === me) continue;
+    if (A.pure[q] > oppPure) oppPure = A.pure[q];
+    if (A.reach[q] > oppReach) oppReach = A.reach[q];
+  }
+  return A.pure[me] * 1.15 - oppPure * 1.0
+       + (A.reach[me] - oppReach) * 0.24
+       - A.shared * 0.30;
+}
+
+function aiCandidates(g, p) {
+  const out = [];
+  for (const pc of piecesOf(g, p)) {
+    for (const m of aiMovesFor(g, pc)) {
+      const wo = wallOptionsFor(g, m.to);
+      if (!wo.length) out.push({ pieceId: pc.id, move: m, wall: null });
+      else for (const w of wo) out.push({ pieceId: pc.id, move: m, wall: w });
+    }
+  }
+  if (out.length > 320) {
+    for (let i = out.length - 1; i > 0; i--) { const j = (Math.random() * (i + 1)) | 0; const t = out[i]; out[i] = out[j]; out[j] = t; }
+    out.length = 320;
+  }
+  return out;
+}
+
+function scoreCands(g, p, cands) {
+  const res = cands.map(c => {
+    const sim = cloneState(g);
+    simApply(sim, c);
+    return { c: c, v: evalFor(sim, p) };
+  });
+  res.sort((a, b) => b.v - a.v);
+  return res;
+}
+
+function aiChoose(g, p) {
+  const cands = aiCandidates(g, p);
+  if (!cands.length) return null;
+  const scored = scoreCands(g, p, cands);
+  if (g.difficulty !== 'hard') {
+    if (scored.length > 1 && Math.random() < 0.22) {
+      const top = scored.slice(0, Math.min(3, scored.length));
+      return top[(Math.random() * top.length) | 0].c;
+    }
+    return scored[0].c;
+  }
+  let best = scored[0].c, bestV = -Infinity;
+  const K = Math.min(5, scored.length);
+  for (let i = 0; i < K; i++) {
+    const cand = scored[i];
+    const sim = cloneState(g);
+    simApply(sim, cand.c);
+    let worst;
+    if (sim.phase === 'over') {
+      worst = evalFor(sim, p);
+    } else {
+      const oppC = aiCandidates(sim, sim.turn);
+      const oppScored = oppC.length ? scoreCands(sim, sim.turn, oppC).slice(0, 3) : [];
+      if (!oppScored.length) worst = evalFor(sim, p);
+      else {
+        worst = Infinity;
+        for (const o of oppScored) {
+          const s2 = cloneState(sim);
+          simApply(s2, o.c);
+          const v = evalFor(s2, p);
+          if (v < worst) worst = v;
+        }
+      }
+    }
+    const v = cand.v * 0.45 + worst * 0.55;
+    if (v > bestV) { bestV = v; best = cand.c; }
+  }
+  return best;
+}
+
+function aiPlaceCell(g, p) {
+  const enemies = g.pieces.filter(x => x.p !== p), own = piecesOf(g, p);
+  const pool = [];
+  for (let i = 0; i < N * N; i++) {
+    if (!canPlaceAt(g, i)) continue;
+    const c = cx(i), r = cy(i);
+    let v = 0, dmin = 99;
+    for (const e of enemies) dmin = Math.min(dmin, Math.abs(cx(e.cell) - c) + Math.abs(cy(e.cell) - r));
+    if (enemies.length) v += Math.min(dmin, 6) * 1.3;
+    for (const o of own) {
+      const d = Math.abs(cx(o.cell) - c) + Math.abs(cy(o.cell) - r);
+      if (d <= 2) v += 1.6; else if (d === 3) v += 0.4;
+    }
+    v += 1.3 - (Math.abs(c - 3) + Math.abs(r - 3)) * 0.13;
+    v += Math.random() * 0.7;
+    pool.push({ i: i, v: v });
+  }
+  if (!pool.length) return -1;
+  pool.sort((a, b) => b.v - a.v);
+  return pool[0].i;
+}
+
+function aiAct() {
+  if (!st || st.phase === 'over') return;
+  if (st.phase === 'place') {
+    const q = st.placeQueue[st.placeIdx];
+    if (!q || !st.ai[q.p]) return;
+    const cell = aiPlaceCell(st, q.p);
+    if (cell >= 0) doPlace(cell);
+    return;
+  }
+  if (!st.ai[st.turn]) return;
+  const me = st.turn;
+  st.busy = true; renderAll();
+  setTimeout(() => {
+    if (!st || st.turn !== me || st.phase === 'over' || st.seq !== (st.seq)) return;
+    const choice = aiChoose(st, me);
+    if (!choice) {
+      st.passes++;
+      if (st.passes >= st.players) { finishByScore('blocked'); return; }
+      st.turn = (st.turn + 1) % st.players;
+      turnSetup();
+      return;
+    }
+    st.busy = false;
+    commitTurn(choice.pieceId, choice.move, choice.wall);
+  }, 320 + Math.random() * 240);
+}
+
+/* =========================================================
+   온라인 전송 계층 — 미니 MQTT 3.1.1 over WebSocket + BroadcastChannel
+   ========================================================= */
+const NETV = 2;
+const BROKERS = [
+  'wss://broker.emqx.io:8084/mqtt',
+  'wss://broker.hivemq.com:8884/mqtt',
+  'wss://test.mosquitto.org:8081/mqtt'
+];
+const enc = s => new TextEncoder().encode(s);
+const decB = b => new TextDecoder().decode(b);
+function cat(a, b) { const o = new Uint8Array(a.length + b.length); o.set(a, 0); o.set(b, a.length); return o; }
+function encLen(n) { const o = []; do { let d = n % 128; n = Math.floor(n / 128); if (n > 0) d |= 128; o.push(d); } while (n > 0); return o; }
+function mqttStr(s) { const b = enc(s); return [b.length >> 8, b.length & 255].concat(Array.from(b)); }
+
+/** 최소 MQTT 3.1.1 클라이언트 (CONNECT / SUBSCRIBE / PUBLISH QoS0 / PINGREQ) */
+class MiniMQTT {
+  constructor(url) { this.url = url; this.buf = new Uint8Array(0); this.alive = false; this.pid = 1; this.subs = []; }
+  connect({ clientId, keepalive }) {
+    return new Promise((resolve, reject) => {
+      let ws;
+      try { ws = new WebSocket(this.url, 'mqtt'); } catch (e) { reject(e); return; }
+      this.ws = ws; ws.binaryType = 'arraybuffer';
+      let done = false;
+      const fail = e => { if (!done) { done = true; clearTimeout(tm); try { ws.close(); } catch (x) {} reject(e || new Error('ws')); } };
+      const tm = setTimeout(() => fail(new Error('timeout')), 4500);
+      ws.onerror = () => fail(new Error('ws error'));
+      ws.onclose = (ev) => {
+        this.closeInfo = (ev && ev.code) + '/' + ((ev && ev.reason) || '');
+        if (!this.alive) fail(new Error('closed ' + this.closeInfo));
+        else if (this.onclose) this.onclose();
+      };
+      ws.onopen = () => {
+        const cid = clientId || ('wg2_' + Math.random().toString(36).slice(2, 10));
+        const body = [].concat([0, 4, 77, 81, 84, 84, 4, 0x02],
+          [(keepalive || 45) >> 8, (keepalive || 45) & 255], mqttStr(cid));
+        this._send(1, body);            /* MQTT CONNECT */
+      };
+      ws.onmessage = ev => this._feed(new Uint8Array(ev.data), (type, flags, body) => {
+        if (type === 2) {
+          if (body[1] === 0) {
+            this.alive = true; clearTimeout(tm);
+            for (const t of this.subs) this._subscribe(t);
+            if (!done) { done = true; resolve(this); }
+            if (this.onopen) this.onopen();
+          } else fail(new Error('mqtt rc' + body[1]));
+        } else if (type === 3) {
+          const tl = (body[0] << 8) | body[1];
+          const topic = decB(body.slice(2, 2 + tl));
+          let off = 2 + tl;
+          if (((flags >> 1) & 3) > 0) off += 2;
+          if (this.onmessage) this.onmessage(topic, decB(body.slice(off)));
+        }
+      });
+      this.pingTimer = setInterval(() => { if (this.alive) this._send(12, []); }, 30000);
+    });
+  }
+  _send(type, body, flags) {
+    if (!this.ws || this.ws.readyState !== 1) return;
+    const head = [(type << 4) | (flags || 0)];
+    this.ws.send(new Uint8Array(head.concat(encLen(body.length), body)));
+  }
+  _subscribe(topic) { this._send(8, [this.pid >> 8, this.pid & 255].concat(mqttStr(topic), [0]), 0x2); this.pid++; }
+  subscribe(topic) { this.subs.push(topic); if (this.alive) this._subscribe(topic); }
+  publish(topic, payload) {
+    const p = Array.from(enc(payload));
+    this._send(3, mqttStr(topic).concat(p));
+  }
+  _feed(chunk, onPacket) {
+    this.buf = cat(this.buf, chunk);
+    for (;;) {
+      if (this.buf.length < 2) return;
+      const type = (this.buf[0] >> 4) & 15, flags = this.buf[0] & 15;
+      let mul = 1, len = 0, i = 1, b;
+      for (;;) {
+        if (i >= this.buf.length) return;
+        b = this.buf[i++];
+        len += (b & 127) * mul; mul *= 128;
+        if (!(b & 128)) break;
+        if (i > 5) return;
+      }
+      if (this.buf.length < i + len) return;
+      const body = this.buf.slice(i, i + len);
+      this.buf = this.buf.slice(i + len);
+      onPacket(type, flags, body);
+    }
+  }
+  close() { clearInterval(this.pingTimer); this.alive = false; try { this.ws && this.ws.close(); } catch (e) {} }
+}
+
+const Net = {
+  pid: 'u' + Math.random().toString(36).slice(2, 9),
+  room: null, role: null, peer: null, peerName: null,
+  cloud: false, connecting: false, bc: null, mq: null, broker: null,
+  seen: new Set(), seq: 0, joinTries: 0, joinTimer: null, lastErr: '',
+  reset() {
+    clearInterval(this.joinTimer);
+    if (this.mq) { try { this.mq.close(); } catch (e) {} }
+    this.mq = null; this.cloud = false; this.connecting = false;
+    try { if (this.bc) this.bc.close(); } catch (e) {}
+    this.bc = null;
+    this.room = null; this.role = null; this.peer = null; this.peerName = null;
+    this.seen.clear(); this.seq = 0; this.joinTries = 0; this.lastErr = '';
+    netBadge();
+  },
+  topic() { return 'wallgo/2/' + this.room; },
+  send(obj) {
+    if (!this.room) return;
+    const msg = Object.assign({ v: NETV, room: this.room, from: this.pid, mid: this.pid + '_' + (++this.seq) }, obj);
+    const s = JSON.stringify(msg);
+    if (this.mq && this.mq.alive) { try { this.mq.publish(this.topic(), s); } catch (e) {} }
+    if (this.bc) { try { this.bc.postMessage(s); } catch (e) {} }
+  },
+  _in(s) {
+    let m;
+    try { m = JSON.parse(s); } catch (e) { return; }
+    if (!m || m.v !== NETV || m.room !== this.room) return;
+    if (m.from === this.pid) return;
+    if (m.mid) { if (this.seen.has(m.mid)) return; this.seen.add(m.mid); }
+    try { onNet(m); } catch (e) { console.error('net handler: ' + (e && e.message), e); }
+  },
+  async open() {
+    this.seen.clear(); this.seq = 0; this.peer = null; this.peerName = null;
+    this.cloud = false; this.connecting = true;
+    this.lastErr = '';
+    if (typeof BroadcastChannel !== 'undefined') {
+      try {
+        this.bc = new BroadcastChannel('wallgo2-' + this.room);
+        this.bc.onmessage = ev => this._in(typeof ev.data === 'string' ? ev.data : '');
+      } catch (e) { this.bc = null; }
+    }
+    netBadge(true);
+    if (this.role === 'guest') this.pingJoin();
+    const list = brokerList();
+    let ok = null;
+    for (const url of list) {
+      try {
+        const mq = new MiniMQTT(url);
+        mq.onmessage = (t, p) => { if (t === this.topic()) this._in(p); };
+        mq.onclose = () => {
+          this.cloud = false; this.lastClose = mq.closeInfo || '';
+          if (this.room) { this.reconnect(); }
+        };
+        await mq.connect({});
+        mq.subscribe(this.topic());
+        ok = mq; this.broker = url;
+        break;
+      } catch (e) { this.lastErr = (e && e.message) || 'fail'; }
+    }
+    this.mq = ok; this.cloud = !!ok; this.connecting = false;
+    this.lastClose = ok ? '' : (this.lastClose || '');
+    netBadge(true);
+    if (this.role === 'guest') this.pingJoin();
+    return this.cloud;
+  },
+  reconnect() {
+    if (!this.room || this.connecting) return;
+    this.connecting = true; netBadge(true);
+    setTimeout(async () => {
+      if (!this.room) return;
+      const mq = new MiniMQTT(this.broker || BROKERS[0]);
+      try {
+        mq.onmessage = (t, p) => { if (t === this.topic()) this._in(p); };
+        mq.onclose = () => { this.cloud = false; if (this.room) this.reconnect(); };
+        await mq.connect({});
+        mq.subscribe(this.topic());
+        this.mq = mq; this.cloud = true; this.connecting = false;
+        netBadge(true);
+        if (this.role === 'guest' && !this.peer) this.pingJoin();
+      } catch (e) {
+        this.connecting = false; this.cloud = false; netBadge(true);
+        if (this.room) setTimeout(() => this.reconnect(), 6000);
+      }
+    }, 1200);
+  },
+  pingJoin() {
+    clearInterval(this.joinTimer);
+    this.joinTries = 0;
+    const send = () => {
+      if (!this.room || this.role !== 'guest' || this.peer) return;
+      this.joinTries++;
+      this.send({ t: 'join', name: myNick() });
+      if (this.joinTries > 14) { lobbyStatus('방을 찾지 못했습니다 · 코드와 인터넷을 확인해 주세요', 'bad'); }
+    };
+    send();
+    this.joinTimer = setInterval(send, 1500);
+  }
+};
+
+function brokerList() {
+  const out = [];
+  try {
+    const qp = new URLSearchParams(location.search).get('broker');
+    if (qp === 'none' || qp === 'off') return [];      /* 브로커 없이: 같은 기기 전송만 */
+    if (qp) out.push(qp);
+    const ls = localStorage.getItem('wg2_broker');
+    if (ls) out.push(ls);
+  } catch (e) {}
+  return out.concat(BROKERS);
+}
+
+function netBadge(force) {
+  const b = document.getElementById('netBadge');
+  if (!b) return;
+  const online = !!(st && st.net === 'online');
+  b.classList.toggle('hide', !online);
+  if (!online) return;
+  const nt = b.querySelector('.nt');
+  b.classList.remove('ok', 'wait', 'bad');
+  if (Net.connecting) { nt.textContent = '재연결'; b.classList.add('wait'); }
+  else if (Net.cloud && Net.peer) { nt.textContent = '연결됨'; b.classList.add('ok'); }
+  else if (Net.cloud) { nt.textContent = '대기'; b.classList.add('wait'); }
+  else if (Net.peer) { nt.textContent = '같은 기기'; b.classList.add('ok'); }
+  else if (Net.room) { nt.textContent = '로컬'; b.classList.add('wait'); }
+  else { nt.textContent = '오프라인'; b.classList.add('bad'); }
+}
+
+/* ---------------- 온라인: 스냅샷 ---------------- */
+function snapshot() {
+  return {
+    players: st.players, phase: st.phase, turn: st.turn,
+    walls: Array.from(st.walls),
+    pieces: st.pieces.map(p => ({ id: p.id, p: p.p, type: p.type, cell: p.cell })),
+    breakLeft: st.breakLeft.slice(),
+    placeIdx: st.placeIdx,
+    pq: st.placeQueue.map(q => ({ p: q.p, type: q.type })),
+    timeLimit: st.timeLimit,
+    names: st.names,
+    mc: st.moveCount,
+    over: st.phase === 'over' ? { winner: st.winner, reason: st.overReason } : null
+  };
+}
+function netPush() {
+  if (!isHost()) return;
+  Net.send({ t: 'st', snap: snapshot() });
+}
+function applySnapshot(snap) {
+  if (!snap) return;
+  st.players = snap.players;
+  st.phase = snap.phase;
+  st.turn = snap.turn;
+  st.walls = new Set(snap.walls);
+  st.pieces = snap.pieces.map(p => ({ id: p.id, p: p.p, type: p.type, cell: p.cell }));
+  st.breakLeft = snap.breakLeft.slice();
+  st.placeQueue = (snap.pq || []).map(q => ({ p: q.p, type: q.type }));
+  st.placeIdx = snap.placeIdx || 0;
+  st.timeLimit = snap.timeLimit;
+  st.names = snap.names || st.names;
+  st.moveCount = snap.mc || 0;
+  st.winner = snap.over ? snap.over.winner : -2;
+  st.overReason = snap.over ? snap.over.reason : null;
+  clearTimeout(guestWaitTimer);
+  st.analysis = analyze(st);
+  if (st.phase === 'over') { stopTimer(); renderAll(); showOver(); return; }
+  turnSetup();
+}
+
+let guestWaitTimer = null;
+function guestAwait() {
+  st.busy = true; renderAll();
+  clearTimeout(guestWaitTimer);
+  const seq = st.seq;
+  guestWaitTimer = setTimeout(() => {
+    if (!st || st.seq !== seq || !st.busy) return;
+    st.busy = false; st.selPiece = null; st.moves = []; st.move = null; st.wallOpts = [];
+    renderAll();
+    toast('상대 응답이 없습니다 · 연결을 확인해 주세요');
+    netBadge(true);
+  }, 5000);
+}
+function netSend(o) { Net.send(o); }
+
+/* ---------------- 온라인: 메시지 처리 ---------------- */
+function onNet(m) {
+  switch (m.t) {
+    case 'join': {
+      if (!Net.role) return;
+      if (Net.peer && Net.peer !== m.from) { Net.send({ t: 'full', to: m.from }); return; }
+      Net.peer = m.from;
+      Net.peerName = clampStr(m.name || 'Player 2', 10);
+      if (st && st.net === 'online' && st.names) st.names[1] = Net.peerName;
+      Net.send({ t: 'welcome', to: m.from, seat: 1, hostName: myNick(), started: !!(st && st.net === 'online' && st.phase), snap: (st && st.net === 'online') ? snapshot() : null });
+      netBadge(true);
+      if (st && st.net === 'online') { renderAll(); }
+      lobbyPeer(true);
+      break;
+    }
+    case 'welcome': {
+      if (m.to && m.to !== Net.pid) return;
+      Net.peer = m.from; Net.peerName = clampStr(m.hostName || 'Player 1', 10);
+      clearInterval(Net.joinTimer);
+      netBadge(true);
+      lobbyPeer(false, true);
+      if (m.started && m.snap) guestStartFrom(m.snap);
+      break;
+    }
+    case 'full': {
+      if (m.to && m.to !== Net.pid) return;
+      lobbyStatus('이 방은 이미 가득 찼습니다', 'bad');
+      break;
+    }
+    case 'start': {
+      if (!isGuest()) return;
+      guestStartFrom(m.snap);
+      break;
+    }
+    case 'st': {
+      if (!isGuest()) return;
+      applySnapshot(m.snap);
+      break;
+    }
+    case 'act': {
+      if (!isHost()) return;
+      hostHandleAct(m);
+      break;
+    }
+    case 'rematch': {
+      if (!isHost()) return;
+      if (st && st.phase === 'over') startOnlineHost(st.timeLimit);
+      break;
+    }
+    case 'bye': {
+      if (Net.peer && m.from !== Net.peer) return;
+      Net.peer = null; Net.peerName = null;
+      netBadge(true);
+      if (st && st.net === 'online' && st.phase !== 'over') {
+        toast('상대 연결이 끊겼습니다');
+        st.busy = true; renderAll();
+      }
+      lobbyPeer(false);
+      break;
+    }
+  }
+}
+
+function hostHandleAct(m) {
+  if (!st || !isHost() || !st.phase) return;
+  if (m.from !== Net.peer) return;
+  const seat = 1;
+  if (st.phase === 'over') { netPush(); return; }
+  if (m.a === 'pass') { if (st.turn === seat) passTurn(); else netPush(); return; }
+  if (st.turn !== seat) { netPush(); return; }
+  if (m.a === 'place') {
+    const q = st.placeQueue[st.placeIdx];
+    if (st.phase !== 'place' || !q || q.p !== seat || !canPlaceAt(st, m.cell)) { netPush(); return; }
+    doPlace(m.cell);
+    return;
+  }
+  if (m.a === 'turn') {
+    if (st.phase !== 'play') { netPush(); return; }
+    const pc = st.pieces.find(p => p.id === m.pieceId);
+    if (!pc || pc.p !== seat) { netPush(); return; }
+    const canBreak = st.players === 3 && st.breakLeft[seat] > 0;
+    const mv = legalMoves(st, pc, canBreak).find(x => x.to === m.to);
+    if (!mv) { netPush(); return; }
+    if (m.wall && wallOptionsFor(st, mv.to).indexOf(m.wall) < 0) { netPush(); return; }
+    if (mv.walls.length) st.breakMode = true;
+    commitTurn(pc.id, mv, m.wall || null);
+  }
+}
+
+/* ---------------- 온라인: 시작 ---------------- */
+function startOnlineHost(timeLimit) {
+  newGame({ players: 2, net: 'online', diff: 'hard', time: timeLimit,
+            names: [myNick(), Net.peerName || 'Player 2'] });
+  Net.send({ t: 'start', snap: snapshot() });
+  showScreen('game');
+  hideModal('#lobbyModal');
+  hideModal('#overModal');
+}
+
+function guestStartFrom(snap) {
+  stopTimer();
+  st = stateShell({ players: 2, net: 'online', diff: 'hard',
+                    time: (snap && snap.timeLimit) || 90,
+                    names: [(snap && snap.names && snap.names[0]) || (Net.peerName || 'Player 1'), myNick()] });
+  pieceNodes.forEach(n => n.remove());
+  pieceNodes.clear();
+  buildStatic();
+  showScreen('game');
+  hideModal('#lobbyModal');
+  hideModal('#overModal');
+  applySnapshot(snap);
+}
+
+/* =========================================================
+   로비 UI
+   ========================================================= */
+function myNick() {
+  const el = document.getElementById('nickInput');
+  const v = el && el.value ? el.value.trim() : '';
+  return clampStr(v || 'Player 1', 10);
+}
+function lobbyStatus(txt, cls) {
+  const el = document.getElementById('lobbyStatus');
+  if (!el) return;
+  el.textContent = txt;
+  const box = document.getElementById('lobbyNet');
+  box.classList.remove('ok', 'wait', 'bad');
+  if (cls) box.classList.add(cls);
+}
+function lobbyPeer(isHost, isGuestView) {
+  const host = document.getElementById('lobbyHost');
+  const guest = document.getElementById('lobbyGuest');
+  if (isHost) {
+    const stt = document.getElementById('hostStatus');
+    if (stt) stt.innerHTML = '🟢 ' + (Net.peerName || '상대') + ' 님이 입장했습니다<span class="sm">시작을 누르면 바로 대결이 시작됩니다</span>';
+    const b = document.getElementById('hostStartBtn');
+    if (b) b.disabled = false;
+    lobbyStatus('상대 연결됨 · 시작 대기', 'ok');
+  } else if (isGuestView) {
+    const g = document.getElementById('guestStatus');
+    if (g) g.innerHTML = '🟢 ' + (Net.peerName || '상대') + ' 방에 연결되었습니다<span class="sm">방장이 시작하면 게임이 열립니다</span>';
+    lobbyStatus('연결됨 · 방장 시작 대기', 'ok');
+  } else if (host && !host.classList.contains('hide')) {
+    const stt = document.getElementById('hostStatus');
+    if (stt) stt.innerHTML = '상대를 기다리는 중…<span class="sm">초대 링크를 보내면 바로 연결됩니다</span>';
+    const b = document.getElementById('hostStartBtn');
+    if (b) b.disabled = true;
+    lobbyStatus(Net.cloud ? '방 열림 · 상대 대기 중' : '같은 기기 연결만 가능 (브로커 접속 실패)', Net.cloud ? 'wait' : 'bad');
+  }
+}
+function showLobbyChoose() {
+  document.getElementById('lobbyChoose').classList.remove('hide');
+  document.getElementById('lobbyHost').classList.add('hide');
+  document.getElementById('lobbyGuest').classList.add('hide');
+}
+function openLobby() {
+  showModal('#lobbyModal');
+  showLobbyChoose();
+  lobbyStatus('연결 중…', 'wait');
+}
+
+async function createRoom() {
+  const code = String(1000 + Math.floor(Math.random() * 9000));
+  Net.reset();
+  Net.room = code; Net.role = 'host';
+  document.getElementById('lobbyChoose').classList.add('hide');
+  document.getElementById('lobbyGuest').classList.add('hide');
+  document.getElementById('lobbyHost').classList.remove('hide');
+  document.getElementById('roomCode').textContent = code;
+  const link = location.href.split('?')[0].split('#')[0] + '?room=' + code;
+  const inp = document.getElementById('inviteLink');
+  inp.value = link;
+  document.getElementById('hostStartBtn').disabled = true;
+  document.getElementById('hostStatus').innerHTML = '연결 중…<span class="sm">초대 링크를 보내면 바로 연결됩니다</span>';
+  lobbyStatus('브로커 접속 중…', 'wait');
+  const ok = await Net.open();
+  lobbyStatus(ok ? '방 열림 · 상대 대기 중' : '같은 기기 연결만 가능 (브로커 접속 실패)', ok ? 'wait' : 'bad');
+  netBadge(true);
+  if (st && st.net === 'online') renderAll();
+}
+
+async function joinRoom(code) {
+  code = String(code || '').replace(/\D/g, '').slice(0, 4);
+  if (code.length !== 4) { toast('방 코드 4자리를 입력해 주세요'); return; }
+  Net.reset();
+  Net.room = code; Net.role = 'guest';
+  document.getElementById('lobbyChoose').classList.add('hide');
+  document.getElementById('lobbyHost').classList.add('hide');
+  document.getElementById('lobbyGuest').classList.remove('hide');
+  document.getElementById('guestStatus').innerHTML = '방에 접속하는 중…<span class="sm">잠시만 기다려 주세요</span>';
+  lobbyStatus('브로커 접속 중…', 'wait');
+  const ok = await Net.open();
+  lobbyStatus(ok ? '연결됨 · 방을 찾는 중…' : '같은 기기 연결만 가능 (브로커 접속 실패)', ok ? 'wait' : 'bad');
+}
+
+function copyInvite() {
+  const v = document.getElementById('inviteLink').value;
+  const done = () => toast('초대 링크를 복사했습니다');
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(v).then(done, () => fallbackCopy(v, done));
+  } else fallbackCopy(v, done);
+}
+function fallbackCopy(v, done) {
+  const i = document.getElementById('inviteLink');
+  i.removeAttribute('readonly'); i.select(); i.setSelectionRange(0, v.length);
+  let ok = false;
+  try { ok = document.execCommand('copy'); } catch (e) {}
+  i.setAttribute('readonly', 'readonly');
+  toast(ok ? '초대 링크를 복사했습니다' : '링크: ' + v);
+  if (ok && done) done();
+}
+
+/* =========================================================
+   UI 렌더
+   ========================================================= */
+const SVGNS = 'http://www.w3.org/2000/svg';
+const $ = s => document.querySelector(s);
+const pieceNodes = new Map();
+
+function el(tag, attrs, cls) {
+  const e = document.createElementNS(SVGNS, tag);
+  if (attrs) for (const k in attrs) e.setAttribute(k, attrs[k]);
+  if (cls) e.setAttribute('class', cls);
+  return e;
+}
+function wallRect(k, t) {
+  const p = edgeParts(k);
+  if (p.t === 'V') return { x: (p.c + 1) * CELL - t / 2, y: p.r * CELL, width: t, height: CELL };
+  return { x: p.c * CELL, y: (p.r + 1) * CELL - t / 2, width: CELL, height: t };
+}
+function buildStatic() {
+  const gBg = $('#gBg'), gTrack = $('#gTrack'), gFrame = $('#gFrame');
+  gBg.innerHTML = ''; gTrack.innerHTML = ''; gFrame.innerHTML = '';
+  gBg.appendChild(el('rect', { x: -18, y: -18, width: 736, height: 736, rx: 30, fill: '#0a1220' }));
+  gBg.appendChild(el('rect', { x: -6, y: -6, width: 712, height: 712, rx: 20, fill: 'rgba(255,255,255,0.015)' }));
+  for (let c = 1; c < N; c++) gTrack.appendChild(el('line', { x1: c * CELL, y1: 0, x2: c * CELL, y2: B }, 'track'));
+  for (let r = 1; r < N; r++) gTrack.appendChild(el('line', { x1: 0, y1: r * CELL, x2: B, y2: r * CELL }, 'track'));
+  gFrame.appendChild(el('rect', { x: 0, y: 0, width: B, height: B, rx: 6 }, 'frame'));
+}
+function renderBoard() {
+  const g = $('#gCells');
+  g.innerHTML = '';
+  const A = st.analysis || analyze(st);
+  const mine = st.net !== 'online' || st.turn === mySeat();
+  const placeTurn = st.phase === 'place' && !st.ai[st.turn] && !st.busy && mine;
+  for (let i = 0; i < N * N; i++) {
+    const c = cx(i), r = cy(i);
+    const rect = el('rect', { x: c * CELL + 4, y: r * CELL + 4, width: CELL - 8, height: CELL - 8, rx: 13 }, 'cell');
+    const rg = A.regions[A.reg[i]];
+    let fill = 'rgba(255,255,255,0.035)';
+    if (rg && rg.players.size === 1) fill = hexA(COLORS[rg.players.values().next().value], 0.17);
+    else if (rg && rg.players.size > 1) fill = 'rgba(150,172,214,0.085)';
+    rect.setAttribute('fill', fill);
+    rect.setAttribute('data-cell', i);
+    if (placeTurn && canPlaceAt(st, i)) rect.classList.add('placeable');
+    g.appendChild(rect);
+  }
+}
+function renderWalls() {
+  const g = $('#gWalls');
+  g.innerHTML = '';
+  for (const k of st.walls) g.appendChild(el('rect', wallRect(k, 15), 'wall'));
+}
+function renderHints() {
+  const g = $('#gHints');
+  g.innerHTML = '';
+  if (st.phase !== 'play') return;
+  if (st.selPiece != null) {
+    const pc = st.pieces.find(x => x.id === st.selPiece);
+    if (pc) g.appendChild(el('circle', { cx: cx(pc.cell) * CELL + CELL / 2, cy: cy(pc.cell) * CELL + CELL / 2, r: 44 }, 'selring'));
+  }
+  if (st.landed != null && !st.move) {
+    g.appendChild(el('rect', { x: cx(st.landed) * CELL + 8, y: cy(st.landed) * CELL + 8, width: CELL - 16, height: CELL - 16, rx: 10 }, 'cellring'));
+  }
+  if (st.move) {
+    const c = cx(st.move.to), r = cy(st.move.to);
+    g.appendChild(el('circle', { cx: c * CELL + CELL / 2, cy: r * CELL + CELL / 2, r: 15 },
+      'tdot sel' + (st.move.walls.length ? ' brk' : '')));
+    return;
+  }
+  for (const m of st.moves) {
+    const c = cx(m.to), r = cy(m.to);
+    g.appendChild(el('circle', { cx: c * CELL + CELL / 2, cy: r * CELL + CELL / 2, r: m.walls.length ? 15 : 13 },
+      'tdot' + (m.walls.length ? ' brk' : '')));
+  }
+}
+function renderWallHints() {
+  const g = $('#gWallHint');
+  g.innerHTML = '';
+  if (st.busy) return;
+  if (st.move && st.move.walls.length) for (const k of st.move.walls) g.appendChild(el('rect', wallRect(k, 24), 'wallbreak'));
+  for (const k of st.wallOpts) g.appendChild(el('rect', Object.assign({ rx: 9 }, wallRect(k, 22)), 'wallhint'));
+}
+function renderEdgeHits() {
+  const g = $('#gEdgeHit');
+  g.innerHTML = '';
+  if (st.busy || !st.wallOpts.length) return;
+  for (const k of st.wallOpts) {
+    const r = el('rect', wallRect(k, 58), 'edgehit');
+    r.setAttribute('data-edge', k);
+    g.appendChild(r);
+  }
+}
+function buildPieceNode(pc) {
+  const g = el('g', { class: 'pc p' + pc.p }, null);
+  g.setAttribute('data-piece', pc.id);
+  if (pc.type === 'S') {
+    g.appendChild(el('rect', { x: -30, y: -30, width: 60, height: 60, rx: 13 }, 'tok'));
+    g.appendChild(el('rect', { x: -11, y: -11, width: 22, height: 22, rx: 3 }, 'glyph'));
+  } else {
+    g.appendChild(el('circle', { r: 33 }, 'tok'));
+    g.appendChild(el('circle', { r: 11 }, 'glyph'));
+  }
+  return g;
+}
+function renderPieces() {
+  const layer = $('#gPieces');
+  const alive = new Set();
+  for (const pc of st.pieces) {
+    if (pc.cell == null) continue;
+    alive.add(pc.id);
+    let g = pieceNodes.get(pc.id);
+    if (!g) { g = buildPieceNode(pc); layer.appendChild(g); pieceNodes.set(pc.id, g); g.classList.add('new'); }
+    g.style.transform = 'translate(' + (cx(pc.cell) * CELL + CELL / 2) + 'px,' + (cy(pc.cell) * CELL + CELL / 2) + 'px)';
+    g.classList.toggle('sel', st.selPiece === pc.id);
+  }
+  for (const [id, g] of Array.from(pieceNodes.entries())) {
+    if (!alive.has(id)) { g.remove(); pieceNodes.delete(id); }
+  }
+}
+function renderScores() {
+  const wrap = $('#scores');
+  wrap.innerHTML = '';
+  const A = st.analysis;
+  for (let p = 0; p < st.players; p++) {
+    const d = document.createElement('div');
+    d.className = 'chip p' + p + ((st.phase !== 'over' && st.turn === p) ? ' act' : '');
+    d.innerHTML = '<span class="nm">' + dispName(p) + (st.ai[p] ? '<i>AI</i>' : '') + '</span>'
+      + '<span class="sc">' + (A ? A.pure[p] : 0) + '<small>칸</small></span>';
+    wrap.appendChild(d);
+  }
+  const pr = A ? A.progress : 0;
+  $('#progBar').style.width = pr + '%';
+  $('#progTxt').textContent = st.phase === 'place' ? '배치 중' : ('분리 진행 ' + pr + '%');
+
+  const chip = $('#turnChip');
+  const dot = chip.querySelector('.dot');
+  let txt = '';
+  if (st.phase === 'over') {
+    txt = st.winner > -1 ? dispName(st.winner) + ' 승리' : '무승부';
+    dot.style.background = st.winner > -1 ? COLORS[st.winner] : '#8ea0c0';
+  } else if (st.phase === 'place') {
+    const q = st.placeQueue[st.placeIdx];
+    txt = dispName(q.p) + ' · 말 배치';
+    dot.style.background = COLORS[q.p];
+  } else {
+    txt = dispName(st.turn) + (st.ai[st.turn] ? ' AI' : '') + ' 차례';
+    dot.style.background = COLORS[st.turn];
+  }
+  chip.querySelector('.txt').textContent = txt;
+  netBadge();
+}
+function statusHTML() {
+  if (st.phase === 'over') {
+    if (st.winner > -1) return '<span style="color:' + COLORS[st.winner] + '">■</span> <b>' + dispName(st.winner) + ' 승리</b> · 다시 하기를 눌러 새 판';
+    return '<b>무승부</b> · 다시 하기를 눌러 새 판';
+  }
+  if (st.phase === 'place') {
+    const q = st.placeQueue[st.placeIdx];
+    const type = q.type === 'S' ? '사각 ■ (직진 1~2칸)' : '원형 ● (1칸·꺾기)';
+    const wait = st.net === 'online' && q.p !== mySeat();
+    if (wait) return '<span class="pt" style="background:' + COLORS[q.p] + '"></span><b>' + dispName(q.p) + '</b> 님이 말을 놓는 중…';
+    return '<span class="pt" style="background:' + COLORS[q.p] + '"></span><b>' + dispName(q.p) + '</b> · ' + type + ' 놓을 칸 탭 <span style="color:#8ea0c0">(' + (st.placeIdx + 1) + '/' + st.placeQueue.length + ')</span>';
+  }
+  const t = st.turn;
+  const nm = '<span class="pt" style="background:' + COLORS[t] + '"></span><b>' + dispName(t) + (st.ai[t] ? ' AI' : '') + '</b>';
+  if (st.net === 'online' && t !== mySeat()) {
+    return nm + ' 차례' + (st.busy ? ' · 연결 확인 중' : '') + ' · 기다리는 중';
+  }
+  if (st.ai[t]) return nm + ' 생각 중…';
+  if (st.move) return nm + ' · <b style="color:#ffd479">벽 놓을 면</b>을 탭하세요 · 되돌리기로 취소';
+  if (st.selPiece != null) return nm + ' · 이동할 칸 탭 <span style="color:#8ea0c0">(' + st.moves.length + '곳)</span>' + (st.breakMode ? ' · <b style="color:#ff9a52">🔨 부수기 ON</b>' : '');
+  return nm + ' · 움직일 말 탭' + (st.players === 3 && st.breakLeft[t] > 0 ? ' · 🔨 부수기 가능' : '');
+}
+function renderButtons() {
+  const myTurn = st.net !== 'online' || st.turn === mySeat();
+  $('#undoBtn').disabled = !(st.phase === 'play' && !st.busy && myTurn && (st.selPiece != null || st.move));
+  const bb = $('#breakBtn');
+  if (st.players === 3) {
+    bb.classList.remove('hide');
+    bb.classList.toggle('on', !!st.breakMode);
+    bb.disabled = st.busy || st.phase !== 'play' || st.breakLeft[st.turn] <= 0 || st.ai[st.turn] || !myTurn;
+    $('#breakCnt').textContent = st.breakLeft[st.turn] > 0 ? st.breakLeft[st.turn] : '0';
+  } else bb.classList.add('hide');
+}
+function fitBoard() {
+  const wrap = document.querySelector('.board-wrap');
+  const svg = document.getElementById('board');
+  if (!wrap || !svg) return;
+  const w = wrap.clientWidth || 360, h = wrap.clientHeight || 360;
+  const s = Math.max(200, Math.min(w, h, 392));
+  svg.style.width = s + 'px';
+  svg.style.height = s + 'px';
+}
+function renderAll() {
+  if (!st) return;
+  fitBoard();
+  if (!st.analysis) st.analysis = analyze(st);
+  renderBoard(); renderWalls(); renderHints(); renderWallHints(); renderEdgeHits(); renderPieces();
+  renderScores(); renderButtons(); renderTimer();
+  const s = $('#status'); if (s) s.innerHTML = statusHTML();
+}
+
+/* ---------------- 토스트 ---------------- */
+let toastTimer = null;
+function toast(msg) {
+  const t = $('#toast');
+  if (!t) return;
+  t.textContent = msg;
+  t.classList.add('on');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('on'), 1700);
+}
+
+/* =========================================================
+   입력
+   ========================================================= */
+function myTurnNow() {
+  if (!st) return false;
+  if (st.ai[st.turn]) return false;
+  if (st.net === 'online' && st.turn !== mySeat()) return false;
+  return true;
+}
+function selectPiece(id) {
+  const pc = st.pieces.find(x => x.id === id);
+  if (!pc) return;
+  st.selPiece = id;
+  st.move = null; st.wallOpts = [];
+  st.moves = legalMoves(st, pc);
+  if (!st.moves.length) {
+    toast(pc.type === 'S' ? '사각 말: 이 방향이 모두 막혔습니다' : '원형 말: 이동할 칸이 없습니다');
+    st.selPiece = null;
+  }
+  renderAll();
+}
+function undo() {
+  if (st.busy) return;
+  if (st.move) { st.move = null; st.wallOpts = []; renderAll(); return; }
+  if (st.selPiece != null) { st.selPiece = null; st.moves = []; renderAll(); return; }
+}
+function onCell(t) {
+  const cell = +t.getAttribute('data-cell');
+  if (st.phase === 'over' || st.busy) return;
+  if (!myTurnNow()) { toast('상대 차례입니다'); return; }
+
+  if (st.phase === 'place') {
+    const q = st.placeQueue[st.placeIdx];
+    if (!q || q.p !== st.turn) return;
+    if (!canPlaceAt(st, cell)) { toast('이미 말이 있는 칸입니다'); return; }
+    doPlace(cell);
+    return;
+  }
+  if (st.move) return;   /* 벽 놓는 단계 */
+
+  const pc = st.pieces.find(x => x.cell === cell);
+  if (pc && pc.p === st.turn) {
+    if (st.selPiece === pc.id) { st.selPiece = null; st.moves = []; renderAll(); }
+    else selectPiece(pc.id);
+    return;
+  }
+  if (st.selPiece != null) {
+    const m = st.moves.find(x => x.to === cell);
+    if (m) {
+      st.move = m;
+      st.wallOpts = wallOptionsFor(st, m.to);
+      if (!st.wallOpts.length) { commitTurn(st.selPiece, m, null); return; }
+      renderAll();
+      return;
+    }
+    toast('그 칸으로는 갈 수 없습니다');
+  }
+}
+function onEdge(key) {
+  if (!st.move || st.busy || st.phase !== 'play') return;
+  if (st.wallOpts.indexOf(key) < 0) return;
+  if (!myTurnNow()) return;
+  commitTurn(st.selPiece, st.move, key);
+}
+
+/* =========================================================
+   화면 전환 / 모달
+   ========================================================= */
+let cfgSel = { mode: 'online', diff: 'normal', time: 90, threeOpp: 'local' };
+
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.toggle('on', s.id === id));
+  requestAnimationFrame(fitBoard);
+}
+function goHome() {
+  if (st) { st.token++; stopTimer(); }
+  if (Net.room && Net.peer) Net.send({ t: 'bye' });
+  Net.reset();
+  st = null;
+  hideModal('#overModal'); hideModal('#rulesModal'); hideModal('#lobbyModal');
+  showScreen('home');
+}
+function showModal(sel) {
+  const m = $(sel);
+  if (!m) return;
+  m.classList.add('on');
+  if (st) st.paused = true;
+}
+function hideModal(sel) {
+  const m = $(sel);
+  if (m) m.classList.remove('on');
+  if (st && !document.querySelector('.overlay.on')) st.paused = false;
+}
+function startGame(cfg) {
+  cfg = cfg || {};
+  const mode = cfg.mode || (cfg.opp === 'ai' ? 'ai' : (cfg.players === 3 ? 'three' : 'local1'));
+  cfgSel = Object.assign({}, cfgSel, cfg);
+  cfgSel.mode = mode;
+  if (mode === 'online') {
+    hideModal('#overModal'); hideModal('#rulesModal');
+    openLobby();
+    return;
+  }
+  Net.reset();
+  hideModal('#overModal'); hideModal('#lobbyModal');
+  showScreen('game');
+  if (mode === 'three') {
+    newGame({ players: 3, diff: cfgSel.diff, time: cfgSel.time,
+              ai: cfgSel.threeOpp === 'ai' ? [false, true, true] : [false, false, false],
+              names: [myNick(), 'Player 2', 'Player 3'] });
+  } else if (mode === 'ai') {
+    newGame({ players: 2, diff: cfgSel.diff, time: cfgSel.time, ai: [false, true],
+              names: [myNick(), 'AI'] });
+  } else {
+    newGame({ players: 2, diff: cfgSel.diff, time: cfgSel.time, ai: [false, false],
+              names: [myNick(), 'Player 2'] });
+  }
+}
+function showOver() {
+  const A = st.analysis;
+  const w = st.winner;
+  $('#ovEmoji').textContent = w > -1 ? '🏆' : '🤝';
+  $('#ovTitle').textContent = w > -1 ? dispName(w) + ' 승리' : '무승부';
+  $('#ovTitle').style.color = w > -1 ? COLORS[w] : '#e9effb';
+  $('#ovReason').textContent = (st.overReason === 'blocked')
+    ? '모두 이동할 수 없어 영역 점수로 판정했습니다.'
+    : '모든 말이 서로 다른 구역으로 완전히 분리되었습니다.';
+  const rows = $('#ovRows');
+  rows.innerHTML = '';
+  const order = [];
+  for (let p = 0; p < st.players; p++) order.push(p);
+  order.sort((a, b) => A.pure[b] - A.pure[a] || A.maxReg[b] - A.maxReg[a]);
+  for (const p of order) {
+    const d = document.createElement('div');
+    d.className = 'ov-row' + (p === w ? ' win' : '');
+    d.innerHTML = '<span class="dt" style="background:' + COLORS[p] + '"></span>'
+      + '<span class="nm">' + dispName(p) + (st.ai[p] ? ' <i style="font-style:normal;font-size:9px;color:#8ea0c0">AI</i>' : '') + '</span>'
+      + '<span class="mr">최대 ' + A.maxReg[p] + '칸</span>'
+      + '<span class="ar">' + A.pure[p] + '<small>칸</small></span>';
+    rows.appendChild(d);
+  }
+  $('#againBtn').textContent = (st.net === 'online') ? (isHost() ? '다시 하기 (상대에게 알림)' : '다시 하기 요청') : '다시 하기';
+  showModal('#overModal');
+}
+
+/* =========================================================
+   초기화 / 이벤트
+   ========================================================= */
+function syncHomeFields() {
+  const m = cfgSel.mode;
+  document.querySelectorAll('#modeSeg .mode').forEach(b => b.classList.toggle('on', b.getAttribute('data-val') === m));
+  document.getElementById('diffField').classList.toggle('hide', !(m === 'ai' || (m === 'three' && cfgSel.threeOpp === 'ai')));
+  document.getElementById('threeField').classList.toggle('hide', m !== 'three');
+  document.getElementById('nickField').classList.toggle('hide', m === 'ai');
+  document.getElementById('nickHint').textContent = (m === 'online') ? '상대 폰에 이 이름으로 표시됩니다' : '한 기기에서 P1 이름으로 표시됩니다';
+  document.getElementById('oppName').textContent = (m === 'ai') ? 'AI' : ((m === 'online') ? 'Player 2' : (m === 'three' ? 'P2 · P3' : 'Player 2'));
+  document.getElementById('startBtn').textContent = (m === 'online') ? '방 만들기 / 참가하기' : '게임 시작';
+}
+
+function bindUI() {
+  document.getElementById('modeSeg').addEventListener('click', e => {
+    const b = e.target.closest('.mode');
+    if (!b) return;
+    cfgSel.mode = b.getAttribute('data-val');
+    syncHomeFields();
+  });
+  document.querySelectorAll('#home .seg').forEach(seg => {
+    seg.addEventListener('click', e => {
+      const b = e.target.closest('button[data-val]');
+      if (!b) return;
+      seg.querySelectorAll('button').forEach(x => x.classList.toggle('on', x === b));
+      const g = seg.getAttribute('data-group'), v = b.getAttribute('data-val');
+      if (g === 'diff') cfgSel.diff = v;
+      else if (g === 'time') cfgSel.time = +v;
+      else if (g === 'threeOpp') { cfgSel.threeOpp = v; syncHomeFields(); }
+    });
+  });
+  $('#startBtn').addEventListener('click', () => startGame(cfgSel));
+  $('#rulesBtnHome').addEventListener('click', () => showModal('#rulesModal'));
+  $('#helpBtn').addEventListener('click', () => { if (st) st.paused = true; showModal('#rulesModal'); });
+  $('#rulesClose').addEventListener('click', () => hideModal('#rulesModal'));
+  $('#homeBtn').addEventListener('click', () => { if (confirm('게임을 나가시겠습니까?')) goHome(); });
+  $('#newBtn').addEventListener('click', () => {
+    if (st && st.net === 'online') {
+      if (isHost()) { if (confirm('새 판을 시작할까요? 상대 화면에도 적용됩니다.')) startOnlineHost(st.timeLimit); }
+      else { Net.send({ t: 'rematch' }); toast('상대에게 새 판을 요청했습니다'); }
+      return;
+    }
+    if (!confirm('새 게임을 시작할까요?')) return;
+    startGame(cfgSel);
+  });
+  $('#undoBtn').addEventListener('click', undo);
+  $('#breakBtn').addEventListener('click', () => {
+    if (!st || st.phase !== 'play' || st.busy || !myTurnNow() || st.breakLeft[st.turn] <= 0) return;
+    st.breakMode = !st.breakMode;
+    if (st.breakMode) toast('🔨 벽 부수기 ON · 경로의 벽 1개를 부수고 이동');
+    if (st.selPiece != null) {
+      const pc = st.pieces.find(x => x.id === st.selPiece);
+      st.moves = legalMoves(st, pc);
+    }
+    renderAll();
+  });
+  $('#againBtn').addEventListener('click', () => {
+    if (!st) { startGame(cfgSel); return; }
+    if (st.net === 'online') {
+      if (isHost()) { hideModal('#overModal'); startOnlineHost(st.timeLimit); }
+      else { Net.send({ t: 'rematch' }); toast('상대에게 다시 하기를 요청했습니다'); hideModal('#overModal'); }
+      return;
+    }
+    startGame(cfgSel);
+  });
+  $('#toHomeBtn').addEventListener('click', goHome);
+
+  /* 로비 */
+  $('#mkRoomBtn').addEventListener('click', createRoom);
+  $('#joinBtn').addEventListener('click', () => joinRoom(document.getElementById('codeInput').value));
+  $('#codeInput').addEventListener('keydown', e => { if (e.key === 'Enter') joinRoom(e.target.value); });
+  $('#lobbyCancel').addEventListener('click', () => { Net.reset(); hideModal('#lobbyModal'); });
+  $('#lobbyLeave').addEventListener('click', () => { if (Net.peer) Net.send({ t: 'bye' }); Net.reset(); hideModal('#lobbyModal'); st = null; showScreen('home'); });
+  $('#lobbyLeave2').addEventListener('click', () => { if (Net.peer) Net.send({ t: 'bye' }); Net.reset(); hideModal('#lobbyModal'); });
+  $('#copyBtn').addEventListener('click', copyInvite);
+  $('#hostStartBtn').addEventListener('click', () => {
+    if (!Net.peer) return;
+    startOnlineHost(cfgSel.time);
+  });
+
+  /* 보드 입력 */
+  const svg = $('#board');
+  svg.addEventListener('click', e => {
+    const eh = e.target.closest('[data-edge]');
+    if (eh) { onEdge(eh.getAttribute('data-edge')); return; }
+    const ce = e.target.closest('[data-cell]');
+    if (ce) onCell(ce);
+  });
+  svg.addEventListener('pointerdown', e => e.preventDefault());
+
+  window.addEventListener('resize', () => { fitBoard(); if (st) renderAll(); });
+  document.addEventListener('visibilitychange', () => { if (st) st.paused = document.hidden; });
+  window.addEventListener('beforeunload', () => { if (Net.room && Net.peer) Net.send({ t: 'bye' }); });
+}
+
+/* =========================================================
+   테스트/외부 API
+   ========================================================= */
+function makeBoard(players) {
+  return {
+    players: players || 2, walls: new Set(), pieces: [],
+    breakLeft: new Array(players || 2).fill(1), breakMode: false,
+    analysis: null, phase: 'play', turn: 0, ai: [], timeLimit: 0
+  };
+}
+
+window.WG = {
+  get state() { return st; },
+  get net() { return Net; },
+  newGame, startGame, goHome, commitTurn, doPlace, selectPiece, onCell, onEdge,
+  autoAct, aiAct, aiChoose, renderAll, showOver, turnSetup, analyze, decideWinner,
+  startOnlineHost, joinRoom, createRoom, myNick,
+  loadScenario: function (cfg) {
+    stopTimer();
+    st = stateShell({ players: cfg.players || 2, ai: cfg.ai, diff: cfg.diff, time: cfg.time === undefined ? 0 : cfg.time, names: cfg.names });
+    st.phase = 'play'; st.turn = cfg.turn || 0; st.net = cfg.net || null;
+    st.walls = new Set(cfg.walls || []);
+    st.pieces = (cfg.pieces || []).map((p, i) => ({ id: p.id || ('t' + i), p: p.p, type: p.type, cell: p.cell }));
+    st.breakLeft = cfg.breakLeft ? cfg.breakLeft.slice() : new Array(st.players).fill(st.players === 3 ? 1 : 0);
+    st.moveCount = 0;
+    pieceNodes.forEach(n => n.remove());
+    pieceNodes.clear();
+    buildStatic();
+    showScreen('game');
+    finalizeAnalysis(st);
+    if (st.phase === 'over') { renderAll(); showOver(); return; }
+    turnSetup();
+  },
+  rules: {
+    N, idx, cx, cy, edgeAt, makeBoard, genPieceMoves, legalMoves, aiMovesFor,
+    wallOptionsFor, analyze, decideWinner, cloneState, simApply, evalFor,
+    aiCandidates, scoreCands, MiniMQTT, Net
+  }
+};
+
+bindUI();
+buildStatic();
+syncHomeFields();
+netBadge();
+
+/* 초대 링크(?room=1234)로 들어온 경우 자동 참가 */
+(function autoJoin() {
+  try {
+    const u = new URLSearchParams(location.search);
+    const nm = u.get('name');
+    if (nm) document.getElementById('nickInput').value = decodeURIComponent(nm).slice(0, 10);
+    const code = u.get('room');
+    if (code && /^\d{4}$/.test(code)) {
+      document.getElementById('nickField').classList.remove('hide');
+      openLobby();
+      document.getElementById('codeInput').value = code;
+      setTimeout(() => joinRoom(code), 120);
+    }
+  } catch (e) {}
+})();
+</script>
+</body>
+</html>

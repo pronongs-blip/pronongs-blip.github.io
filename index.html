@@ -7,9 +7,9 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="선홍 ♥ 양지공주님">
-<meta name="description" content="양지공주님과 선홍만을 위한 미니 아케이드. 게임 2종(벽바둑 2·흑과 백)과 사진 EXIF 삭제·모자이크 유틸리티를 한 곳에서.">
-<title>👑 선홍 ♥ 양지공주님 아케이드</title>
+<meta name="apple-mobile-web-app-title" content="선홍 ♥ 지혜공주님">
+<meta name="description" content="지혜공주님과 선홍만을 위한 미니 아케이드. 게임 2종(벽바둑 2·흑과 백)과 사진 EXIF 삭제·모자이크 유틸리티를 한 곳에서.">
+<title>👑 선홍 ♥ 지혜공주님 아케이드</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='88'%3E%F0%9F%91%91%3C/text%3E%3C/svg%3E">
 <style>
 :root{
@@ -204,7 +204,10 @@ h1 .l2{
 }
 .bdg.hot{color:#2a1305;background:linear-gradient(120deg,#ffe6b6,var(--amber));border-color:rgba(255,255,255,.35);box-shadow:0 2px 8px rgba(var(--gold-rgb),.3)}
 .bdg.new{color:#2a0a1a;background:linear-gradient(120deg,#ffd0e4,var(--rose));border-color:rgba(255,255,255,.35);box-shadow:0 2px 8px rgba(var(--rose-rgb),.3)}
-.bdg.tool{color:#fff6df;background:rgba(var(--gold-rgb),.16);border-color:rgba(var(--gold-rgb),.45)}
+.bdg.cnt{color:#d9e5f7;background:rgba(255,255,255,.075);border-color:rgba(255,255,255,.16)}
+.bdg[hidden],.tg[hidden]{display:none}
+.tg.when{color:#93a2ba;border-color:rgba(255,255,255,.075);background:rgba(255,255,255,.028);letter-spacing:.1px}
+.tg.when[data-fresh="0"]{color:#8494ad}
 .ds{
   font-size:10.2px;line-height:1.5;font-weight:600;color:#9fb0cb;
   word-break:keep-all;overflow-wrap:break-word;
@@ -238,6 +241,16 @@ h1 .l2{
 .note{
   margin:8px 0 0;text-align:center;font-size:8.5px;font-weight:800;letter-spacing:.15px;color:#7d8ba6;line-height:1.5;
 }
+.foot-tools{display:flex;justify-content:center;margin-top:7px}
+.rst{
+  -webkit-appearance:none;appearance:none;margin:0;padding:3px 9px;border-radius:8px;
+  font-family:inherit;font-size:8.5px;font-weight:800;letter-spacing:.2px;line-height:1.5;
+  color:#6d7b93;background:transparent;border:1px solid rgba(255,255,255,.085);
+  cursor:pointer;transition:color .16s ease,border-color .16s ease,background .16s ease;
+}
+.rst:hover{color:#c9d6ea;border-color:rgba(255,255,255,.18)}
+.rst:focus-visible{outline:2px solid rgba(var(--gold-rgb),.8);outline-offset:2px}
+.rst.arm{color:#ffd8e6;border-color:rgba(var(--rose-rgb),.5);background:rgba(var(--rose-rgb),.14)}
 .note .hrt{color:var(--rose);font-size:9px}
 .note .sep{opacity:.4;padding:0 3px}
 
@@ -327,6 +340,8 @@ h1 .l2{
   .tip{padding:8px 10px}
   .tip p{font-size:9px}
   .note{margin-top:6px;font-size:8px}
+  .foot-tools{margin-top:5px}
+  .rst{font-size:8px;padding:2.5px 8px}
   .cards{gap:7px}
 }
 /* 가로모드 등 아주 낮은 화면은 자연스럽게 스크롤 */
@@ -344,9 +359,9 @@ h1 .l2{
 
   <header class="brand">
     <div class="crest" aria-hidden="true">👑</div>
-    <p class="eyebrow">For Yangji Princess · Playground</p>
-    <h1>양지공주님 <span class="amp">&amp;</span> 선홍<br><span class="l2">플레이그라운드</span></h1>
-    <p class="sub"><span class="live"><i></i>READY</span><span class="dot">·</span><span>게임 2종 · 유틸리티 1종</span></p>
+    <p class="eyebrow">For Jihye Princess · Playground</p>
+    <h1>지혜공주님 <span class="amp">&amp;</span> 선홍<br><span class="l2">플레이그라운드</span></h1>
+    <p class="sub"><span class="live" id="statPill"><i></i><span id="statPillTxt">READY</span></span><span class="dot">·</span><span>게임 2종 · 유틸리티 1종</span></p>
     <div class="ornament" aria-hidden="true"><i></i><b></b><i></i></div>
   </header>
 
@@ -360,28 +375,28 @@ h1 .l2{
 
       <div class="cards cards-games">
 
-        <a class="card c-royal" href="./wall-baduk2.html">
+        <a class="card c-royal" href="./wall-baduk2.html" data-app-id="wall-baduk2" data-released="2026-11-21">
           <span class="ic" aria-hidden="true">👑</span>
           <span class="txt">
             <span class="top">
-              <span class="nm">양지공주님 전용 벽바둑 2</span>
-              <span class="bdg hot">인기</span>
+              <span class="nm">지혜공주님 전용 벽바둑 2</span>
+              <span class="bdg" data-slot="badge" hidden></span>
             </span>
             <span class="ds">벽으로 길을 막고 영역을 차지하는 1:1 전략 보드게임 (온라인 · AI · 3인전)</span>
-            <span class="tags"><span class="tg">온라인 1:1</span><span class="tg">전략</span></span>
+            <span class="tags"><span class="tg">온라인 1:1</span><span class="tg">전략</span><span class="tg when" data-slot="when" hidden></span></span>
           </span>
           <span class="go" aria-hidden="true">›</span>
         </a>
 
-        <a class="card c-ivory" href="./black-white.html">
+        <a class="card c-ivory" href="./black-white.html" data-app-id="black-white" data-released="2026-11-21">
           <span class="ic" aria-hidden="true">🖤</span>
           <span class="txt">
             <span class="top">
-              <span class="nm">양지공주님 전용 흑과 백</span>
-              <span class="bdg new">NEW</span>
+              <span class="nm">지혜공주님 전용 흑과 백</span>
+              <span class="bdg" data-slot="badge" hidden></span>
             </span>
             <span class="ds">0~8 타일의 흑·백만 보고 승부하는 9라운드 1:1 심리전 (온라인 · AI)</span>
-            <span class="tags"><span class="tg">온라인 1:1</span><span class="tg">심리전</span></span>
+            <span class="tags"><span class="tg">온라인 1:1</span><span class="tg">심리전</span><span class="tg when" data-slot="when" hidden></span></span>
           </span>
           <span class="go" aria-hidden="true">›</span>
         </a>
@@ -397,15 +412,15 @@ h1 .l2{
 
       <div class="cards cards-tools">
 
-        <a class="card c-gold" href="./exif-mosaic.html">
+        <a class="card c-gold" href="./exif-mosaic.html" data-app-id="exif-mosaic" data-released="2026-11-21">
           <span class="ic" aria-hidden="true">🛡️</span>
           <span class="txt">
             <span class="top">
               <span class="nm">사진 EXIF 삭제 · 모자이크</span>
-              <span class="bdg tool">필수</span>
+              <span class="bdg" data-slot="badge" hidden></span>
             </span>
             <span class="ds">스레드·당근 업로드 전 GPS·기기정보 완전 삭제 &amp; 손가락 모자이크</span>
-            <span class="tags"><span class="tg">EXIF 삭제</span><span class="tg">오프라인</span></span>
+            <span class="tags"><span class="tg">EXIF 삭제</span><span class="tg">오프라인</span><span class="tg when" data-slot="when" hidden></span></span>
           </span>
           <span class="go" aria-hidden="true">›</span>
         </a>
@@ -420,9 +435,211 @@ h1 .l2{
       <span class="ti" aria-hidden="true">📲</span>
       <p>아이폰 <b>Safari</b>에서 <span class="kbd">공유</span> → <b>홈 화면에 추가</b> 하면 앱처럼 전체화면으로 열립니다.</p>
     </div>
-    <p class="note">새 게임이 완성될 때마다 이 광장에 하나씩 세워집니다 <span class="sep">·</span> made for 양지공주님 <span class="hrt">♥</span></p>
+    <p class="note">새 게임이 완성될 때마다 이 광장에 하나씩 세워집니다 <span class="sep">·</span> made for 지혜공주님 <span class="hrt">♥</span></p>
+    <div class="foot-tools">
+      <button class="rst" type="button" id="resetStats" aria-pressed="false" title="이 기기에 저장된 실행 기록을 지웁니다">기록 초기화</button>
+    </div>
   </footer>
 
 </main>
+
+<script>
+/* ============================================================
+   아케이드 이용 기록 · 동적 배지 시스템 (localStorage)
+   저장 키: yg_arcade_stats_v1
+   { "wall-baduk2": {clicks: 3, lastOpened: 1763....} , ... }
+   ============================================================ */
+(function () {
+  "use strict";
+  var KEY = "yg_arcade_stats_v1";
+  var cards = Array.prototype.slice.call(document.querySelectorAll(".card[data-app-id]"));
+  if (!cards.length) return;
+
+  var ids = [];
+  var byId = {};
+  cards.forEach(function (card) {
+    var id = card.getAttribute("data-app-id");
+    ids.push(id);
+    byId[id] = card;
+  });
+
+  var pillTxt = document.getElementById("statPillTxt");
+  var resetBtn = document.getElementById("resetStats");
+
+  /* ---------- 저장소 ---------- */
+  function readStats() {
+    var out = {};
+    var raw = null;
+    try { raw = window.localStorage.getItem(KEY); } catch (e) { raw = null; }
+    if (!raw) return out;
+    var data;
+    try { data = JSON.parse(raw); } catch (e) { return out; }
+    if (!data || typeof data !== "object") return out;
+    ids.forEach(function (id) {
+      var s = data[id];
+      if (!s || typeof s !== "object") return;
+      var clicks = Math.floor(Number(s.clicks));
+      var last = Number(s.lastOpened);
+      if (!isFinite(clicks) || clicks < 0) clicks = 0;
+      if (!isFinite(last) || last <= 0) last = 0;
+      if (clicks > 0 || last > 0) out[id] = { clicks: clicks, lastOpened: last };
+    });
+    return out;
+  }
+
+  function writeStats(all) {
+    try { window.localStorage.setItem(KEY, JSON.stringify(all)); } catch (e) { /* 사생활 보호 모드 등 */ }
+  }
+
+  function clearStats() {
+    try { window.localStorage.removeItem(KEY); } catch (e) { /* noop */ }
+  }
+
+  /* ---------- 보조 ---------- */
+  function releasedOf(card) {
+    var t = Date.parse((card.getAttribute("data-released") || "") + "T00:00:00");
+    return isFinite(t) ? t : 0;
+  }
+
+  /* 최다 실행 1위. 동률이면 최근 실행 → 최신 출시 순으로 한 곳을 최애로 정한다. */
+  function favoriteOf(stats) {
+    var best = null;
+    ids.forEach(function (id) {
+      var s = stats[id];
+      if (!s || s.clicks < 1) return;
+      if (!best) { best = id; return; }
+      var b = stats[best];
+      if (s.clicks !== b.clicks) { if (s.clicks > b.clicks) best = id; return; }
+      if (s.lastOpened !== b.lastOpened) { if (s.lastOpened > b.lastOpened) best = id; return; }
+      if (releasedOf(byId[id]) > releasedOf(byId[best])) best = id;
+    });
+    return best;
+  }
+
+  function pad2(n) { return (n < 10 ? "0" : "") + n; }
+
+  function fullTime(ts) {
+    if (!ts) return "";
+    var d = new Date(ts);
+    return d.getFullYear() + "-" + pad2(d.getMonth() + 1) + "-" + pad2(d.getDate()) +
+      " " + pad2(d.getHours()) + ":" + pad2(d.getMinutes());
+  }
+
+  /* 최근 실행 시각을 짧게: 방금 전 / N분 전 / 오늘 / N일 전 / 오래 전 */
+  function ago(ts) {
+    if (!ts) return "";
+    var now = Date.now();
+    var diff = now - ts;
+    if (diff < 0) diff = 0;
+    if (diff < 60000) return "방금 전";
+    if (diff < 3600000) return Math.floor(diff / 60000) + "분 전";
+    var a = new Date(ts), b = new Date(now);
+    var da = new Date(a.getFullYear(), a.getMonth(), a.getDate()).getTime();
+    var db = new Date(b.getFullYear(), b.getMonth(), b.getDate()).getTime();
+    var days = Math.round((db - da) / 86400000);
+    if (days <= 0) return "오늘";
+    if (days < 30) return days + "일 전";
+    return "오래 전";
+  }
+
+  /* ---------- 렌더 ---------- */
+  function render() {
+    var stats = readStats();
+    var fav = favoriteOf(stats);
+    var total = 0;
+
+    cards.forEach(function (card) {
+      var id = card.getAttribute("data-app-id");
+      var s = stats[id] || { clicks: 0, lastOpened: 0 };
+      total += s.clicks;
+
+      var badge = card.querySelector('[data-slot="badge"]');
+      var when = card.querySelector('[data-slot="when"]');
+      var cls, text;
+      if (s.clicks < 1) {
+        cls = "bdg new";
+        text = "NEW";
+      } else if (id === fav) {
+        cls = "bdg hot";
+        text = "🔥 최애 · " + s.clicks + "회";
+      } else {
+        cls = "bdg cnt";
+        text = s.clicks + "회";
+      }
+      if (badge) {
+        if (badge.textContent !== text) badge.textContent = text;
+        if (badge.className !== cls) badge.className = cls;
+        badge.hidden = false;
+      }
+
+      if (when) {
+        var label = s.clicks > 0 ? (ago(s.lastOpened) || "오늘") : "아직 안 해봄";
+        if (when.textContent !== label) when.textContent = label;
+        when.setAttribute("data-fresh", s.clicks > 0 ? "1" : "0");
+        when.title = s.clicks > 0
+          ? "마지막 실행 " + fullTime(s.lastOpened)
+          : "출시 " + (card.getAttribute("data-released") || "-") + " · 아직 실행 안 함";
+        when.hidden = false;
+      }
+      card.setAttribute("data-clicks", String(s.clicks));
+    });
+
+    if (pillTxt) pillTxt.textContent = total > 0 ? "총 " + total + "회 실행" : "READY";
+  }
+
+  /* ---------- 클릭 기록 (+1) : 기본 링크 이동은 그대로 둔다 ---------- */
+  function bump(id) {
+    var all = readStats();
+    var s = all[id] || { clicks: 0, lastOpened: 0 };
+    s.clicks += 1;
+    s.lastOpened = Date.now();
+    all[id] = s;
+    writeStats(all);
+    render();
+  }
+
+  cards.forEach(function (card) {
+    var id = card.getAttribute("data-app-id");
+    card.addEventListener("click", function () { bump(id); }, true);
+    card.addEventListener("auxclick", function (ev) { if (ev.button === 1) bump(id); });
+  });
+
+  /* ---------- 새로 그리는 시점 : 복귀(bfcache) · 탭 전환 · 다른 탭 변경 ---------- */
+  window.addEventListener("pageshow", render);
+  window.addEventListener("focus", render);
+  document.addEventListener("visibilitychange", function () { if (!document.hidden) render(); });
+  window.addEventListener("storage", function (ev) { if (!ev.key || ev.key === KEY) render(); });
+  setInterval(function () { if (!document.hidden) render(); }, 30000);
+
+  /* ---------- 기록 초기화 : 두 번 누르면 지움 ---------- */
+  var armed = false, armTimer = 0;
+  function disarm() {
+    armed = false;
+    if (armTimer) { clearTimeout(armTimer); armTimer = 0; }
+    if (resetBtn) {
+      resetBtn.textContent = "기록 초기화";
+      resetBtn.classList.remove("arm");
+      resetBtn.setAttribute("aria-pressed", "false");
+    }
+  }
+  if (resetBtn) {
+    resetBtn.addEventListener("click", function () {
+      if (!armed) {
+        armed = true;
+        resetBtn.textContent = "한 번 더 누르면 지워요";
+        resetBtn.classList.add("arm");
+        resetBtn.setAttribute("aria-pressed", "true");
+        armTimer = setTimeout(disarm, 3500);
+        return;
+      }
+      disarm();
+      clearStats();
+      render();
+    });
+  }
+
+  render();
+})();
+</script>
 </body>
 </html>

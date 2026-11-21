@@ -7,8 +7,8 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="양지공주님 벽바둑">
-<title>👑 양지공주님 벽바둑 2 · Wall Go Ⅱ</title>
+<meta name="apple-mobile-web-app-title" content="지혜공주님 벽바둑">
+<title>👑 지혜공주님 벽바둑 2 · Wall Go Ⅱ</title>
 <style>
 :root{
   --bg:#070b14; --panel:#0e1526; --panel2:#141d31; --line:rgba(255,255,255,.09);
@@ -81,7 +81,7 @@ input{font-family:inherit}
 .mode .md{font-size:9.5px;color:var(--dim);font-weight:700}
 .mode.on{background:linear-gradient(180deg,rgba(255,212,121,.19),rgba(255,212,121,.06));border-color:rgba(255,212,121,.66);box-shadow:0 0 0 1px rgba(255,212,121,.18) inset}
 .mode.on .md{color:#e4cfa2}
-/* 양지공주님 전용: 온라인 1:1 카드 = 로즈골드 강조 테두리 */
+/* 지혜공주님 전용: 온라인 1:1 카드 = 로즈골드 강조 테두리 */
 .mode[data-val="online"]::after{
   content:"";position:absolute;inset:0;border-radius:13px;padding:1.4px;pointer-events:none;
   background:linear-gradient(140deg,var(--rose2) 0%,var(--rose) 42%,var(--amber) 100%);
@@ -138,6 +138,24 @@ input{font-family:inherit}
   background:rgba(255,255,255,.05);border:1px solid var(--line);
 }
 .ghost:active{background:rgba(255,255,255,.1)}
+
+/* ---------- PORTAL (아케이드 홈으로) ---------- */
+.portal-pill{
+  display:inline-flex;align-items:center;justify-content:center;gap:3px;
+  height:28px;padding:0 11px 0 8px;border-radius:999px;flex:0 0 auto;
+  font-size:11.5px;font-weight:800;letter-spacing:-.1px;line-height:1;
+  color:#e8dcc9;background:linear-gradient(180deg,rgba(255,255,255,.075),rgba(255,255,255,.025));
+  border:1px solid rgba(255,212,121,.30);text-decoration:none;
+  box-shadow:0 2px 8px rgba(0,0,0,.22);
+}
+.portal-pill .chev{font-size:13px;font-weight:900;line-height:1;color:var(--gold);margin-top:-1px}
+.portal-pill:active{background:rgba(255,212,121,.16)}
+.portal-dock{
+  position:absolute;z-index:30;top:calc(env(safe-area-inset-top,0px) + 10px);left:0;right:0;
+  max-width:420px;margin:0 auto;padding:0 14px;display:flex;pointer-events:none;
+}
+.portal-dock .portal-pill{pointer-events:none}
+#home.on .portal-dock .portal-pill{pointer-events:auto}
 
 /* ---------- GAME ---------- */
 #game{gap:6px}
@@ -393,11 +411,14 @@ input{font-family:inherit}
 
   <!-- ============ HOME ============ -->
   <section class="screen on" id="home">
+    <div class="portal-dock">
+      <a class="portal-pill" href="./index.html" aria-label="아케이드 홈으로"><span class="chev">‹</span>홈</a>
+    </div>
     <div class="home-wrap">
       <div class="brand">
-        <div class="logo-badge" aria-label="양지공주님 전용">👑</div>
-        <h1>양지공주님 전용 <span class="no">벽바둑 2</span></h1>
-        <p class="sub"><span class="en">FOR YANGJI PRINCESS</span><span class="sep">·</span><span>둘만의 1:1 전략 대결</span></p>
+        <div class="logo-badge" aria-label="지혜공주님 전용">👑</div>
+        <h1>지혜공주님 전용 <span class="no">벽바둑 2</span></h1>
+        <p class="sub"><span class="en">FOR JIHYE PRINCESS</span><span class="sep">·</span><span>둘만의 1:1 전략 대결</span></p>
       </div>
 
       <div class="modes" id="modeSeg">
@@ -420,7 +441,7 @@ input{font-family:inherit}
         <div class="nick-row">
           <input id="nickInput" maxlength="10" placeholder="선홍" value="선홍">
           <span class="vs">VS</span>
-          <span class="fixed" id="oppName">양지공주님</span>
+          <span class="fixed" id="oppName">지혜</span>
         </div>
       </div>
 
@@ -460,6 +481,7 @@ input{font-family:inherit}
   <section class="screen" id="game">
     <div class="top">
       <div class="top-row">
+        <a class="portal-pill" href="./index.html" aria-label="아케이드 홈으로"><span class="chev">‹</span>홈</a>
         <button class="icon-btn" id="homeBtn" aria-label="처음으로">⌂</button>
         <div class="turn-chip" id="turnChip"><span class="dot"></span><span class="txt">P1 차례</span><span class="ph" id="turnPhase">말 선택</span></div>
         <div class="timer" id="timerChip">1:30</div>
@@ -537,7 +559,7 @@ input{font-family:inherit}
       <div class="lobby-net" id="lobbyNet"><span class="nd"></span><span id="lobbyStatus">연결 중…</span></div>
 
       <div id="lobbyChoose">
-        <p class="lobby-lead">방을 만들고 링크를 보내면, 양지공주님은 누르기만 하면 됩니다.</p>
+        <p class="lobby-lead">방을 만들고 링크를 보내면, 지혜 님이 누르기만 하면 됩니다.</p>
         <button class="cta" id="mkRoomBtn" style="width:100%">방 만들기</button>
         <div class="or">— 또는 —</div>
         <div class="join-row">
@@ -557,7 +579,7 @@ input{font-family:inherit}
           <button class="cta" id="hostStartBtn" disabled>시작</button>
           <button class="ghost" id="copyBtn">링크 복사</button>
         </div>
-        <div class="big-status" id="hostStatus">양지공주님을 기다리는 중…<span class="sm">초대 링크만 보내면 바로 연결됩니다</span></div>
+        <div class="big-status" id="hostStatus">지혜 님을 기다리는 중…<span class="sm">초대 링크만 보내면 바로 연결됩니다</span></div>
         <button class="ghost" id="lobbyLeave" style="width:100%">나가기</button>
       </div>
 
@@ -651,9 +673,9 @@ const N = 7, CELL = 100, B = N * CELL;
 const DIRS = [[1,0],[-1,0],[0,1],[0,-1]];
 const COLORS = ['#3d7bf7', '#f2556e', '#f5b83d'];
 const PNAME = i => 'P' + (i + 1);
-/* 양지공주님 전용 기본 이름 (입력란에서 언제든 바꿀 수 있음) */
+/* 상대(지혜) 기본 이름 (입력란에서 언제든 바꿀 수 있음) */
 const DEF_HOST = '선홍';
-const DEF_GUEST = '양지공주님';
+const DEF_GUEST = '지혜';
 const DEF_NAMES = [DEF_HOST, DEF_GUEST, 'Player 3'];
 const isRoomLink = () => {
   try { return /^\d{4}$/.test((new URLSearchParams(location.search).get('room') || '')); } catch (e) { return false; }
@@ -1739,7 +1761,7 @@ function lobbyPeer(isHost, isGuestView) {
     lobbyStatus('연결됨 · 방장 시작 대기', 'ok');
   } else if (host && !host.classList.contains('hide')) {
     const stt = document.getElementById('hostStatus');
-    if (stt) stt.innerHTML = '양지공주님을 기다리는 중…<span class="sm">초대 링크만 보내면 바로 연결됩니다</span>';
+    if (stt) stt.innerHTML = '지혜 님을 기다리는 중…<span class="sm">초대 링크만 보내면 바로 연결됩니다</span>';
     const b = document.getElementById('hostStartBtn');
     if (b) b.disabled = true;
     lobbyStatus(Net.cloud ? '방 열림 · 상대 대기 중' : '같은 기기 연결만 가능 (브로커 접속 실패)', Net.cloud ? 'wait' : 'bad');
@@ -1773,7 +1795,7 @@ async function createRoom() {
   const ok = await Net.open();
   lobbyStatus(ok ? '방 열림 · 상대 대기 중' : '같은 기기 연결만 가능 (브로커 접속 실패)', ok ? 'wait' : 'bad');
   const hs = document.getElementById('hostStatus');
-  if (hs && !Net.peer) hs.innerHTML = '양지공주님을 기다리는 중…<span class="sm">'
+  if (hs && !Net.peer) hs.innerHTML = '지혜 님을 기다리는 중…<span class="sm">'
     + (ok ? '초대 링크만 보내면 바로 연결됩니다' : '같은 기기에서만 연결됩니다 (중계 서버 접속 실패)') + '</span>';
   netBadge(true);
   if (st && st.net === 'online') renderAll();
@@ -1782,7 +1804,7 @@ async function createRoom() {
 async function joinRoom(code) {
   code = String(code || '').replace(/\D/g, '').slice(0, 4);
   if (code.length !== 4) { toast('방 코드 4자리를 입력해 주세요'); return; }
-  /* 코드로 직접 참가하는 경우: 이름을 고치지 않았다면 손님 기본값(양지공주님)으로 */
+  /* 코드로 직접 참가하는 경우: 이름을 고치지 않았다면 손님 기본값(지혜)으로 */
   const ni = document.getElementById('nickInput');
   if (ni && !nickTouched && !/[?&]name=/.test(location.search)) ni.value = DEF_GUEST;
   Net.reset();
@@ -2243,7 +2265,7 @@ function onEdge(key) {
    화면 전환 / 모달
    ========================================================= */
 let cfgSel = { mode: 'online', diff: 'normal', time: 90, threeOpp: 'local' };
-let nickTouched = false;      /* 닉네임을 직접 고쳤는지 (안 고쳤으면 참가 시 양지공주님) */
+let nickTouched = false;      /* 닉네임을 직접 고쳤는지 (안 고쳤으면 참가 시 지혜) */
 
 function showScreen(id) {
   document.querySelectorAll('.screen').forEach(s => s.classList.toggle('on', s.id === id));
@@ -2332,7 +2354,7 @@ function syncHomeFields() {
   document.getElementById('nickField').classList.toggle('hide', m === 'ai');
   document.getElementById('nickHint').textContent = (m === 'online')
     ? '상대 폰에 이 표시됩니다'
-    : (m === 'three' ? 'P1 이름으로 표시됩니다' : 'P2는 양지공주님으로 표시');
+    : (m === 'three' ? 'P1 이름으로 표시됩니다' : 'P2는 지혜로 표시');
   const opp = (m === 'ai') ? 'AI'
     : (m === 'three' ? (DEF_GUEST + ' · P3')
       : ((m === 'online' && Net.peerName && !isRoomLink()) ? Net.peerName : (isRoomLink() ? DEF_HOST : DEF_GUEST)));
@@ -2485,7 +2507,7 @@ netBadge();
     const nm = u.get('name');
     const code = u.get('room');
     const roomLink = !!(code && /^\d{4}$/.test(code));
-    /* 초대 링크(?room=)로 들어온 게스트는 별도 입력 없이 '양지공주님'으로 매칭 */
+    /* 초대 링크(?room=)로 들어온 게스트는 별도 입력 없이 '지혜'로 매칭 */
     if (nm) document.getElementById('nickInput').value = decodeURIComponent(nm).slice(0, 10);
     else if (roomLink) document.getElementById('nickInput').value = DEF_GUEST;
     if (roomLink) {

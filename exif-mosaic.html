@@ -42,6 +42,13 @@
     background:var(--panel2);border:1px solid var(--line);color:var(--dim);font-size:14px;font-weight:600}
   .txtbtn{height:36px;padding:0 12px;border-radius:11px;background:var(--panel2);border:1px solid var(--line);
     color:var(--txt);font-size:12.5px;font-weight:600}
+  /* 아케이드 포털 복귀 */
+  .portal-pill{display:inline-flex;align-items:center;justify-content:center;gap:2px;
+    height:36px;padding:0 11px 0 8px;border-radius:11px;flex:0 0 auto;
+    background:var(--panel2);border:1px solid var(--line);color:var(--dim);
+    font-size:12px;font-weight:600;letter-spacing:-.15px;line-height:1;text-decoration:none}
+  .portal-pill .chev{font-size:14px;font-weight:700;line-height:1;color:var(--accent);margin-top:-1px}
+  .portal-pill:active{background:#1f2534;color:var(--txt)}
 
   /* --- meta bar --- */
   .metabar{flex:0 0 auto;padding:0 12px 8px;display:none}
@@ -209,12 +216,18 @@
 
   .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
 
+  /* 아주 좁은 화면(≤374px)에서는 포털 알약을 더 줄여 제목 잘림 방지 */
+  @media (max-width:374px){
+    .portal-pill{padding:0 10px}
+    .portal-pill .chev{display:none}
+  }
+
   /* 짧은 화면(가로 모드) 대응 */
   @media (max-height:560px){
     header{padding:calc(4px + env(safe-area-inset-top)) 12px 4px}
     .sub{display:none}
     .logo{width:28px;height:28px;border-radius:9px}
-    .iconbtn,.txtbtn{height:32px}
+    .iconbtn,.txtbtn,.portal-pill{height:32px}
     .metabar .metaNote{display:none}
     .chip{height:22px;font-size:10.5px}
     .panel{gap:5px;padding-top:6px}
@@ -247,6 +260,7 @@
       </div>
     </div>
     <div class="hbtns">
+      <a class="portal-pill" href="./index.html" aria-label="아케이드 홈으로"><span class="chev">‹</span>홈</a>
       <button class="txtbtn" id="pickBtn2" hidden>사진 바꾸기</button>
       <button class="iconbtn" id="helpBtn" aria-label="사용 안내">?</button>
     </div>

@@ -7,12 +7,13 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="벽바둑 2">
-<title>벽바둑 2 · Wall Go Ⅱ</title>
+<meta name="apple-mobile-web-app-title" content="양지공주님 벽바둑">
+<title>👑 양지공주님 벽바둑 2 · Wall Go Ⅱ</title>
 <style>
 :root{
   --bg:#070b14; --panel:#0e1526; --panel2:#141d31; --line:rgba(255,255,255,.09);
   --txt:#e9effb; --dim:#8ea0c0; --gold:#ffd479;
+  --rose:#f472b6; --rose2:#fda4af; --amber:#fbbf24;
   --p0:#3d7bf7; --p1:#f2556e; --p2:#f5b83d;
   --ok:#38d39f; --warn:#ffb347; --bad:#ff5d73;
 }
@@ -20,6 +21,7 @@
 html,body{margin:0;padding:0;height:100%;overflow:hidden;overscroll-behavior:none}
 body{
   background:
+    radial-gradient(95% 55% at 50% -8%, rgba(244,114,182,.16) 0%, rgba(251,191,36,.07) 38%, rgba(244,114,182,0) 72%),
     radial-gradient(120% 80% at 50% -10%, #1a2745 0%, #101a2e 38%, #070b14 100%);
   color:var(--txt);
   font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Malgun Gothic","Pretendard",system-ui,sans-serif;
@@ -40,14 +42,33 @@ input{font-family:inherit}
 /* ---------- HOME ---------- */
 #home{justify-content:center}
 .home-wrap{width:100%;max-width:420px;margin:0 auto;display:flex;flex-direction:column;gap:8px}
-.brand{text-align:center;margin-bottom:2px}
-.brand .logo{font-size:30px;line-height:1}
-.brand h1{
-  margin:2px 0 2px;font-size:27px;letter-spacing:-.5px;font-weight:900;
-  background:linear-gradient(180deg,#fff,#b9c9e8);-webkit-background-clip:text;background-clip:text;color:transparent;
+.brand{text-align:center;margin-bottom:4px}
+.brand .logo-badge{
+  width:46px;height:46px;margin:0 auto 5px;border-radius:15px;position:relative;
+  display:flex;align-items:center;justify-content:center;font-size:22px;line-height:1;
+  background:linear-gradient(150deg,rgba(244,114,182,.30),rgba(251,191,36,.26));
+  border:1px solid rgba(253,164,175,.55);
+  box-shadow:0 6px 20px rgba(244,114,182,.26), inset 0 1px 0 rgba(255,255,255,.32);
 }
-.brand h1 span{color:var(--gold);-webkit-text-fill-color:var(--gold)}
-.brand .sub{margin:0;font-size:11px;color:var(--dim);letter-spacing:.2px}
+.brand .logo-badge::after{
+  content:"";position:absolute;inset:-5px;border-radius:20px;pointer-events:none;
+  border:1px solid rgba(251,191,36,.22);
+}
+.brand h1{
+  margin:0;font-size:24px;letter-spacing:-.8px;font-weight:900;line-height:1.15;
+  background:linear-gradient(180deg,#fff 0%,#fbe7ef 58%,#eab8cd 100%);
+  -webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent;
+}
+.brand h1 .no{
+  background:linear-gradient(120deg,var(--rose2) 0%,var(--rose) 42%,var(--amber) 100%);
+  -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
+}
+.brand .sub{
+  margin:5px 0 0;font-size:9.5px;color:#bda7b6;letter-spacing:.1px;font-weight:700;
+  display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:4px;
+}
+.brand .sub .en{font-size:8.5px;font-weight:900;letter-spacing:1.5px;color:#eda6c1}
+.brand .sub .sep{opacity:.4}
 
 .modes{display:grid;grid-template-columns:1fr 1fr;gap:7px}
 .mode{
@@ -60,6 +81,21 @@ input{font-family:inherit}
 .mode .md{font-size:9.5px;color:var(--dim);font-weight:700}
 .mode.on{background:linear-gradient(180deg,rgba(255,212,121,.19),rgba(255,212,121,.06));border-color:rgba(255,212,121,.66);box-shadow:0 0 0 1px rgba(255,212,121,.18) inset}
 .mode.on .md{color:#e4cfa2}
+/* 양지공주님 전용: 온라인 1:1 카드 = 로즈골드 강조 테두리 */
+.mode[data-val="online"]::after{
+  content:"";position:absolute;inset:0;border-radius:13px;padding:1.4px;pointer-events:none;
+  background:linear-gradient(140deg,var(--rose2) 0%,var(--rose) 42%,var(--amber) 100%);
+  -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
+  -webkit-mask-composite:xor;mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);mask-composite:exclude;
+  opacity:.42;transition:opacity .18s;
+}
+.mode[data-val="online"].on::after{opacity:1}
+.mode[data-val="online"].on{
+  background:linear-gradient(152deg,rgba(244,114,182,.26),rgba(150,70,120,.10) 58%,rgba(251,191,36,.10));
+  border-color:rgba(253,164,175,.5);
+  box-shadow:0 6px 20px rgba(244,114,182,.18), 0 0 0 1px rgba(244,114,182,.14) inset;
+}
+.mode[data-val="online"].on .md{color:#f3c3d4}
 
 .field{background:linear-gradient(180deg,rgba(255,255,255,.05),rgba(255,255,255,.015));
   border:1px solid var(--line);border-radius:13px;padding:8px 10px 9px}
@@ -75,17 +111,24 @@ input{font-family:inherit}
 .seg button.on em{color:#e8cf9b}
 .nick-row{display:flex;align-items:center;gap:8px}
 .nick-row input{
-  flex:1;font-family:inherit;height:36px;border-radius:9px;border:1px solid var(--line);background:rgba(0,0,0,.28);
+  flex:1;min-width:0;font-family:inherit;height:36px;border-radius:9px;border:1px solid var(--line);background:rgba(0,0,0,.28);
   color:#eaf1ff;font-size:16px;font-weight:800;padding:0 11px;outline:none;-webkit-user-select:text;user-select:text;
 }
 .nick-row input:focus{border-color:rgba(255,212,121,.6)}
-.nick-row .vs{font-size:10px;font-weight:800;color:var(--dim);flex:0 0 auto}
-.nick-row .fixed{font-size:12px;font-weight:800;color:#a9b8d4;flex:0 0 auto;padding:0 4px}
+.nick-row .vs{
+  font-size:10px;font-weight:900;flex:0 0 auto;letter-spacing:.6px;
+  background:linear-gradient(120deg,var(--rose2),var(--amber));
+  -webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent;
+}
+.nick-row .fixed{
+  font-size:12px;font-weight:800;color:#f2a6c1;flex:0 1 auto;padding:0 4px;
+  max-width:120px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
 
 .cta{
   height:50px;border-radius:14px;font-size:16.5px;font-weight:900;letter-spacing:.2px;
-  background:linear-gradient(180deg,#ffe6ab,#efb54a);color:#20180a;
-  box-shadow:0 8px 22px rgba(240,182,74,.26), inset 0 1px 0 rgba(255,255,255,.6);
+  background:linear-gradient(116deg,#ffeecb 0%,#fbbf24 46%,#f4a0c0 100%);color:#231405;
+  box-shadow:0 9px 24px rgba(244,114,182,.20), 0 6px 18px rgba(240,182,74,.20), inset 0 1px 0 rgba(255,255,255,.62);
 }
 .cta:active{transform:translateY(1px);filter:brightness(.97)}
 .cta:disabled{filter:grayscale(.7) brightness(.8)}
@@ -146,7 +189,7 @@ input{font-family:inherit}
 .chip.p0 .sc{color:#8db6ff}.chip.p1 .sc{color:#ff97a8}.chip.p2 .sc{color:#ffd479}
 .chip.act{background:rgba(255,255,255,.1);box-shadow:0 0 0 1.5px rgba(255,255,255,.45) inset}
 .prog{position:relative;height:15px;border-radius:8px;background:rgba(255,255,255,.06);overflow:hidden;border:1px solid var(--line)}
-.prog-bar{height:100%;width:0%;border-radius:8px;background:linear-gradient(90deg,#5f86d6,#ffd479);transition:width .35s ease}
+.prog-bar{height:100%;width:0%;border-radius:8px;background:linear-gradient(90deg,#5f86d6,#f472b6 62%,#ffd479);transition:width .35s ease}
 .prog-txt{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:800;letter-spacing:.4px;color:#e7eefc;text-shadow:0 1px 2px rgba(0,0,0,.6)}
 .board-wrap{flex:1 1 auto;min-height:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px}
 .legend{font-size:10.5px;color:#8698b8;font-weight:800;letter-spacing:.1px;display:flex;align-items:center;gap:4px;white-space:nowrap}
@@ -242,10 +285,11 @@ input{font-family:inherit}
 .lobby-net.ok .nd{background:var(--ok);box-shadow:0 0 8px var(--ok)}
 .lobby-net.wait .nd{background:var(--warn);box-shadow:0 0 8px var(--warn)}
 .lobby-net.bad .nd{background:var(--bad)}
+.lobby-lead{margin:-2px 0 10px;font-size:11px;line-height:1.5;color:#c9b2c1;font-weight:700;text-align:center}
 .or{text-align:center;font-size:11px;color:var(--dim);font-weight:800;margin:11px 0;position:relative}
 .join-row{display:flex;gap:7px}
 .join-row input{
-  flex:1;font-family:inherit;height:48px;border-radius:12px;border:1px solid var(--line);background:rgba(0,0,0,.3);
+  flex:1;min-width:0;font-family:inherit;height:48px;border-radius:12px;border:1px solid var(--line);background:rgba(0,0,0,.3);
   color:#fff;font-size:20px;font-weight:900;letter-spacing:6px;text-align:center;outline:none;
   -webkit-user-select:text;user-select:text;
 }
@@ -281,9 +325,9 @@ input{font-family:inherit}
   <section class="screen on" id="home">
     <div class="home-wrap">
       <div class="brand">
-        <div class="logo">♟️</div>
-        <h1>벽바둑 <span>2</span></h1>
-        <p class="sub">WALL GO Ⅱ · 벽으로 길을 막고 영역을 차지하라</p>
+        <div class="logo-badge" aria-label="양지공주님 전용">👑</div>
+        <h1>양지공주님 전용 <span class="no">벽바둑 2</span></h1>
+        <p class="sub"><span class="en">FOR YANGJI PRINCESS</span><span class="sep">·</span><span>둘만의 1:1 전략 대결</span></p>
       </div>
 
       <div class="modes" id="modeSeg">
@@ -304,9 +348,9 @@ input{font-family:inherit}
       <div class="field" id="nickField">
         <div class="field-label">닉네임 <span class="hint" id="nickHint">상대 폰에 이 이름으로 표시됩니다</span></div>
         <div class="nick-row">
-          <input id="nickInput" maxlength="10" placeholder="Player 1" value="Player 1">
+          <input id="nickInput" maxlength="10" placeholder="선홍" value="선홍">
           <span class="vs">VS</span>
-          <span class="fixed" id="oppName">Player 2</span>
+          <span class="fixed" id="oppName">양지공주님</span>
         </div>
       </div>
 
@@ -406,6 +450,7 @@ input{font-family:inherit}
       <div class="lobby-net" id="lobbyNet"><span class="nd"></span><span id="lobbyStatus">연결 중…</span></div>
 
       <div id="lobbyChoose">
+        <p class="lobby-lead">방을 만들고 링크를 보내면, 양지공주님은 누르기만 하면 됩니다.</p>
         <button class="cta" id="mkRoomBtn" style="width:100%">방 만들기</button>
         <div class="or">— 또는 —</div>
         <div class="join-row">
@@ -425,7 +470,7 @@ input{font-family:inherit}
           <button class="cta" id="hostStartBtn" disabled>시작</button>
           <button class="ghost" id="copyBtn">링크 복사</button>
         </div>
-        <div class="big-status" id="hostStatus">상대를 기다리는 중…<span class="sm">초대 링크를 보내면 바로 연결됩니다</span></div>
+        <div class="big-status" id="hostStatus">양지공주님을 기다리는 중…<span class="sm">초대 링크만 보내면 바로 연결됩니다</span></div>
         <button class="ghost" id="lobbyLeave" style="width:100%">나가기</button>
       </div>
 
@@ -439,7 +484,7 @@ input{font-family:inherit}
   <!-- ============ RULES ============ -->
   <div class="overlay" id="rulesModal">
     <div class="card">
-      <h2>? 벽바둑 2 규칙</h2>
+      <h2>👑 벽바둑 2 규칙</h2>
       <p>7×7 격자에서 말을 옮기고, <b>이동한 칸에 붙은 벽 한 면</b>을 세웁니다. 모두의 말이 서로 다른 구역으로 완전히 갈라지면 끝나고, <b>내 말만 있는 구역의 칸 수</b>가 점수입니다.</p>
 
       <h3>말 두 종류</h3>
@@ -509,6 +554,13 @@ const N = 7, CELL = 100, B = N * CELL;
 const DIRS = [[1,0],[-1,0],[0,1],[0,-1]];
 const COLORS = ['#3d7bf7', '#f2556e', '#f5b83d'];
 const PNAME = i => 'P' + (i + 1);
+/* 양지공주님 전용 기본 이름 (입력란에서 언제든 바꿀 수 있음) */
+const DEF_HOST = '선홍';
+const DEF_GUEST = '양지공주님';
+const DEF_NAMES = [DEF_HOST, DEF_GUEST, 'Player 3'];
+const isRoomLink = () => {
+  try { return /^\d{4}$/.test((new URLSearchParams(location.search).get('room') || '')); } catch (e) { return false; }
+};
 
 const idx = (c, r) => r * N + c;
 const cx = i => i % N;
@@ -770,7 +822,7 @@ const isGuest = () => !!(Net.room && Net.role === 'guest');
 const mySeat = () => (isGuest() ? 1 : 0);
 
 function dispName(p) {
-  const n = (st && st.names && st.names[p]) ? st.names[p] : PNAME(p);
+  const n = (st && st.names && st.names[p]) ? st.names[p] : (DEF_NAMES[p] || PNAME(p));
   return clampStr(n, 9);
 }
 
@@ -818,7 +870,7 @@ function turnSetup() {
   }
   if (!hasAnyMove(st, st.turn)) {
     st.busy = true;
-    toast(PNAME(st.turn) + ' 이동 가능한 수가 없습니다 · 턴 넘김');
+    toast(dispName(st.turn) + ' 이동 가능한 수가 없습니다 · 턴 넘김');
     renderAll();
     schedule(() => {
       st.passes++;
@@ -1393,7 +1445,7 @@ function onNet(m) {
       if (!Net.role) return;
       if (Net.peer && Net.peer !== m.from) { Net.send({ t: 'full', to: m.from }); return; }
       Net.peer = m.from;
-      Net.peerName = clampStr(m.name || 'Player 2', 10);
+      Net.peerName = clampStr(m.name || DEF_GUEST, 10);
       if (st && st.net === 'online' && st.names) st.names[1] = Net.peerName;
       Net.send({ t: 'welcome', to: m.from, seat: 1, hostName: myNick(), started: !!(st && st.net === 'online' && st.phase), snap: (st && st.net === 'online') ? snapshot() : null });
       netBadge(true);
@@ -1403,7 +1455,7 @@ function onNet(m) {
     }
     case 'welcome': {
       if (m.to && m.to !== Net.pid) return;
-      Net.peer = m.from; Net.peerName = clampStr(m.hostName || 'Player 1', 10);
+      Net.peer = m.from; Net.peerName = clampStr(m.hostName || DEF_HOST, 10);
       clearInterval(Net.joinTimer);
       netBadge(true);
       lobbyPeer(false, true);
@@ -1478,7 +1530,7 @@ function hostHandleAct(m) {
 /* ---------------- 온라인: 시작 ---------------- */
 function startOnlineHost(timeLimit) {
   newGame({ players: 2, net: 'online', diff: 'hard', time: timeLimit,
-            names: [myNick(), Net.peerName || 'Player 2'] });
+            names: [myNick(), Net.peerName || DEF_GUEST] });
   Net.send({ t: 'start', snap: snapshot() });
   showScreen('game');
   hideModal('#lobbyModal');
@@ -1489,7 +1541,7 @@ function guestStartFrom(snap) {
   stopTimer();
   st = stateShell({ players: 2, net: 'online', diff: 'hard',
                     time: (snap && snap.timeLimit) || 90,
-                    names: [(snap && snap.names && snap.names[0]) || (Net.peerName || 'Player 1'), myNick()] });
+                    names: [(snap && snap.names && snap.names[0]) || (Net.peerName || DEF_HOST), myNick()] });
   pieceNodes.forEach(n => n.remove());
   pieceNodes.clear();
   buildStatic();
@@ -1505,7 +1557,7 @@ function guestStartFrom(snap) {
 function myNick() {
   const el = document.getElementById('nickInput');
   const v = el && el.value ? el.value.trim() : '';
-  return clampStr(v || 'Player 1', 10);
+  return clampStr(v || (isRoomLink() ? DEF_GUEST : DEF_HOST), 10);
 }
 function lobbyStatus(txt, cls) {
   const el = document.getElementById('lobbyStatus');
@@ -1530,7 +1582,7 @@ function lobbyPeer(isHost, isGuestView) {
     lobbyStatus('연결됨 · 방장 시작 대기', 'ok');
   } else if (host && !host.classList.contains('hide')) {
     const stt = document.getElementById('hostStatus');
-    if (stt) stt.innerHTML = '상대를 기다리는 중…<span class="sm">초대 링크를 보내면 바로 연결됩니다</span>';
+    if (stt) stt.innerHTML = '양지공주님을 기다리는 중…<span class="sm">초대 링크만 보내면 바로 연결됩니다</span>';
     const b = document.getElementById('hostStartBtn');
     if (b) b.disabled = true;
     lobbyStatus(Net.cloud ? '방 열림 · 상대 대기 중' : '같은 기기 연결만 가능 (브로커 접속 실패)', Net.cloud ? 'wait' : 'bad');
@@ -1563,6 +1615,9 @@ async function createRoom() {
   lobbyStatus('브로커 접속 중…', 'wait');
   const ok = await Net.open();
   lobbyStatus(ok ? '방 열림 · 상대 대기 중' : '같은 기기 연결만 가능 (브로커 접속 실패)', ok ? 'wait' : 'bad');
+  const hs = document.getElementById('hostStatus');
+  if (hs && !Net.peer) hs.innerHTML = '양지공주님을 기다리는 중…<span class="sm">'
+    + (ok ? '초대 링크만 보내면 바로 연결됩니다' : '같은 기기에서만 연결됩니다 (중계 서버 접속 실패)') + '</span>';
   netBadge(true);
   if (st && st.net === 'online') renderAll();
 }
@@ -1570,6 +1625,9 @@ async function createRoom() {
 async function joinRoom(code) {
   code = String(code || '').replace(/\D/g, '').slice(0, 4);
   if (code.length !== 4) { toast('방 코드 4자리를 입력해 주세요'); return; }
+  /* 코드로 직접 참가하는 경우: 이름을 고치지 않았다면 손님 기본값(양지공주님)으로 */
+  const ni = document.getElementById('nickInput');
+  if (ni && !nickTouched && !/[?&]name=/.test(location.search)) ni.value = DEF_GUEST;
   Net.reset();
   Net.room = code; Net.role = 'guest';
   document.getElementById('lobbyChoose').classList.add('hide');
@@ -1879,9 +1937,11 @@ function onEdge(key) {
    화면 전환 / 모달
    ========================================================= */
 let cfgSel = { mode: 'online', diff: 'normal', time: 90, threeOpp: 'local' };
+let nickTouched = false;      /* 닉네임을 직접 고쳤는지 (안 고쳤으면 참가 시 양지공주님) */
 
 function showScreen(id) {
   document.querySelectorAll('.screen').forEach(s => s.classList.toggle('on', s.id === id));
+  if (id === 'home') syncHomeFields();
   requestAnimationFrame(fitBoard);
 }
 function goHome() {
@@ -1919,13 +1979,13 @@ function startGame(cfg) {
   if (mode === 'three') {
     newGame({ players: 3, diff: cfgSel.diff, time: cfgSel.time,
               ai: cfgSel.threeOpp === 'ai' ? [false, true, true] : [false, false, false],
-              names: [myNick(), 'Player 2', 'Player 3'] });
+              names: [myNick(), DEF_GUEST, 'Player 3'] });
   } else if (mode === 'ai') {
     newGame({ players: 2, diff: cfgSel.diff, time: cfgSel.time, ai: [false, true],
               names: [myNick(), 'AI'] });
   } else {
     newGame({ players: 2, diff: cfgSel.diff, time: cfgSel.time, ai: [false, false],
-              names: [myNick(), 'Player 2'] });
+              names: [myNick(), DEF_GUEST] });
   }
 }
 function showOver() {
@@ -1964,8 +2024,13 @@ function syncHomeFields() {
   document.getElementById('diffField').classList.toggle('hide', !(m === 'ai' || (m === 'three' && cfgSel.threeOpp === 'ai')));
   document.getElementById('threeField').classList.toggle('hide', m !== 'three');
   document.getElementById('nickField').classList.toggle('hide', m === 'ai');
-  document.getElementById('nickHint').textContent = (m === 'online') ? '상대 폰에 이 이름으로 표시됩니다' : '한 기기에서 P1 이름으로 표시됩니다';
-  document.getElementById('oppName').textContent = (m === 'ai') ? 'AI' : ((m === 'online') ? 'Player 2' : (m === 'three' ? 'P2 · P3' : 'Player 2'));
+  document.getElementById('nickHint').textContent = (m === 'online')
+    ? '상대 폰에 이 표시됩니다'
+    : (m === 'three' ? 'P1 이름으로 표시됩니다' : 'P2는 양지공주님으로 표시');
+  const opp = (m === 'ai') ? 'AI'
+    : (m === 'three' ? (DEF_GUEST + ' · P3')
+      : ((m === 'online' && Net.peerName && !isRoomLink()) ? Net.peerName : (isRoomLink() ? DEF_HOST : DEF_GUEST)));
+  document.getElementById('oppName').textContent = opp;
   document.getElementById('startBtn').textContent = (m === 'online') ? '방 만들기 / 참가하기' : '게임 시작';
 }
 
@@ -1988,6 +2053,7 @@ function bindUI() {
     });
   });
   $('#startBtn').addEventListener('click', () => startGame(cfgSel));
+  $('#nickInput').addEventListener('input', () => { nickTouched = true; });
   $('#rulesBtnHome').addEventListener('click', () => showModal('#rulesModal'));
   $('#helpBtn').addEventListener('click', () => { if (st) st.paused = true; showModal('#rulesModal'); });
   $('#rulesClose').addEventListener('click', () => hideModal('#rulesModal'));
@@ -2101,10 +2167,14 @@ netBadge();
   try {
     const u = new URLSearchParams(location.search);
     const nm = u.get('name');
-    if (nm) document.getElementById('nickInput').value = decodeURIComponent(nm).slice(0, 10);
     const code = u.get('room');
-    if (code && /^\d{4}$/.test(code)) {
+    const roomLink = !!(code && /^\d{4}$/.test(code));
+    /* 초대 링크(?room=)로 들어온 게스트는 별도 입력 없이 '양지공주님'으로 매칭 */
+    if (nm) document.getElementById('nickInput').value = decodeURIComponent(nm).slice(0, 10);
+    else if (roomLink) document.getElementById('nickInput').value = DEF_GUEST;
+    if (roomLink) {
       document.getElementById('nickField').classList.remove('hide');
+      syncHomeFields();
       openLobby();
       document.getElementById('codeInput').value = code;
       setTimeout(() => joinRoom(code), 120);

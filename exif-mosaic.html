@@ -67,11 +67,24 @@
   /* --- stage --- */
   main{flex:1 1 auto;min-height:0;position:relative}
   #stageInner{position:absolute;inset:6px 10px;display:flex;align-items:center;justify-content:center}
+  #stageInner.clip{overflow:hidden}
   #canvaswrap{position:relative;line-height:0;border-radius:14px;display:none}
   #canvaswrap.on{display:block}
+  /* 확대/이동은 이 레이어 하나에만 건다 — 캔버스·원본 비교가 같은 변환을 공유한다 */
+  #zoomLayer{position:relative;line-height:0;transform-origin:0 0;will-change:transform}
+  #zoomLayer.anim{transition:transform .24s cubic-bezier(.22,.7,.3,1)}
   #canvas{display:block;border-radius:14px;box-shadow:0 12px 34px rgba(0,0,0,.6), 0 0 0 1px #2a3143;touch-action:none;cursor:crosshair;background:#000}
-  #origCanvas{position:absolute;inset:0;width:100%;height:100%;border-radius:14px;pointer-events:none;display:none;box-shadow:0 12px 34px rgba(0,0,0,.6), 0 0 0 1px #2a3143}
+  #origCanvas{position:absolute;left:0;top:0;width:100%;height:100%;border-radius:14px;pointer-events:none;display:none;box-shadow:0 12px 34px rgba(0,0,0,.6), 0 0 0 1px #2a3143}
   #origCanvas.on{display:block}
+  /* 확대 중에만 뜨는 리셋 알약 */
+  .zoomChip{position:absolute;top:8px;right:8px;z-index:7;display:none;align-items:center;justify-content:center;
+    height:28px;min-width:66px;padding:0 11px;border-radius:999px;
+    background:rgba(8,11,17,.74);border:1px solid rgba(150,175,235,.34);color:#e8eefb;
+    font-size:11.5px;font-weight:700;letter-spacing:-.15px;font-variant-numeric:tabular-nums;line-height:1;
+    -webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);box-shadow:0 6px 16px rgba(0,0,0,.45);
+    touch-action:manipulation;cursor:pointer}
+  .zoomChip.on{display:inline-flex}
+  .zoomChip:active{transform:scale(.96)}
   .hint{position:absolute;left:50%;bottom:12px;transform:translateX(-50%);white-space:nowrap;
     background:rgba(8,10,14,.72);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
     border:1px solid rgba(255,255,255,.1);color:#dfe6f5;font-size:11.5px;padding:6px 12px;border-radius:999px;
@@ -253,14 +266,18 @@
         </div>
         <h2>사진을 고르면 정보부터 지워드려요</h2>
         <p>위치·기기·촬영 시간(EXIF)은 자동으로 삭제되고,<br/>얼굴이나 계좌번호는 손가락으로 문질러 가립니다.</p>
+        <p class="tiny">모자이크가 잘 안 보이면 두 손가락으로 벌려 확대(최대 6배)하세요</p>
         <button class="primary big" id="pickBtn" style="margin-top:8px">사진 선택</button>
         <p class="dropTip">여기로 <b>끌어다 놓아도</b> 됩니다</p>
         <p class="tiny">사진은 서버로 전송되지 않아요 · 100% 이 기기 안에서만 처리</p>
       </div>
 
       <div id="canvaswrap">
-        <canvas id="canvas" aria-label="편집 캔버스"></canvas>
-        <canvas id="origCanvas" aria-hidden="true"></canvas>
+        <div id="zoomLayer">
+          <canvas id="canvas" aria-label="편집 캔버스"></canvas>
+          <canvas id="origCanvas" aria-hidden="true"></canvas>
+        </div>
+        <button type="button" class="zoomChip" id="zoomChip" aria-label="확대 초기화">1.0× · 맞춤</button>
         <div class="compareTag" id="compareTag">원본</div>
         <div class="hint" id="hint">얼굴이나 계좌번호를 손가락으로 문지르세요</div>
         <div class="busy" id="busy"><div><div class="spin"></div><span id="busyText">처리 중…</span></div></div>
@@ -334,6 +351,8 @@
   var origCtx = origCanvas.getContext('2d');
   var stageInner = $('#stageInner');
   var wrap = $('#canvaswrap');
+  var zoomLayer = $('#zoomLayer');
+  var zoomChip = $('#zoomChip');
   var fileInput = $('#fileInput');
 
   var MAX_WORK = 2400;
@@ -355,6 +374,7 @@
     cur: null,
     pointerId: null,
     mode: 'mosaic',
+    zoom: null,
     brush: 40,
     strength: 3,
     color: '#000000',
@@ -698,7 +718,7 @@
         $('#pickBtn2').hidden = false;
         $('#hint').className = 'hint';
         renderAll();
-        fitCanvas();
+        fitCanvas();          // 새 사진은 1.0x 맞춤에서 시작한다(resetZoom 포함)
         syncPanelVar();
         updateMeta();
         updateToolState();
@@ -803,8 +823,145 @@
     ctx.restore();
   }
 
+  /* ======================= zoom / pan ======================= */
+  // 캔버스는 CSS transform(translate + scale)으로 확대한다. 확대·이동 후에도
+  // getBoundingClientRect()는 변환이 반영된 화면 사각형을 돌려주므로, 사각형 기반
+  // 좌표 변환(toImg)은 그대로 1px 오차 없이 맞는다.
+  var Z = {
+    scale: 1, tx: 0, ty: 0,
+    MIN: 1, MAX: 6,
+    fitW: 0, fitH: 0,
+    animating: false
+  };
+  S.zoom = Z;
+
+  var ZOOM_UI_MIN = 1.02;                    // 이보다 확대돼야 리셋 칩을 띄운다
+  var activePointers = new Map();            // pointerId -> {x, y, type}
+  var gesture = 'none';                       // 'none' | 'draw' | 'pinch' | 'lock'
+  var pinchRef = null;
+
+  function applyTransform() {
+    zoomLayer.style.transform = 'translate(' + Z.tx.toFixed(2) + 'px,' + Z.ty.toFixed(2) + 'px) scale(' + Z.scale.toFixed(4) + ')';
+  }
+
+  function isZoomed() { return Z.scale > ZOOM_UI_MIN; }
+
+  function baseSize() {
+    return [Z.fitW || canvas.offsetWidth || 1, Z.fitH || canvas.offsetHeight || 1];
+  }
+
+  // 이미지가 캔버스 기본 영역을 항상 덮도록 이동 범위를 잡는다(1x면 이동 0).
+  function clampZ() {
+    if (!(Z.scale > Z.MIN)) { Z.scale = Z.MIN; Z.tx = 0; Z.ty = 0; return; }
+    if (Z.scale > Z.MAX) Z.scale = Z.MAX;
+    var wh = baseSize();
+    var minTx = wh[0] - wh[0] * Z.scale;
+    var minTy = wh[1] - wh[1] * Z.scale;
+    Z.tx = clamp(Z.tx, minTx, 0);
+    Z.ty = clamp(Z.ty, minTy, 0);
+  }
+
+  function setZoomUI() {
+    var on = !!S.W && isZoomed();
+    if (on) zoomChip.textContent = Z.scale.toFixed(1) + '× · 맞춤';
+    zoomChip.className = 'zoomChip' + (on ? ' on' : '');
+    // 확대 중에는 스테이지 밖으로 나가는 그림을 잘라 헤더·패널을 덮지 않게 한다
+    stageInner.className = on ? 'clip' : '';
+  }
+
+  function applyZoom() {
+    clampZ();
+    applyTransform();
+    setZoomUI();
+  }
+
+  // 복귀 애니메이션 도중에 새 제스처가 들어오면 즉시 끝내고 손가락 기준으로 다시 계산한다
+  function finishZoomAnim() {
+    if (!Z.animating) return;
+    Z.animating = false;
+    zoomLayer.className = '';
+  }
+
+  function resetZoom(animate) {
+    var changed = Z.scale !== Z.MIN || Z.tx || Z.ty;
+    Z.scale = Z.MIN; Z.tx = 0; Z.ty = 0;
+    pinchRef = null;
+    if (!changed) { applyTransform(); setZoomUI(); return; }
+    if (animate) {
+      zoomLayer.className = 'anim';
+      Z.animating = true;
+      applyTransform();
+      setTimeout(function () {
+        Z.animating = false;
+        if (!isZoomed() && Z.tx === 0 && Z.ty === 0) zoomLayer.className = '';
+      }, 260);
+    } else {
+      zoomLayer.className = '';
+      applyTransform();
+    }
+    setZoomUI();
+  }
+
+  // (cx, cy) 화면 좌표의 지점을 고정한 채 배율만 바꾼다.
+  function zoomAt(cx, cy, next) {
+    if (!S.W) return;
+    next = clamp(next, Z.MIN, Z.MAX);
+    var wr = wrap.getBoundingClientRect();
+    var lx = (cx - wr.left - Z.tx) / Z.scale;
+    var ly = (cy - wr.top - Z.ty) / Z.scale;
+    if (next <= Z.MIN) { resetZoom(false); return; }
+    Z.scale = next;
+    Z.tx = cx - wr.left - next * lx;
+    Z.ty = cy - wr.top - next * ly;
+    applyZoom();
+  }
+
+  function twoPointers() {
+    var out = [];
+    activePointers.forEach(function (p) {
+      if (out.length < 2) out.push(p);
+    });
+    return out;
+  }
+
+  // 핀치 시작 시점의 “손가락 사이 중심 밑에 있던 사진 좌표”를 기준점으로 잡는다.
+  // 이후 중심이 움직이면 그 기준점이 계속 중심 밑에 붙어 있게 배율·위치를 다시 푼다.
+  function beginPinch() {
+    var tp = twoPointers();
+    if (tp.length < 2) { pinchRef = null; return; }
+    var dx = tp[1].x - tp[0].x, dy = tp[1].y - tp[0].y;
+    var dist = Math.sqrt(dx * dx + dy * dy);
+    if (dist < 6) dist = 6;
+    var mx = (tp[0].x + tp[1].x) / 2, my = (tp[0].y + tp[1].y) / 2;
+    var wr = wrap.getBoundingClientRect();
+    pinchRef = {
+      dist: dist,
+      scale: Z.scale,
+      mx: mx, my: my,
+      ax: (mx - wr.left - Z.tx) / Z.scale,
+      ay: (my - wr.top - Z.ty) / Z.scale
+    };
+  }
+
+  function movePinch() {
+    var tp = twoPointers();
+    if (!pinchRef || tp.length < 2) return;
+    var dx = tp[1].x - tp[0].x, dy = tp[1].y - tp[0].y;
+    var dist = Math.sqrt(dx * dx + dy * dy) || 1;
+    var mx = (tp[0].x + tp[1].x) / 2, my = (tp[0].y + tp[1].y) / 2;
+    var next = clamp(pinchRef.scale * (dist / pinchRef.dist), Z.MIN, Z.MAX);
+    var wr = wrap.getBoundingClientRect();
+    Z.scale = next;
+    Z.tx = mx - wr.left - next * pinchRef.ax;
+    Z.ty = my - wr.top - next * pinchRef.ay;
+    applyZoom();
+  }
+
+  zoomChip.addEventListener('click', function () { resetZoom(true); });
+
   /* ======================= pointer ======================= */
   function toImg(e) {
+    // 확대·이동 상태에서도 rect는 변환 반영 후 값이므로 그대로 정확하다
     var r = canvas.getBoundingClientRect();
     return [
       (e.clientX - r.left) * S.W / (r.width || 1),
@@ -823,12 +980,8 @@
     if (h && h.className.indexOf('off') < 0) h.className = 'hint off';
   }
 
-  function onDown(e) {
-    if (!S.W || S.cur) return;
-    if (e.pointerType === 'mouse' && e.button !== 0) return;
-    e.preventDefault();
+  function startStroke(e) {
     hideHint();
-    try { canvas.setPointerCapture(e.pointerId); } catch (err) {}
     S.pointerId = e.pointerId;
     var p = toImg(e);
     var brush = Math.max(6, Math.round(S.brush * brushScale()));
@@ -837,11 +990,14 @@
       brush: brush,
       strength: S.strength,
       color: S.color,
-      pts: [p]
+      pts: [p],
+      _redo0: S.redo,
+      _saved0: S.saved
     };
     if (st.mode === 'mosaic') st.block = Math.max(4, Math.round(brush * (0.5 - 0.06 * st.strength)));
     if (st.mode === 'blur') st.k = Math.round(2.6 + st.strength * 1.7);
 
+    gesture = 'draw';
     S.cur = st;
     S.strokes.push(st);
     S.redo = [];
@@ -855,10 +1011,65 @@
     if (S.saved) { S.saved = false; updateMeta(); }
   }
 
+  // 아직 끝나지 않은 1-포인터 스트로크를 즉시 되돌린다(두 번째 손가락이 닿았을 때).
+  function cancelStroke() {
+    var st = S.cur;
+    S.cur = null;
+    S.pointerId = null;
+    if (!st) return;
+    st.small = null;
+    var i = S.strokes.lastIndexOf(st);
+    if (i >= 0) S.strokes.splice(i, 1);
+    if (st._redo0) S.redo = st._redo0;
+    if (st._saved0) { S.saved = true; updateMeta(); }
+    renderAll();
+    updateToolState();
+    gesture = 'none';
+  }
+
+  function endStroke() {
+    if (S.cur) S.cur.small = null;
+    S.cur = null;
+    S.pointerId = null;
+    if (gesture === 'draw') gesture = 'none';
+    updateToolState();
+  }
+
+  function onDown(e) {
+    if (!S.W) return;
+    if (e.pointerType === 'mouse' && e.button !== 0) return;
+    // 같은 포인터의 중복 pointerdown(캡처 중 버튼 클릭 등)은 무시하고 기본 동작을 살린다
+    if (activePointers.has(e.pointerId)) return;
+    finishZoomAnim();
+    e.preventDefault();
+    activePointers.set(e.pointerId, { x: e.clientX, y: e.clientY, type: e.pointerType || 'mouse' });
+    try { canvas.setPointerCapture(e.pointerId); } catch (err) {}
+
+    if (activePointers.size >= 2) {
+      // 두 번째 손가락: 방금 찍힌 1-포인터 획을 지우고 핀치/팬으로 전환
+      cancelStroke();
+      hideHint();
+      beginPinch();
+      gesture = 'pinch';
+      return;
+    }
+    // 핀치가 끝나고 남은 손가락이 아직 붙어 있으면 그리지 않는다(오작동 방지)
+    if (gesture === 'lock') return;
+    startStroke(e);
+  }
+
   function onMove(e) {
+    var rec = activePointers.get(e.pointerId);
+    if (rec) { rec.x = e.clientX; rec.y = e.clientY; }
+
+    if (gesture === 'pinch') {
+      e.preventDefault();
+      movePinch();
+      return;
+    }
     if (!S.cur || e.pointerId !== S.pointerId) return;
     e.preventDefault();
-    var evs = (e.getCoalescedEvents && e.getCoalescedEvents && e.getCoalescedEvents().length) ? e.getCoalescedEvents() : [e];
+    var evs = (e.getCoalescedEvents && e.getCoalescedEvents().length) ? e.getCoalescedEvents() : [e];
     var st = S.cur;
     for (var i = 0; i < evs.length; i++) {
       var p = toImg(evs[i]);
@@ -871,21 +1082,59 @@
     }
   }
 
+  function dropPointer(e) {
+    if (!e || e.pointerId === undefined) return;
+    activePointers.delete(e.pointerId);
+    try { canvas.releasePointerCapture(e.pointerId); } catch (err) {}
+  }
+
+  function settleGesture() {
+    if (activePointers.size >= 2) { beginPinch(); return; }
+    pinchRef = null;
+    gesture = activePointers.size === 1 ? 'lock' : 'none';
+  }
+
   function onUp(e) {
-    if (!S.cur) return;
-    if (e && e.pointerId !== undefined && e.pointerId !== S.pointerId) return;
-    try { canvas.releasePointerCapture(S.pointerId); } catch (err) {}
-    if (S.cur) S.cur.small = null;
-    S.cur = null;
-    S.pointerId = null;
-    updateToolState();
+    var id = e && e.pointerId;
+    dropPointer(e);
+    if (gesture === 'pinch') { settleGesture(); return; }
+    if (gesture === 'draw' && id !== undefined && id !== S.pointerId) return;
+    endStroke();
+    if (!activePointers.size) gesture = 'none';
+  }
+
+  function onCancel(e) {
+    var id = e && e.pointerId;
+    dropPointer(e);
+    if (gesture === 'pinch') { settleGesture(); return; }
+    if (gesture === 'draw' && id !== undefined && id !== S.pointerId) return;
+    cancelStroke();
+    // 취소된 뒤에도 손가락이 남아 있으면 바로 그리지 않게 잠깐 잠근다
+    gesture = activePointers.size ? 'lock' : 'none';
+  }
+
+  // 데스크톱: 마우스 휠(트랙패드 핀치 포함)로 커서 지점 기준 확대/축소
+  function onWheel(e) {
+    if (!S.W) return;
+    e.preventDefault();
+    finishZoomAnim();
+    var unit = e.deltaMode === 1 ? 16 : (e.deltaMode === 2 ? 400 : 1);
+    var dy = (e.deltaY || 0) * unit;
+    if (!dy) return;
+    var factor = Math.max(0.5, Math.min(2, Math.exp(-dy * 0.0022)));
+    zoomAt(e.clientX, e.clientY, Z.scale * factor);
   }
 
   canvas.addEventListener('pointerdown', onDown, { passive: false });
   canvas.addEventListener('pointermove', onMove, { passive: false });
   canvas.addEventListener('pointerup', onUp);
-  canvas.addEventListener('pointercancel', onUp);
+  canvas.addEventListener('pointercancel', onCancel);
+  canvas.addEventListener('wheel', onWheel, { passive: false });
   canvas.addEventListener('contextmenu', function (e) { e.preventDefault(); });
+  // 구형 iOS Safari의 자체 핀치 줌 제스처를 막아 두 손가락이 모두 우리 로직으로 오게 한다
+  ['gesturestart', 'gesturechange', 'gestureend'].forEach(function (n) {
+    canvas.addEventListener(n, function (e) { e.preventDefault(); }, { passive: false });
+  });
 
   /* ======================= tools ======================= */
   function updateToolState() {
@@ -1044,8 +1293,12 @@
     var aw = Math.max(40, stageInner.clientWidth);
     var ah = Math.max(40, stageInner.clientHeight);
     var ratio = Math.min(aw / S.W, ah / S.H);
-    canvas.style.width = Math.floor(S.W * ratio) + 'px';
-    canvas.style.height = Math.floor(S.H * ratio) + 'px';
+    var cw = Math.floor(S.W * ratio), ch = Math.floor(S.H * ratio);
+    canvas.style.width = cw + 'px';
+    canvas.style.height = ch + 'px';
+    Z.fitW = cw; Z.fitH = ch;
+    // 화면 크기가 바뀌면 확대 기준도 바뀌므로 기본 맞춤으로 돌린다
+    resetZoom(false);
   }
   window.addEventListener('resize', function () { fitCanvas(); syncPanelVar(); });
   window.addEventListener('orientationchange', function () { setTimeout(fitCanvas, 220); });
@@ -1096,6 +1349,7 @@
       '<ol class="steps">' +
       '<li><b>사진 선택</b> — 위치·기기·촬영 시간이 들어 있는지 바로 알려드려요.</li>' +
       '<li><b>손가락으로 문지르기</b> — 얼굴, 계좌번호, 차량번호를 가립니다. 모자이크·블러·단색 가리기 중에 고르세요.</li>' +
+      '<li><b>두 손가락으로 확대</b> — 정밀한 곳은 벌려서 확대(최대 6배)하고, 두 손가락으로 끌어 옮기세요. 오른쪽 위 <b>“맞춤”</b> 알약을 누르면 원래 크기로 돌아갑니다.</li>' +
       '<li><b>EXIF 제거하고 저장</b> — 사진을 다시 그려서 저장하므로 원본에 붙은 모든 기록이 지워집니다.</li>' +
       '</ol>' +
       '<div class="okBox">사진은 서버로 보내지 않습니다. 인터넷을 끊어도 똑같이 동작해요 — 모든 처리는 브라우저 안에서만 일어납니다.</div>' +
@@ -1292,7 +1546,12 @@
   updateToolState();
   fitCanvas();
   syncPanelVar();
-  window.EXIFMOSAIC = { state: S, loadImage: loadImage, renderAll: renderAll, undo: undo, redo: redo, parseMeta: parseMeta };
+  window.EXIFMOSAIC = {
+    state: S, loadImage: loadImage, renderAll: renderAll, undo: undo, redo: redo, parseMeta: parseMeta,
+    zoom: Z, resetZoom: resetZoom, zoomAt: zoomAt,
+    getGesture: function () { return gesture; },
+    getPointers: function () { return activePointers.size; }
+  };
 })();
 </script>
 </body>

@@ -8,7 +8,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="선홍 ♥ 양지공주님">
-<meta name="description" content="양지공주님과 선홍만을 위한 미니 아케이드. 벽바둑 2, 흑과 백, 사진 EXIF 삭제·모자이크를 한 곳에서.">
+<meta name="description" content="양지공주님과 선홍만을 위한 미니 아케이드. 게임 2종(벽바둑 2·흑과 백)과 사진 EXIF 삭제·모자이크 유틸리티를 한 곳에서.">
 <title>👑 선홍 ♥ 양지공주님 아케이드</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='88'%3E%F0%9F%91%91%3C/text%3E%3C/svg%3E">
 <style>
@@ -114,34 +114,45 @@ h1 .l2{
 
 /* ---------- STAGE ---------- */
 /* 헤더 아래 장식 디바이더 */
-.ornament{display:flex;align-items:center;justify-content:center;gap:9px;margin:17px 0 0}
+.ornament{display:flex;align-items:center;justify-content:center;gap:9px;margin:15px 0 0}
 .ornament i{display:block;height:1px;width:52px;background:linear-gradient(90deg,rgba(var(--gold-rgb),0),rgba(var(--gold-rgb),.55))}
 .ornament i:last-child{background:linear-gradient(90deg,rgba(var(--gold-rgb),.55),rgba(var(--gold-rgb),0))}
 .ornament b{display:block;width:5px;height:5px;transform:rotate(45deg);border:1px solid rgba(var(--gold-rgb),.7);background:rgba(var(--gold-rgb),.25)}
 
-.stage{flex:1 1 auto;display:flex;flex-direction:column;justify-content:center;gap:11px;padding:20px 0 16px;min-height:0}
-.stage-head{display:flex;align-items:center;justify-content:space-between;padding:0 3px 1px}
-.stage-head .lb{display:flex;align-items:center;gap:6px;font-size:9px;font-weight:900;letter-spacing:1.7px;color:#a98fa0}
-.stage-head .lb::before{content:"";width:14px;height:1px;background:linear-gradient(90deg,rgba(var(--gold-rgb),0),var(--gold))}
-.stage-head .cnt{
-  font-size:9px;font-weight:900;letter-spacing:.6px;color:#e8cf9b;
-  padding:2.5px 8px;border-radius:20px;border:1px solid rgba(var(--gold-rgb),.34);
-  background:linear-gradient(180deg,rgba(var(--gold-rgb),.16),rgba(var(--gold-rgb),.05));
-}
+.stage{flex:1 1 auto;display:flex;flex-direction:column;justify-content:center;gap:15px;padding:18px 0 6px;min-height:0}
 
-.cards{display:grid;grid-template-columns:1fr;gap:11px}
+/* 섹션(게임 / 유틸리티) — 각자 헤더 + 카드 묶음 */
+.group{display:flex;flex-direction:column;gap:8px;min-height:0}
+.group-games{--hac:var(--rose-rgb)}
+.group-tools{--hac:var(--gold-rgb)}
+
+.stage-head{display:flex;align-items:center;justify-content:space-between;padding:0 3px}
+.stage-head .lb{display:flex;align-items:center;gap:6px;font-size:9px;font-weight:900;letter-spacing:1.7px;color:#c79fb2}
+.group-tools .stage-head .lb{color:#e0c48d}
+.stage-head .lb::before{
+  content:"";width:14px;height:1px;
+  background:linear-gradient(90deg,rgba(var(--hac),0),rgba(var(--hac),1));
+}
+.stage-head .cnt{
+  font-size:9px;font-weight:900;letter-spacing:.6px;color:#f6dbe7;
+  padding:2.5px 8px;border-radius:20px;border:1px solid rgba(var(--hac),.34);
+  background:linear-gradient(180deg,rgba(var(--hac),.16),rgba(var(--hac),.05));
+}
+.group-tools .stage-head .cnt{color:#f3e2ba}
+
+.cards{display:grid;grid-template-columns:1fr;gap:10px}
 .card{
   position:relative;display:flex;align-items:center;gap:11px;
-  padding:15px 14px 15px 12px;border-radius:16px;text-decoration:none;color:inherit;
+  padding:14px 14px 14px 12px;border-radius:16px;text-decoration:none;color:inherit;
   background:linear-gradient(180deg,rgba(255,255,255,.062),rgba(255,255,255,.022));
   border:1px solid var(--line);
   box-shadow:0 8px 22px rgba(3,7,16,.34), inset 0 1px 0 rgba(255,255,255,.06);
   overflow:hidden;transition:transform .16s ease, border-color .18s ease, box-shadow .18s ease;
   animation:rise .5s cubic-bezier(.22,.85,.3,1) both;
 }
-.card:nth-child(1){animation-delay:.03s}
-.card:nth-child(2){animation-delay:.10s}
-.card:nth-child(3){animation-delay:.17s}
+.cards .card:nth-child(1){animation-delay:.03s}
+.cards .card:nth-child(2){animation-delay:.10s}
+.group-tools .card{animation-delay:.17s}
 @keyframes rise{from{opacity:0;transform:translateY(9px)}to{opacity:1;transform:none}}
 /* 카드 좌측 액센트 레일 */
 .card::before{
@@ -225,39 +236,41 @@ h1 .l2{
   color:#f7e2c0;background:rgba(var(--gold-rgb),.13);border:1px solid rgba(var(--gold-rgb),.34);
 }
 .note{
-  margin:9px 0 0;text-align:center;font-size:8.5px;font-weight:800;letter-spacing:.15px;color:#7d8ba6;line-height:1.5;
+  margin:8px 0 0;text-align:center;font-size:8.5px;font-weight:800;letter-spacing:.15px;color:#7d8ba6;line-height:1.5;
 }
 .note .hrt{color:var(--rose);font-size:9px}
 .note .sep{opacity:.4;padding:0 3px}
 
 /* ---------- DESKTOP ---------- */
 @media (min-width:760px){
-  .portal{max-width:1120px;padding-top:calc(env(safe-area-inset-top,0px) + 52px);padding-bottom:40px}
-  .crest{width:66px;height:66px;font-size:32px;border-radius:22px;margin-bottom:14px}
-  .crest::after{inset:-6px;border-radius:27px}
-  .eyebrow{font-size:9.5px;letter-spacing:3px;margin-bottom:11px}
-  h1{font-size:35px;letter-spacing:-1.3px}
-  h1 .amp{font-size:26px}
-  h1 .l2{font-size:39px;letter-spacing:-1.5px}
-  .sub{font-size:12px;margin-top:13px;gap:7px}
+  .portal{max-width:1120px;padding-top:calc(env(safe-area-inset-top,0px) + 44px);padding-bottom:34px}
+  .crest{width:62px;height:62px;font-size:30px;border-radius:21px;margin-bottom:12px}
+  .crest::after{inset:-6px;border-radius:26px}
+  .eyebrow{font-size:9.5px;letter-spacing:3px;margin-bottom:10px}
+  h1{font-size:33px;letter-spacing:-1.3px}
+  h1 .amp{font-size:25px}
+  h1 .l2{font-size:37px;letter-spacing:-1.5px}
+  .sub{font-size:12px;margin-top:12px;gap:7px}
   .sub .live{font-size:10px;padding:3px 9px}
-  .ornament{margin-top:22px;gap:12px}
+  .ornament{margin-top:18px;gap:12px}
   .ornament i{width:78px}
-  .stage{padding:26px 0 24px;gap:14px}
-  .stage-head{padding:0 4px 2px}
+  .stage{padding:22px 0 0;gap:18px}
+  .group{gap:11px}
+  .stage-head{padding:0 4px}
   .stage-head .lb{font-size:10px;letter-spacing:2.2px}
   .stage-head .cnt{font-size:10px;padding:3.5px 11px}
-  .cards{grid-template-columns:repeat(3,1fr);gap:16px}
-  .card{flex-direction:column;align-items:flex-start;gap:15px;padding:24px 22px 22px;border-radius:20px;min-height:286px}
-  .card::before{top:10%;bottom:10%}
-  .card .ic{width:64px;height:64px;font-size:30px;border-radius:19px}
-  .card .ic::after{inset:-4px;border-radius:20px}
-  .txt{gap:7px;width:100%}
-  .top{gap:8px}
-  .nm{font-size:16.5px;letter-spacing:-.5px}
-  .bdg{font-size:9.5px;padding:4px 7px}
-  .ds{font-size:12px;line-height:1.6;color:#a6b6cf}
-  .tags{margin-top:auto;gap:6px;padding-top:2px;padding-right:34px}
+
+  /* 게임: 2열 대형 타일 */
+  .cards-games{grid-template-columns:repeat(2,1fr);gap:18px}
+  .cards-games .card{flex-direction:column;align-items:flex-start;gap:13px;padding:22px 22px 20px;border-radius:20px;min-height:212px}
+  .cards-games .card::before{top:10%;bottom:10%}
+  .cards-games .ic{width:60px;height:60px;font-size:28px;border-radius:18px}
+  .cards-games .ic::after{inset:-4px;border-radius:20px}
+  .cards-games .txt{gap:7px;width:100%}
+  .cards-games .nm{font-size:16.5px;letter-spacing:-.5px}
+  .cards-games .bdg{font-size:9.5px;padding:4px 7px}
+  .cards-games .ds{font-size:12px;line-height:1.6;color:#a6b6cf}
+  .cards-games .tags{margin-top:auto;gap:6px;padding-top:2px;padding-right:34px}
   .tg{font-size:9.5px;padding:3.5px 8px;border-radius:6px}
   .go{
     position:absolute;bottom:22px;right:20px;width:28px;height:28px;line-height:26px;text-align:center;
@@ -266,36 +279,55 @@ h1 .l2{
     transition:transform .18s ease,color .18s ease,border-color .18s ease,background .18s ease;
   }
   .card:hover .go{transform:translateX(2px);color:#fff;border-color:rgba(var(--ac),.7);background:rgba(var(--ac),.16)}
-  .foot{max-width:1120px}
-  .tip{padding:13px 16px;border-radius:15px;align-items:center}
+
+  /* 유틸리티: 1장 전체폭 가로형 카드 */
+  .cards-tools{grid-template-columns:1fr;gap:0}
+  .cards-tools .card{
+    flex-direction:row;align-items:center;gap:18px;
+    padding:18px 26px 18px 22px;border-radius:20px;min-height:0;
+  }
+  .cards-tools .card::before{top:22%;bottom:22%}
+  .cards-tools .ic{width:58px;height:58px;font-size:27px;border-radius:18px}
+  .cards-tools .ic::after{inset:-4px;border-radius:20px}
+  .cards-tools .txt{gap:5px;padding-right:46px}
+  .cards-tools .nm{font-size:16.5px;letter-spacing:-.5px}
+  .cards-tools .bdg{font-size:9.5px;padding:4px 7px}
+  .cards-tools .ds{font-size:12px;line-height:1.55;color:#a6b6cf}
+  .cards-tools .tags{margin-top:2px;gap:6px}
+  .cards-tools .go{
+    position:absolute;top:50%;bottom:auto;right:22px;margin-top:-14px;
+  }
+
+  .tip{padding:12px 16px;border-radius:15px;align-items:center}
   .tip .ti{font-size:14px}
   .tip p{font-size:11px}
   .tip .kbd{font-size:10px;padding:1.5px 6px}
-  .note{font-size:9.5px;margin-top:13px}
+  .note{font-size:9.5px;margin-top:11px}
 }
 
 /* 낮은 화면(iPhone SE 375x667 등) 컴팩트 모드 — 한 화면 유지 */
 @media (max-height:750px) and (max-width:759px){
   .portal{padding-top:calc(env(safe-area-inset-top,0px) + 12px);padding-bottom:calc(env(safe-area-inset-bottom,0px) + 10px)}
-  .crest{width:48px;height:48px;font-size:23px;border-radius:16px;margin-bottom:7px}
-  .crest::after{inset:-4px;border-radius:19px}
-  .eyebrow{font-size:8px;letter-spacing:1.7px;margin-bottom:5px}
-  h1{font-size:23px}
-  h1 .l2{font-size:27px}
-  .sub{margin-top:6px;font-size:9.5px}
-  .ornament{margin-top:10px}
-  .stage{padding:12px 0 10px;gap:9px}
-  .card{padding:11px 12px 11px 11px;border-radius:15px}
-  .ic{width:44px;height:44px;font-size:21px;border-radius:13px}
-  .ic::after{inset:-3px;border-radius:16px}
-  .nm{font-size:13px}
-  .ds{font-size:9.8px;line-height:1.45}
+  .crest{width:46px;height:46px;font-size:22px;border-radius:15px;margin-bottom:6px}
+  .crest::after{inset:-4px;border-radius:18px}
+  .eyebrow{font-size:8px;letter-spacing:1.7px;margin-bottom:4px}
+  h1{font-size:22px}
+  h1 .l2{font-size:26px}
+  .sub{margin-top:5px;font-size:9.5px}
+  .ornament{margin-top:9px}
+  .stage{padding:10px 0 4px;gap:10px}
+  .group{gap:6px}
+  .card{padding:10px 12px 10px 11px;border-radius:15px}
+  .ic{width:42px;height:42px;font-size:20px;border-radius:12px}
+  .ic::after{inset:-3px;border-radius:15px}
+  .nm{font-size:12.5px}
+  .ds{font-size:9.5px;line-height:1.42}
   .tags{margin-top:0}
   .tg{font-size:8.5px;padding:2px 5.5px}
   .tip{padding:8px 10px}
   .tip p{font-size:9px}
-  .note{margin-top:7px;font-size:8px}
-  .cards{gap:8px}
+  .note{margin-top:6px;font-size:8px}
+  .cards{gap:7px}
 }
 /* 가로모드 등 아주 낮은 화면은 자연스럽게 스크롤 */
 @media (max-height:560px) and (max-width:759px){
@@ -314,59 +346,74 @@ h1 .l2{
     <div class="crest" aria-hidden="true">👑</div>
     <p class="eyebrow">For Yangji Princess · Playground</p>
     <h1>양지공주님 <span class="amp">&amp;</span> 선홍<br><span class="l2">플레이그라운드</span></h1>
-    <p class="sub"><span class="live"><i></i>READY</span><span class="dot">·</span><span>둘만의 미니 아케이드 3종</span></p>
+    <p class="sub"><span class="live"><i></i>READY</span><span class="dot">·</span><span>게임 2종 · 유틸리티 1종</span></p>
     <div class="ornament" aria-hidden="true"><i></i><b></b><i></i></div>
   </header>
 
-  <section class="stage" aria-label="게임 목록">
-    <div class="stage-head">
-      <span class="lb">GAMES</span>
-      <span class="cnt">3 TITLES</span>
-    </div>
+  <div class="stage">
 
-    <div class="cards">
+    <section class="group group-games" aria-label="게임">
+      <div class="stage-head">
+        <span class="lb">GAMES</span>
+        <span class="cnt">2 TITLES</span>
+      </div>
 
-      <a class="card c-royal" href="./wall-baduk2.html">
-        <span class="ic" aria-hidden="true">👑</span>
-        <span class="txt">
-          <span class="top">
-            <span class="nm">양지공주님 전용 벽바둑 2</span>
-            <span class="bdg hot">인기</span>
+      <div class="cards cards-games">
+
+        <a class="card c-royal" href="./wall-baduk2.html">
+          <span class="ic" aria-hidden="true">👑</span>
+          <span class="txt">
+            <span class="top">
+              <span class="nm">양지공주님 전용 벽바둑 2</span>
+              <span class="bdg hot">인기</span>
+            </span>
+            <span class="ds">벽으로 길을 막고 영역을 차지하는 1:1 전략 보드게임 (온라인 · AI · 3인전)</span>
+            <span class="tags"><span class="tg">온라인 1:1</span><span class="tg">전략</span></span>
           </span>
-          <span class="ds">벽으로 길을 막고 영역을 차지하는 1:1 전략 보드게임 (온라인 · AI · 3인전)</span>
-          <span class="tags"><span class="tg">온라인 1:1</span><span class="tg">전략</span></span>
-        </span>
-        <span class="go" aria-hidden="true">›</span>
-      </a>
+          <span class="go" aria-hidden="true">›</span>
+        </a>
 
-      <a class="card c-ivory" href="./black-white.html">
-        <span class="ic" aria-hidden="true">🖤</span>
-        <span class="txt">
-          <span class="top">
-            <span class="nm">양지공주님 전용 흑과 백</span>
-            <span class="bdg new">NEW</span>
+        <a class="card c-ivory" href="./black-white.html">
+          <span class="ic" aria-hidden="true">🖤</span>
+          <span class="txt">
+            <span class="top">
+              <span class="nm">양지공주님 전용 흑과 백</span>
+              <span class="bdg new">NEW</span>
+            </span>
+            <span class="ds">0~8 타일의 흑·백만 보고 승부하는 9라운드 1:1 심리전 (온라인 · AI)</span>
+            <span class="tags"><span class="tg">온라인 1:1</span><span class="tg">심리전</span></span>
           </span>
-          <span class="ds">0~8 타일의 흑·백만 보고 승부하는 9라운드 1:1 심리전 (온라인 · AI)</span>
-          <span class="tags"><span class="tg">온라인 1:1</span><span class="tg">심리전</span></span>
-        </span>
-        <span class="go" aria-hidden="true">›</span>
-      </a>
+          <span class="go" aria-hidden="true">›</span>
+        </a>
 
-      <a class="card c-gold" href="./exif-mosaic.html">
-        <span class="ic" aria-hidden="true">🛡️</span>
-        <span class="txt">
-          <span class="top">
-            <span class="nm">사진 EXIF 삭제 · 모자이크</span>
-            <span class="bdg tool">필수</span>
+      </div>
+    </section>
+
+    <section class="group group-tools" aria-label="유틸리티">
+      <div class="stage-head">
+        <span class="lb">UTILITIES</span>
+        <span class="cnt">1 TOOL</span>
+      </div>
+
+      <div class="cards cards-tools">
+
+        <a class="card c-gold" href="./exif-mosaic.html">
+          <span class="ic" aria-hidden="true">🛡️</span>
+          <span class="txt">
+            <span class="top">
+              <span class="nm">사진 EXIF 삭제 · 모자이크</span>
+              <span class="bdg tool">필수</span>
+            </span>
+            <span class="ds">스레드·당근 업로드 전 GPS·기기정보 완전 삭제 &amp; 손가락 모자이크</span>
+            <span class="tags"><span class="tg">EXIF 삭제</span><span class="tg">오프라인</span></span>
           </span>
-          <span class="ds">스레드·당근 업로드 전 GPS·기기정보 완전 삭제 &amp; 손가락 모자이크</span>
-          <span class="tags"><span class="tg">유틸리티</span><span class="tg">오프라인</span></span>
-        </span>
-        <span class="go" aria-hidden="true">›</span>
-      </a>
+          <span class="go" aria-hidden="true">›</span>
+        </a>
 
-    </div>
-  </section>
+      </div>
+    </section>
+
+  </div>
 
   <footer class="foot">
     <div class="tip">

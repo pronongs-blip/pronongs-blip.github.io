@@ -29,8 +29,8 @@
   }
   .app{display:flex;flex-direction:column;height:100vh;height:100dvh;max-width:780px;margin:0 auto;position:relative}
 
-  header{display:flex;align-items:center;gap:8px;padding:calc(9px + env(safe-area-inset-top)) 11px 8px;flex:0 0 auto}
-  .brand{display:flex;align-items:center;gap:9px;min-width:0;flex:1}
+  header{display:flex;align-items:center;gap:8px;padding:calc(6px + env(safe-area-inset-top)) 14px 8px;flex:0 0 auto}
+  .brand{display:flex;align-items:center;gap:9px;min-width:0;flex:1;height:36px}
   .logo{width:31px;height:31px;flex:0 0 auto;border-radius:10px;display:grid;place-items:center;
     background:linear-gradient(150deg,#2c3c60,#151e33);box-shadow:inset 0 0 0 1px #2f3a58, 0 6px 16px rgba(0,0,0,.45)}
   .logo svg{width:18px;height:18px;display:block}
@@ -44,7 +44,8 @@
     color:var(--txt);font-size:12.5px;font-weight:600}
   /* 아케이드 포털 복귀 — 헤더 맨 좌측의 컴팩트 필(벽바둑 2·흑과 백과 동일 톤) */
   .portal-pill{display:inline-flex;align-items:center;justify-content:center;gap:3px;
-    height:28px;padding:0 11px 0 8px;border-radius:999px;flex:0 0 auto;
+    /* 3개 앱 공통 좌표 규격 — 폭·높이 고정 */
+    width:39px;height:28px;padding:0;border-radius:999px;flex:0 0 auto;
     font-size:11.5px;font-weight:800;letter-spacing:-.1px;line-height:1;
     color:#dfe7f7;background:linear-gradient(180deg,rgba(255,255,255,.075),rgba(255,255,255,.025));
     border:1px solid rgba(120,155,235,.32);text-decoration:none;
@@ -221,8 +222,7 @@
 
   /* 아주 좁은 화면(≤384px)에서는 포털 알약·로고·우측 버튼을 줄여 제목·부제 잘림 방지 */
   @media (max-width:384px){
-    header{gap:7px;padding-left:10px;padding-right:10px}
-    .portal-pill{padding:0 10px 0 8px}
+    header{gap:7px;padding-right:10px}
     .logo{width:28px;height:28px;border-radius:9px}
     .logo svg{width:16.5px;height:16.5px}
     .brand{gap:7px}
@@ -231,10 +231,9 @@
     .iconbtn{width:33px;height:33px}
     .txtbtn{height:33px;padding:0 9px;font-size:11.5px}
   }
-  /* 더 좁은 화면(≤330px)에서는 쉐브론을 빼 알약 폭을 더 줄인다 */
+  /* 더 좁은 화면(≤330px): 공통 39px 필 폭은 그대로 두고 타이틀만 줄여 잘림 방지 */
   @media (max-width:330px){
-    .portal-pill{padding:0 9px}
-    .portal-pill .chev{display:none}
+    h1{font-size:13px}
   }
 
   /* 사진을 불러온 편집 상태 + 좁은 화면: 부제를 접어 타이틀·우측 버튼 자리를 확보 */

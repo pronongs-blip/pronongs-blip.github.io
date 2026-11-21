@@ -142,7 +142,8 @@ input{font-family:inherit}
 /* ---------- PORTAL (아케이드 홈으로) ---------- */
 .portal-pill{
   display:inline-flex;align-items:center;justify-content:center;gap:3px;
-  height:28px;padding:0 11px 0 8px;border-radius:999px;flex:0 0 auto;
+  /* 3개 앱 공통 좌표 규격 — 폭·높이를 고정해 화면/앱 간 픽셀 오차 0 */
+  width:39px;height:28px;padding:0;border-radius:999px;flex:0 0 auto;
   font-size:11.5px;font-weight:800;letter-spacing:-.1px;line-height:1;
   color:#e8dcc9;background:linear-gradient(180deg,rgba(255,255,255,.075),rgba(255,255,255,.025));
   border:1px solid rgba(255,212,121,.30);text-decoration:none;
@@ -152,14 +153,14 @@ input{font-family:inherit}
 .portal-pill:active{background:rgba(255,212,121,.16)}
 .portal-dock{
   position:absolute;z-index:30;top:calc(env(safe-area-inset-top,0px) + 10px);left:0;right:0;
-  max-width:420px;margin:0 auto;padding:0 14px;display:flex;pointer-events:none;
+  max-width:440px;margin:0 auto;padding:0 14px;display:flex;pointer-events:none;
 }
 .portal-dock .portal-pill{pointer-events:none}
 #home.on .portal-dock .portal-pill{pointer-events:auto}
 
 /* ---------- GAME ---------- */
 #game{gap:6px}
-.top{display:flex;flex-direction:column;gap:6px;flex:0 0 auto}
+.top{display:flex;flex-direction:column;gap:6px;flex:0 0 auto;padding:0 2px}
 .top-row{display:flex;align-items:center;gap:6px}
 .icon-btn{
   width:32px;height:32px;border-radius:9px;font-size:14px;font-weight:800;color:#b9c8e2;
@@ -404,6 +405,46 @@ input{font-family:inherit}
 .ov-row .mr{font-size:9.5px;color:var(--dim);font-weight:700;flex:0 0 auto}
 .ov-row .ar{font-size:16px;font-weight:900;font-variant-numeric:tabular-nums;flex:0 0 auto}
 .ov-row .ar small{font-size:8.5px;color:var(--dim);font-weight:700;margin-left:1px}
+/* --- 종료 결과: 사유 배지 · 최종 판 미니 프리뷰 · 보드 보기 --- */
+.ov-head .rs .rl{display:inline-block;margin-right:5px;padding:1px 5px;border-radius:5px;
+  background:rgba(255,212,121,.16);border:1px solid rgba(255,212,121,.34);color:#ffd479;
+  font-weight:900;font-size:9.5px;letter-spacing:.1px;vertical-align:1px}
+.ov-mini-wrap{margin:12px 0 2px;padding:8px;border-radius:13px;display:flex;align-items:center;gap:10px;
+  background:rgba(255,255,255,.035);border:1px solid var(--line)}
+.ov-mini{flex:0 0 auto;width:116px;height:116px;border-radius:10px;overflow:hidden;background:#0a1220;
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.08)}
+.ov-mini svg{display:block;width:100%;height:100%}
+.ov-mini-cap{flex:1;min-width:0;display:flex;flex-direction:column;gap:5px}
+.ov-mini-cap .t{font-size:11px;font-weight:900;color:#e9effb;letter-spacing:-.1px}
+.ov-mini-cap .k{display:flex;align-items:center;gap:5px;font-size:9.5px;font-weight:700;color:#b9c8e2;line-height:1.35}
+.ov-mini-cap .k i{width:9px;height:9px;border-radius:3px;flex:0 0 auto;font-style:normal}
+.ov-rowcap{margin:9px 0 -1px;font-size:9.5px;font-weight:900;color:var(--dim);letter-spacing:.2px}
+.ov-note{margin:8px 0 0;font-size:10.5px;color:var(--dim);text-align:center;line-height:1.4}
+.ov-see-row{margin-top:11px}
+.ov-see{width:100%;height:42px;border-radius:12px;font-size:13px;font-weight:900;letter-spacing:-.1px;
+  color:#ffe9b8;background:rgba(255,212,121,.11);border:1px solid rgba(255,212,121,.40)}
+.ov-see:active{background:rgba(255,212,121,.2)}
+.ov-see-row + .rules-close{margin-top:8px}
+/* 접힌(보드 보기) 상태 — 얇은 결과 배너만 남기고 최종 판을 그대로 노출 */
+#overModal.boardview{background:rgba(4,7,14,.10);backdrop-filter:none;-webkit-backdrop-filter:none;
+  padding:0;overflow:hidden;pointer-events:none}
+#overModal.boardview .card{display:none}
+#overModal.boardview .ov-boardbar{display:flex}
+.ov-boardbar{display:none;position:absolute;left:12px;right:12px;
+  bottom:calc(env(safe-area-inset-bottom,0px) + 12px);align-items:center;gap:9px;
+  padding:8px 9px 8px 12px;border-radius:14px;pointer-events:auto;
+  background:rgba(13,20,36,.93);border:1px solid rgba(255,212,121,.32);
+  box-shadow:0 14px 36px rgba(0,0,0,.6);
+  backdrop-filter:blur(9px);-webkit-backdrop-filter:blur(9px)}
+.ov-boardbar .obb-main{flex:1;min-width:0}
+.ov-boardbar .obb-tt{font-size:12.5px;font-weight:900;letter-spacing:-.2px;color:#fff;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ov-boardbar .obb-sub{font-size:9.5px;font-weight:700;color:var(--dim);margin-top:2px;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ov-boardbar .obb-btn{flex:0 0 auto;height:34px;padding:0 13px;border-radius:10px;font-size:12px;font-weight:900;
+  color:#231405;background:linear-gradient(180deg,#ffeecb 0%,#fbbf24 60%,#f4c470 100%);
+  border:1px solid rgba(255,255,255,.3)}
+.ov-boardbar .obb-btn:active{filter:brightness(.97)}
 </style>
 </head>
 <body>
@@ -652,11 +693,31 @@ input{font-family:inherit}
         <div class="tt" id="ovTitle">P1 승리</div>
         <div class="rs" id="ovReason"></div>
       </div>
+      <div class="ov-mini-wrap">
+        <div class="ov-mini" id="ovMini" aria-label="최종 판 미니 보드"></div>
+        <div class="ov-mini-cap">
+          <div class="t">최종 판</div>
+          <div class="k" id="ovMiniLegend"></div>
+          <div class="k"><i style="background:rgba(150,172,214,.45)"></i>회색 칸 = 공유·중립</div>
+        </div>
+      </div>
+      <div class="ov-rowcap" id="ovRowCap">최종 점수 · 차지한 영역 칸</div>
       <div class="ov-rows" id="ovRows"></div>
+      <div class="ov-note" id="ovNote">‘최종 판 보기’를 누르면 마지막 보드를 크게 볼 수 있습니다.</div>
+      <div class="ov-see-row">
+        <button class="ghost ov-see" id="seeBoardBtn">🖼 최종 판 보기</button>
+      </div>
       <div class="rules-close">
         <button class="cta" id="againBtn" style="flex:1">다시 하기</button>
         <button class="ghost" id="toHomeBtn" style="flex:0 0 96px">처음으로</button>
       </div>
+    </div>
+    <div class="ov-boardbar" id="ovBoardBar" aria-hidden="true">
+      <div class="obb-main">
+        <div class="obb-tt" id="obbTitle">🏆 승리</div>
+        <div class="obb-sub" id="obbSub"></div>
+      </div>
+      <button class="obb-btn" id="backToResultBtn">결과 보기</button>
     </div>
   </div>
 
@@ -883,6 +944,30 @@ function decideWinner(A, players) {
    상태
    ========================================================= */
 let st = null;
+let overBoardView = false;   /* true = 결과 모달을 접고 최종 판을 노출하는 상태 */
+
+/* 종료 사유 문구 */
+const OVER_REASON = {
+  separated: '모든 말의 영역이 완전히 분리되었습니다.',
+  blocked: '양쪽 모두 이동할 수 없어 영역 점수로 판정했습니다.'
+};
+function pureRegionCount(A, players) {
+  const cnt = new Array(players).fill(0);
+  for (const rg of A.regions) if (rg.players.size === 1) cnt[rg.players.values().next().value]++;
+  return cnt;
+}
+function scoreLine() {
+  if (!st) return '';
+  const A = st.analysis || analyze(st);
+  return A.pure.slice(0, st.players).join(' : ');
+}
+function lastMoveLine() {
+  const lm = st && st.lastMove;
+  if (!lm || lm.t !== 'move') return '';
+  const inf = histInfo(lm);
+  if (!inf) return '';
+  return '마지막 수 ' + dispName(lm.p) + ' ' + (inf.glyph ? inf.glyph + ' ' : '') + inf.main;
+}
 
 function cloneState(g) {
   return {
@@ -1868,12 +1953,14 @@ function renderBoard() {
   const A = st.analysis || analyze(st);
   const mine = st.net !== 'online' || st.turn === mySeat();
   const placeTurn = st.phase === 'place' && !st.ai[st.turn] && !st.busy && mine;
+  /* 종료 후에는 영역 색을 한 단계 붉혀 최종 판을 한눈에 읽게 한다 */
+  const pureA = st.phase === 'over' ? 0.28 : 0.17;
   for (let i = 0; i < N * N; i++) {
     const c = cx(i), r = cy(i);
     const rect = el('rect', { x: c * CELL + 4, y: r * CELL + 4, width: CELL - 8, height: CELL - 8, rx: 13 }, 'cell');
     const rg = A.regions[A.reg[i]];
     let fill = 'rgba(255,255,255,0.035)';
-    if (rg && rg.players.size === 1) fill = hexA(COLORS[rg.players.values().next().value], 0.17);
+    if (rg && rg.players.size === 1) fill = hexA(COLORS[rg.players.values().next().value], pureA);
     else if (rg && rg.players.size > 1) fill = 'rgba(150,172,214,0.085)';
     rect.setAttribute('fill', fill);
     rect.setAttribute('data-cell', i);
@@ -2288,7 +2375,8 @@ function showModal(sel) {
 }
 function hideModal(sel) {
   const m = $(sel);
-  if (m) m.classList.remove('on');
+  if (m) { m.classList.remove('on'); m.classList.remove('boardview'); }
+  if (sel === '#overModal') overBoardView = false;
   if (st && !document.querySelector('.overlay.on')) st.paused = false;
 }
 function startGame(cfg) {
@@ -2322,9 +2410,24 @@ function showOver() {
   $('#ovEmoji').textContent = w > -1 ? '🏆' : '🤝';
   $('#ovTitle').textContent = w > -1 ? dispName(w) + ' 승리' : '무승부';
   $('#ovTitle').style.color = w > -1 ? COLORS[w] : '#e9effb';
-  $('#ovReason').textContent = (st.overReason === 'blocked')
-    ? '모두 이동할 수 없어 영역 점수로 판정했습니다.'
-    : '모든 말이 서로 다른 구역으로 완전히 분리되었습니다.';
+  /* 종료 사유를 배지와 함께 명시 */
+  $('#ovReason').innerHTML = '<span class="rl">종료 사유</span>'
+    + esc(OVER_REASON[st.overReason] || '게임이 종료되었습니다.');
+  /* 최종 판 미니 프리뷰 + 범례 */
+  renderOverMini();
+  const legend = $('#ovMiniLegend');
+  if (legend) {
+    legend.innerHTML = '';
+    for (let p = 0; p < st.players; p++) {
+      const d = document.createElement('div');
+      d.className = 'k';
+      d.innerHTML = '<i style="background:' + COLORS[p] + '"></i>' + esc(dispName(p))
+        + ' <b style="color:#fff">' + A.pure[p] + '칸</b>';
+      legend.appendChild(d);
+    }
+  }
+  /* 플레이어별 최종 점수(영역 칸) */
+  const rc = pureRegionCount(A, st.players);
   const rows = $('#ovRows');
   rows.innerHTML = '';
   const order = [];
@@ -2335,12 +2438,68 @@ function showOver() {
     d.className = 'ov-row' + (p === w ? ' win' : '');
     d.innerHTML = '<span class="dt" style="background:' + COLORS[p] + '"></span>'
       + '<span class="nm">' + dispName(p) + (st.ai[p] ? ' <i style="font-style:normal;font-size:9px;color:#8ea0c0">AI</i>' : '') + '</span>'
-      + '<span class="mr">최대 ' + A.maxReg[p] + '칸</span>'
+      + '<span class="mr">영역 ' + rc[p] + '곳 · 최대 ' + A.maxReg[p] + '칸</span>'
       + '<span class="ar">' + A.pure[p] + '<small>칸</small></span>';
     rows.appendChild(d);
   }
+  /* 접힌 배너(보드 보기 상태에서 노출) 문구 */
+  $('#obbTitle').textContent = (w > -1 ? '🏆 ' + dispName(w) + ' 승리' : '🤝 무승부');
+  $('#obbTitle').style.color = w > -1 ? COLORS[w] : '#fff';
+  const lm = lastMoveLine();
+  $('#obbSub').textContent = '최종 점수 ' + scoreLine() + (lm ? ' · ' + lm : '');
   $('#againBtn').textContent = (st.net === 'online') ? (isHost() ? '다시 하기 (상대에게 알림)' : '다시 하기 요청') : '다시 하기';
+  setOverBoardView(false);
   showModal('#overModal');
+}
+
+/* ---------------- 종료 결과: 최종 판 미니 프리뷰 ---------------- */
+function renderOverMini() {
+  const box = $('#ovMini');
+  if (!box || !st) return;
+  const A = st.analysis || analyze(st);
+  const svg = el('svg', { viewBox: '0 0 ' + B + ' ' + B, preserveAspectRatio: 'xMidYMid meet' });
+  svg.appendChild(el('rect', { x: 0, y: 0, width: B, height: B, rx: 24, fill: '#0a1220' }));
+  for (let i = 0; i < N * N; i++) {
+    const c = cx(i), r = cy(i);
+    const rg = A.regions[A.reg[i]];
+    let fill = 'rgba(255,255,255,.055)';
+    if (rg && rg.players.size === 1) fill = hexA(COLORS[rg.players.values().next().value], 0.46);
+    else if (rg && rg.players.size > 1) fill = 'rgba(150,172,214,.16)';
+    svg.appendChild(el('rect', { x: c * CELL + 5, y: r * CELL + 5, width: CELL - 10, height: CELL - 10, rx: 16, fill: fill }));
+  }
+  for (const k of st.walls) {
+    svg.appendChild(el('rect', Object.assign({ rx: 4, fill: 'rgba(255,222,158,.92)' }, wallRect(k, 15))));
+  }
+  const lm = st.lastMove;
+  if (lm && lm.t === 'move' && lm.from != null && lm.to != null) {
+    svg.appendChild(el('rect', {
+      x: cx(lm.from) * CELL + 14, y: cy(lm.from) * CELL + 14, width: CELL - 28, height: CELL - 28,
+      rx: 10, fill: 'none', stroke: 'rgba(142,242,255,.75)', 'stroke-width': 6, 'stroke-dasharray': '14 10'
+    }));
+    svg.appendChild(el('rect', {
+      x: cx(lm.to) * CELL + 9, y: cy(lm.to) * CELL + 9, width: CELL - 18, height: CELL - 18,
+      rx: 14, fill: 'none', stroke: 'rgba(142,242,255,.95)', 'stroke-width': 7
+    }));
+  }
+  for (const pc of st.pieces) {
+    if (pc.cell == null) continue;
+    const x = cx(pc.cell) * CELL + CELL / 2, y = cy(pc.cell) * CELL + CELL / 2;
+    if (pc.type === 'S') svg.appendChild(el('rect', { x: x - 21, y: y - 21, width: 42, height: 42, rx: 9, fill: COLORS[pc.p] }));
+    else svg.appendChild(el('circle', { cx: x, cy: y, r: 23, fill: COLORS[pc.p] }));
+  }
+  box.innerHTML = '';
+  box.appendChild(svg);
+}
+
+/* 모달 ↔ 최종 판 보기 전환 */
+function setOverBoardView(on) {
+  overBoardView = !!on;
+  const m = $('#overModal');
+  if (!m) return;
+  m.classList.toggle('boardview', overBoardView);
+  const bar = $('#ovBoardBar');
+  if (bar) bar.setAttribute('aria-hidden', overBoardView ? 'false' : 'true');
+  if (overBoardView && st) renderAll();   /* 최종 판 영역 하이라이트·마지막 수 다시 그리기 */
 }
 
 /* =========================================================
@@ -2416,6 +2575,9 @@ function bindUI() {
     startGame(cfgSel);
   });
   $('#toHomeBtn').addEventListener('click', goHome);
+  /* 종료 결과: 최종 판 보기 ↔ 결과 보기 */
+  $('#seeBoardBtn').addEventListener('click', () => setOverBoardView(true));
+  $('#backToResultBtn').addEventListener('click', () => setOverBoardView(false));
 
   /* 최근 수 바 → 히스토리 패널 */
   $('#moveBar').addEventListener('click', () => {

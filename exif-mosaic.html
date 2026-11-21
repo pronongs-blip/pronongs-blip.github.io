@@ -1,0 +1,1299 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no" />
+<meta name="theme-color" content="#0b0d12" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<meta name="format-detection" content="telephone=no" />
+<title>사진 정보 지우개 — EXIF 삭제 · 모자이크</title>
+<style>
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  :root{
+    --bg:#080a0f; --panel:#11141c; --panel2:#171b26; --line:#232937; --line2:#333b4f;
+    --txt:#edf1f8; --dim:#8d95a8; --dim2:#5c6478;
+    --accent:#5b8cff; --accent2:#3a6ae6;
+    --danger:#ff6472; --warn:#ffb43a; --ok:#38d39f;
+  }
+  html,body{height:100%;margin:0}
+  body{
+    background:radial-gradient(120% 70% at 50% -10%, #182031 0%, #0b0e14 45%, #07080c 100%);
+    color:var(--txt);
+    font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Pretendard","Noto Sans KR",system-ui,sans-serif;
+    font-size:14px;line-height:1.45;
+    overscroll-behavior:none;
+    -webkit-user-select:none;user-select:none;
+    -webkit-font-smoothing:antialiased;
+    -webkit-touch-callout:none;
+  }
+  .app{display:flex;flex-direction:column;height:100vh;height:100dvh;max-width:780px;margin:0 auto;position:relative}
+
+  header{display:flex;align-items:center;gap:10px;padding:calc(8px + env(safe-area-inset-top)) 14px 8px;flex:0 0 auto}
+  .brand{display:flex;align-items:center;gap:10px;min-width:0;flex:1}
+  .logo{width:34px;height:34px;flex:0 0 auto;border-radius:11px;display:grid;place-items:center;
+    background:linear-gradient(150deg,#2c3c60,#151e33);box-shadow:inset 0 0 0 1px #2f3a58, 0 6px 16px rgba(0,0,0,.45)}
+  .logo svg{width:19px;height:19px;display:block}
+  .brandText{min-width:0}
+  h1{font-size:15px;font-weight:700;margin:0;letter-spacing:-.25px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .sub{font-size:11px;color:var(--dim);margin:1px 0 0;letter-spacing:-.1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .hbtns{display:flex;gap:6px;flex:0 0 auto}
+  .iconbtn{width:36px;height:36px;padding:0;display:grid;place-items:center;border-radius:11px;
+    background:var(--panel2);border:1px solid var(--line);color:var(--dim);font-size:14px;font-weight:600}
+  .txtbtn{height:36px;padding:0 12px;border-radius:11px;background:var(--panel2);border:1px solid var(--line);
+    color:var(--txt);font-size:12.5px;font-weight:600}
+
+  /* --- meta bar --- */
+  .metabar{flex:0 0 auto;padding:0 12px 8px;display:none}
+  .metabar.on{display:block}
+  .chipRow{display:flex;gap:6px;overflow-x:auto;padding:1px 0 3px;scrollbar-width:none;-webkit-overflow-scrolling:touch;
+    -webkit-mask-image:linear-gradient(90deg,#000 0,#000 calc(100% - 18px),transparent 100%);
+    mask-image:linear-gradient(90deg,#000 0,#000 calc(100% - 18px),transparent 100%)}
+  .chipRow::-webkit-scrollbar{display:none}
+  .chip{flex:0 0 auto;display:inline-flex;align-items:center;gap:5px;height:26px;padding:0 9px;border-radius:9px;
+    font-size:11.5px;letter-spacing:-.15px;white-space:nowrap;
+    background:rgba(255,255,255,.045);border:1px solid var(--line);color:var(--dim)}
+  .chip b{font-weight:700;color:var(--txt)}
+  .chip.danger{background:rgba(255,100,114,.11);border-color:rgba(255,100,114,.35);color:#ffb3ba}
+  .chip.danger b{color:#ff8b96}
+  .chip.warn{background:rgba(255,180,58,.10);border-color:rgba(255,180,58,.3);color:#ffd38a}
+  .chip.ok{background:rgba(56,211,159,.10);border-color:rgba(56,211,159,.3);color:#8ef0c8}
+  .chip.saved{background:rgba(56,211,159,.16);border-color:rgba(56,211,159,.45);color:#a7f6d5}
+  .chipBtn{cursor:pointer}
+  .metaNote{display:flex;align-items:center;gap:8px;font-size:11px;color:var(--dim2);padding:2px 2px 0;letter-spacing:-.15px}
+  .metaNote .grow{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .linkish{background:none;border:0;padding:0;color:var(--accent);font-size:11px;font-weight:600;cursor:pointer}
+
+  /* --- stage --- */
+  main{flex:1 1 auto;min-height:0;position:relative}
+  #stageInner{position:absolute;inset:6px 10px;display:flex;align-items:center;justify-content:center}
+  #canvaswrap{position:relative;line-height:0;border-radius:14px;display:none}
+  #canvaswrap.on{display:block}
+  #canvas{display:block;border-radius:14px;box-shadow:0 12px 34px rgba(0,0,0,.6), 0 0 0 1px #2a3143;touch-action:none;cursor:crosshair;background:#000}
+  #origCanvas{position:absolute;inset:0;width:100%;height:100%;border-radius:14px;pointer-events:none;display:none;box-shadow:0 12px 34px rgba(0,0,0,.6), 0 0 0 1px #2a3143}
+  #origCanvas.on{display:block}
+  .hint{position:absolute;left:50%;bottom:12px;transform:translateX(-50%);white-space:nowrap;
+    background:rgba(8,10,14,.72);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+    border:1px solid rgba(255,255,255,.1);color:#dfe6f5;font-size:11.5px;padding:6px 12px;border-radius:999px;
+    pointer-events:none;transition:opacity .35s ease;letter-spacing:-.15px}
+  .hint.off{opacity:0}
+  .compareTag{position:absolute;left:10px;top:10px;background:rgba(91,140,255,.85);color:#fff;font-size:11px;
+    font-weight:700;padding:4px 9px;border-radius:8px;display:none}
+  .compareTag.on{display:block}
+
+  /* --- empty --- */
+  .empty{display:flex;flex-direction:column;align-items:center;text-align:center;padding:0 18px;gap:7px;width:100%}
+  .emptyIcon{width:74px;height:74px;border-radius:24px;display:grid;place-items:center;margin-bottom:6px;
+    background:linear-gradient(150deg,#1e2842,#111726);box-shadow:inset 0 0 0 1px #2b3552, 0 14px 34px rgba(0,0,0,.5)}
+  .empty h2{font-size:17px;margin:0;letter-spacing:-.4px;font-weight:700}
+  .empty p{margin:0;font-size:12.5px;color:var(--dim);line-height:1.6;letter-spacing:-.2px}
+  .empty .tiny{font-size:11px;color:var(--dim2);margin-top:6px;letter-spacing:-.15px}
+  .dropTip{margin-top:4px;font-size:11px;color:var(--dim2)}
+  .dropTip b{color:var(--dim)}
+
+  button{font-family:inherit;color:var(--txt);background:var(--panel2);border:1px solid var(--line);
+    border-radius:12px;padding:10px 12px;font-size:13px;cursor:pointer;touch-action:manipulation;
+    transition:transform .06s ease,background .15s,border-color .15s,opacity .15s}
+  button:active{transform:scale(.975)}
+  button:disabled{opacity:.4;cursor:default;transform:none}
+  .primary{background:linear-gradient(180deg,#5b8cff,#3a6ae6);border-color:#4a78e8;color:#fff;font-weight:700;
+    box-shadow:0 8px 20px rgba(58,106,230,.32)}
+  .big{height:50px;padding:0 30px;font-size:15px;border-radius:14px;font-weight:700}
+  .ghost{background:transparent;border-color:var(--line)}
+
+  /* --- panel --- */
+  .panel{flex:0 0 auto;padding:9px 12px calc(10px + env(safe-area-inset-bottom));
+    background:linear-gradient(180deg,rgba(13,16,23,.55),rgba(9,11,16,.97));
+    border-top:1px solid var(--line);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
+    display:none;flex-direction:column;gap:8px}
+  .panel.on{display:flex}
+
+  .modes{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;background:rgba(255,255,255,.035);
+    border:1px solid var(--line);border-radius:13px;padding:4px}
+  .mode{display:flex;align-items:center;justify-content:center;gap:6px;height:36px;border:0;background:transparent;
+    border-radius:10px;font-size:12.5px;font-weight:600;color:var(--dim);letter-spacing:-.2px;padding:0}
+  .mode.on{background:linear-gradient(180deg,#2b3a5e,#212c47);color:#fff;box-shadow:inset 0 0 0 1px #3a4a72}
+  .mode span{font-size:13px;line-height:1;opacity:.9}
+
+  .ctl{display:flex;gap:10px;align-items:flex-end}
+  .ctlCol{flex:1;min-width:0}
+  .ctlHead{display:flex;align-items:center;justify-content:space-between;font-size:11px;color:var(--dim);
+    letter-spacing:-.15px;margin-bottom:3px}
+  .ctlHead b{color:var(--txt);font-size:11px;font-variant-numeric:tabular-nums}
+
+  input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:22px;background:transparent;margin:0;display:block}
+  input[type=range]::-webkit-slider-runnable-track{height:4px;border-radius:2px;background:#2a3144}
+  input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:50%;
+    background:#fff;margin-top:-7px;box-shadow:0 1px 4px rgba(0,0,0,.5),0 0 0 1px rgba(0,0,0,.15)}
+  input[type=range]::-moz-range-track{height:4px;border-radius:2px;background:#2a3144}
+  input[type=range]::-moz-range-thumb{width:16px;height:16px;border:0;border-radius:50%;background:#fff}
+
+  .swatches{display:flex;gap:7px;height:22px;align-items:center}
+  .sw{width:24px;height:24px;border-radius:9px;padding:0;background:var(--c);border:1px solid rgba(255,255,255,.18)}
+  .sw.on{box-shadow:0 0 0 2px #0b0e14, 0 0 0 4px var(--accent)}
+
+  .tools{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+  .tools button{height:38px;padding:0;font-size:12px;font-weight:600;letter-spacing:-.2px;display:flex;align-items:center;justify-content:center;gap:4px}
+  .tools button span{font-size:13px;opacity:.85}
+
+  .saveRow{display:grid;grid-template-columns:auto 1fr;gap:8px;align-items:stretch}
+  .seg{display:flex;background:rgba(255,255,255,.04);border:1px solid var(--line);border-radius:12px;padding:3px;gap:3px}
+  .seg button{border:0;background:transparent;padding:0 11px;height:38px;font-size:12px;font-weight:700;color:var(--dim);border-radius:9px}
+  .seg button.on{background:#2b3450;color:#fff}
+  #saveBtn{height:44px;font-size:14px}
+
+  /* --- spinner --- */
+  .busy{position:absolute;inset:0;display:none;place-items:center;background:rgba(6,8,12,.72);
+    backdrop-filter:blur(4px);border-radius:14px;z-index:30;font-size:12.5px;color:#cfd7e8}
+  .busy.on{display:grid}
+  .spin{width:26px;height:26px;border-radius:50%;border:2.5px solid rgba(255,255,255,.15);
+    border-top-color:#8fb0ff;animation:sp .8s linear infinite;margin:0 auto 10px}
+  @keyframes sp{to{transform:rotate(360deg)}}
+
+  /* --- toast --- */
+  #toast{position:fixed;left:50%;bottom:calc(var(--panelh, 0px) + 16px + env(safe-area-inset-bottom));transform:translate(-50%,14px);
+    background:rgba(20,25,36,.96);border:1px solid #333c52;color:#eaf0fb;font-size:12.5px;
+    padding:10px 16px;border-radius:12px;box-shadow:0 12px 30px rgba(0,0,0,.5);
+    opacity:0;pointer-events:none;transition:opacity .2s ease,transform .2s ease;z-index:90;max-width:88vw;text-align:center;letter-spacing:-.2px}
+  #toast.on{opacity:1;transform:translate(-50%,0)}
+  #toast.warn{border-color:rgba(255,180,58,.5)}
+  #toast.ok{border-color:rgba(56,211,159,.5)}
+
+  /* --- modal --- */
+  .modal{position:fixed;inset:0;z-index:80;display:none}
+  .modal.on{display:block}
+  .backdrop{position:absolute;inset:0;background:rgba(4,6,10,.66);backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px)}
+  .sheet{position:absolute;left:0;right:0;bottom:0;max-width:780px;margin:0 auto;
+    background:linear-gradient(180deg,#151a25,#0d1017);border-radius:20px 20px 0 0;
+    border-top:1px solid #2b3346;padding:8px 16px calc(16px + env(safe-area-inset-bottom));
+    max-height:88vh;overflow-y:auto;-webkit-overflow-scrolling:touch;
+    animation:up .22s ease-out}
+  @keyframes up{from{transform:translateY(24px);opacity:.6}to{transform:none;opacity:1}}
+  .grab{width:38px;height:4px;border-radius:2px;background:#39425a;margin:2px auto 12px}
+  .sheet h3{margin:0 0 4px;font-size:16px;letter-spacing:-.35px}
+  .sheet .note{font-size:12px;color:var(--dim);margin:0 0 12px;letter-spacing:-.2px}
+  .previewBox{background:#000;border-radius:14px;overflow:hidden;margin:0 0 12px;display:grid;place-items:center;
+    box-shadow:inset 0 0 0 1px #2a3143;max-height:34vh}
+  .previewBox img{display:block;max-width:100%;max-height:34vh;object-fit:contain}
+  .vlist{list-style:none;margin:0 0 14px;padding:0;display:flex;flex-direction:column;gap:6px}
+  .vlist li{display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--dim);letter-spacing:-.2px}
+  .vlist li b{color:var(--txt);font-weight:600}
+  .vlist .tick{width:18px;height:18px;border-radius:50%;background:rgba(56,211,159,.16);color:#4fe0ac;
+    display:grid;place-items:center;font-size:11px;flex:0 0 auto}
+  .row2{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px}
+  .row2 button{height:48px;font-size:13.5px;border-radius:13px;font-weight:700}
+  .fullrow{width:100%;height:44px}
+  .kv{display:flex;flex-direction:column;gap:7px;margin:0 0 14px}
+  .kvRow{display:flex;gap:10px;font-size:12.5px;align-items:baseline}
+  .kvRow dt{flex:0 0 84px;color:var(--dim2);margin:0;font-size:11.5px}
+  .kvRow dd{flex:1;margin:0;color:var(--txt);word-break:break-all;letter-spacing:-.15px}
+  .warnBox{background:rgba(255,100,114,.08);border:1px solid rgba(255,100,114,.28);border-radius:12px;
+    padding:10px 12px;font-size:12px;color:#ffbcc2;line-height:1.55;margin-bottom:12px;letter-spacing:-.2px}
+  .okBox{background:rgba(56,211,159,.08);border:1px solid rgba(56,211,159,.28);border-radius:12px;
+    padding:10px 12px;font-size:12px;color:#a6f2d4;line-height:1.55;margin-bottom:12px;letter-spacing:-.2px}
+  .steps{font-size:12.5px;color:var(--dim);line-height:1.7;margin:0 0 14px;padding-left:18px;letter-spacing:-.2px}
+  .steps b{color:var(--txt)}
+
+  .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+
+  /* 짧은 화면(가로 모드) 대응 */
+  @media (max-height:560px){
+    header{padding:calc(4px + env(safe-area-inset-top)) 12px 4px}
+    .sub{display:none}
+    .logo{width:28px;height:28px;border-radius:9px}
+    .iconbtn,.txtbtn{height:32px}
+    .metabar .metaNote{display:none}
+    .chip{height:22px;font-size:10.5px}
+    .panel{gap:5px;padding-top:6px}
+    .mode{height:30px;font-size:11.5px}
+    .ctlHead{font-size:10px;margin-bottom:1px}
+    input[type=range]{height:18px}
+    .tools button{height:30px;font-size:11px}
+    .seg button{height:30px;padding:0 8px}
+    #saveBtn{height:34px;font-size:12.5px}
+    .emptyIcon{width:54px;height:54px;border-radius:18px}
+    .empty h2{font-size:15px}
+    .empty p{font-size:11.5px}
+    .big{height:42px;font-size:14px}
+  }
+</style>
+</head>
+<body>
+<div class="app">
+  <header>
+    <div class="brand">
+      <div class="logo" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#8fb0ff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 3l7 3v5.5c0 4.2-2.9 7.9-7 9.5-4.1-1.6-7-5.3-7-9.5V6l7-3z"/>
+          <path d="M9 12.2l2.1 2.1L15.4 10"/>
+        </svg>
+      </div>
+      <div class="brandText">
+        <h1>사진 정보 지우개</h1>
+        <p class="sub">EXIF 자동 삭제 · 손가락 모자이크</p>
+      </div>
+    </div>
+    <div class="hbtns">
+      <button class="txtbtn" id="pickBtn2" hidden>사진 바꾸기</button>
+      <button class="iconbtn" id="helpBtn" aria-label="사용 안내">?</button>
+    </div>
+  </header>
+
+  <div class="metabar" id="metabar"></div>
+
+  <main>
+    <div id="stageInner">
+      <div class="empty" id="empty">
+        <div class="emptyIcon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="34" height="34" fill="none" stroke="#7f93bb" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="6" width="18" height="14" rx="3"/>
+            <circle cx="12" cy="13" r="3.4"/>
+            <path d="M8.5 6l1.2-2h4.6L15.5 6"/>
+          </svg>
+        </div>
+        <h2>사진을 고르면 정보부터 지워드려요</h2>
+        <p>위치·기기·촬영 시간(EXIF)은 자동으로 삭제되고,<br/>얼굴이나 계좌번호는 손가락으로 문질러 가립니다.</p>
+        <button class="primary big" id="pickBtn" style="margin-top:8px">사진 선택</button>
+        <p class="dropTip">여기로 <b>끌어다 놓아도</b> 됩니다</p>
+        <p class="tiny">사진은 서버로 전송되지 않아요 · 100% 이 기기 안에서만 처리</p>
+      </div>
+
+      <div id="canvaswrap">
+        <canvas id="canvas" aria-label="편집 캔버스"></canvas>
+        <canvas id="origCanvas" aria-hidden="true"></canvas>
+        <div class="compareTag" id="compareTag">원본</div>
+        <div class="hint" id="hint">얼굴이나 계좌번호를 손가락으로 문지르세요</div>
+        <div class="busy" id="busy"><div><div class="spin"></div><span id="busyText">처리 중…</span></div></div>
+      </div>
+    </div>
+  </main>
+
+  <section class="panel" id="panel">
+    <div class="modes" role="group" aria-label="가리기 방식">
+      <button class="mode on" data-mode="mosaic"><span>▦</span>모자이크</button>
+      <button class="mode" data-mode="blur"><span>◍</span>블러</button>
+      <button class="mode" data-mode="solid"><span>■</span>가리기</button>
+    </div>
+
+    <div class="ctl">
+      <div class="ctlCol">
+        <div class="ctlHead"><span>브러시</span><b id="brushVal">40</b></div>
+        <input type="range" id="brush" min="12" max="80" step="1" value="40" aria-label="브러시 크기">
+      </div>
+      <div class="ctlCol" id="strengthCol">
+        <div class="ctlHead"><span id="strengthLabel">모자이크 강도</span><b id="strengthVal">3</b></div>
+        <input type="range" id="strength" min="1" max="5" step="1" value="3" aria-label="강도">
+      </div>
+      <div class="ctlCol" id="colorCol" hidden>
+        <div class="ctlHead"><span>가리기 색</span></div>
+        <div class="swatches">
+          <button class="sw on" data-color="#000000" style="--c:#000" aria-label="검정"></button>
+          <button class="sw" data-color="#ffffff" style="--c:#fff" aria-label="흰색"></button>
+        </div>
+      </div>
+    </div>
+
+    <div class="tools">
+      <button id="undoBtn"><span>↶</span>되돌리기</button>
+      <button id="redoBtn"><span>↷</span>다시</button>
+      <button id="compareBtn"><span>◉</span>원본</button>
+      <button id="clearBtn"><span>⌫</span>전체 지우기</button>
+    </div>
+
+    <div class="saveRow">
+      <div class="seg" id="fmtSeg" role="group" aria-label="저장 형식">
+        <button data-fmt="jpeg" class="on">JPG</button>
+        <button data-fmt="png">PNG</button>
+      </div>
+      <button class="primary" id="saveBtn">EXIF 제거하고 저장</button>
+    </div>
+  </section>
+</div>
+
+<div id="toast" role="status" aria-live="polite"></div>
+
+<div class="modal" id="modal">
+  <div class="backdrop" data-close="1"></div>
+  <div class="sheet" role="dialog" aria-modal="true" aria-label="안내">
+    <div class="grab"></div>
+    <div id="sheetBody"></div>
+  </div>
+</div>
+
+<input type="file" id="fileInput" accept="image/*" hidden>
+
+<script>
+(function () {
+  'use strict';
+
+  /* ======================= refs & state ======================= */
+  var $ = function (s) { return document.querySelector(s); };
+  var canvas = $('#canvas');
+  var ctx = canvas.getContext('2d');
+  var origCanvas = $('#origCanvas');
+  var origCtx = origCanvas.getContext('2d');
+  var stageInner = $('#stageInner');
+  var wrap = $('#canvaswrap');
+  var fileInput = $('#fileInput');
+
+  var MAX_WORK = 2400;
+  var MAX_PIXELS = 12e6;
+
+  var S = {
+    file: null,
+    fileName: '',
+    fileSize: 0,
+    origW: 0,
+    origH: 0,
+    outW: 0,
+    outH: 0,
+    W: 0,
+    H: 0,
+    base: document.createElement('canvas'),
+    strokes: [],
+    redo: [],
+    cur: null,
+    pointerId: null,
+    mode: 'mosaic',
+    brush: 40,
+    strength: 3,
+    color: '#000000',
+    fmt: 'jpeg',
+    info: null,
+    saved: false,
+    outBlob: null,
+    outUrl: '',
+    full: false
+  };
+
+  function dd(n) { return (n < 10 ? '0' : '') + n; }
+  function stamp() {
+    var d = new Date();
+    return '' + d.getFullYear() + dd(d.getMonth() + 1) + dd(d.getDate());
+  }
+  function fmtBytes(n) {
+    if (!n && n !== 0) return '-';
+    if (n < 1024) return n + 'B';
+    if (n < 1024 * 1024) return (n / 1024).toFixed(n < 10240 ? 1 : 0) + 'KB';
+    return (n / 1048576).toFixed(1) + 'MB';
+  }
+  function esc(s) {
+    return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+    });
+  }
+  function clamp(v, a, b) { return v < a ? a : (v > b ? b : v); }
+
+  var toastEl = $('#toast'), toastTimer = null;
+  function toast(msg, tone) {
+    toastEl.textContent = msg;
+    toastEl.className = 'on' + (tone ? ' ' + tone : '');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function () { toastEl.className = ''; }, 2600);
+  }
+
+  var busyEl = $('#busy'), busyText = $('#busyText');
+  function setBusy(on, msg) {
+    if (msg) busyText.textContent = msg;
+    busyEl.className = 'busy' + (on ? ' on' : '');
+  }
+
+  /* ======================= EXIF parser ======================= */
+  // JPEG marker walk: collects APP1(Exif/XMP), SOF size, orientation, GPS etc.
+  function parseMeta(bytes, size, mime) {
+    var info = {
+      hasExif: false, hasXmp: false, hasIcc: false, hasIptc: false, hasComment: false,
+      hasMakerNote: false, metaBytes: 0, orientation: 1, rawW: 0, rawH: 0,
+      make: '', model: '', dateTime: '', software: '', lens: '', gps: null, items: [],
+      type: mime || '', size: size || 0, isJpeg: false
+    };
+    if (!bytes || bytes.length < 4) return info;
+
+    if (!(bytes[0] === 0xFF && bytes[1] === 0xD8)) {
+      // PNG eXIf / tEXt check for the badge
+      if (bytes[0] === 0x89 && bytes[1] === 0x50 && bytes[2] === 0x4E && bytes[3] === 0x47) {
+        var lim = Math.min(bytes.length, 200000);
+        for (var i = 0; i < lim - 4; i++) {
+          if (bytes[i] === 0x65 && bytes[i + 1] === 0x58 && bytes[i + 2] === 0x49 && bytes[i + 3] === 0x66) {
+            info.hasExif = true; info.metaBytes += 64; break;
+          }
+        }
+        info.rawW = (bytes[16] << 24 | bytes[17] << 16 | bytes[18] << 8 | bytes[19]) >>> 0;
+        info.rawH = (bytes[20] << 24 | bytes[21] << 16 | bytes[22] << 8 | bytes[23]) >>> 0;
+      }
+      return info;
+    }
+
+    info.isJpeg = true;
+    var off = 2;
+    var guard = 0;
+    while (off < bytes.length - 3 && guard++ < 4000) {
+      if (bytes[off] !== 0xFF) { off++; continue; }
+      var marker = bytes[off + 1];
+      if (marker === 0xFF) { off++; continue; }
+      if (marker === 0xD8 || marker === 0x01 || (marker >= 0xD0 && marker <= 0xD7)) { off += 2; continue; }
+      if (marker === 0xD9) break;
+      var len = (bytes[off + 2] << 8) | bytes[off + 3];
+      if (len < 2) break;
+      var segStart = off + 4;
+      var segEnd = off + 2 + len;
+      if (segEnd > bytes.length) segEnd = bytes.length;
+
+      if (marker >= 0xC0 && marker <= 0xCF && marker !== 0xC4 && marker !== 0xC8 && marker !== 0xCC) {
+        if (!info.rawH && segStart + 5 < bytes.length) {
+          info.rawH = (bytes[segStart + 1] << 8) | bytes[segStart + 2];
+          info.rawW = (bytes[segStart + 3] << 8) | bytes[segStart + 4];
+        }
+      } else if (marker === 0xE1) {
+        var isExif = bytes[segStart] === 0x45 && bytes[segStart + 1] === 0x78 &&
+                     bytes[segStart + 2] === 0x69 && bytes[segStart + 3] === 0x66;
+        var isXmp = bytes[segStart] === 0x68 && bytes[segStart + 1] === 0x74 &&
+                    bytes[segStart + 2] === 0x74 && bytes[segStart + 3] === 0x70;
+        if (isExif) {
+          info.hasExif = true;
+          info.metaBytes += len;
+          try { parseTiff(bytes, segStart + 6, info); } catch (e) { /* ignore broken EXIF */ }
+        } else if (isXmp) {
+          info.hasXmp = true; info.metaBytes += len;
+        }
+      } else if (marker === 0xE2) {
+        info.hasIcc = true; info.metaBytes += len;
+      } else if (marker === 0xED) {
+        info.hasIptc = true; info.metaBytes += len;
+      } else if (marker === 0xFE) {
+        info.hasComment = true; info.metaBytes += len;
+      }
+      if (marker === 0xDA) break;
+      off = segEnd;
+    }
+
+    if (info.gps) info.items.push({ k: '위치(GPS)', v: info.gps.lat.toFixed(5) + ', ' + info.gps.lng.toFixed(5), hot: true });
+    if (info.make || info.model) info.items.push({ k: '기기', v: (info.make + ' ' + info.model).trim(), hot: true });
+    if (info.dateTime) info.items.push({ k: '촬영 일시', v: prettyDate(info.dateTime), hot: false });
+    if (info.software) info.items.push({ k: '소프트웨어', v: info.software, hot: false });
+    if (info.lens) info.items.push({ k: '렌즈', v: info.lens, hot: false });
+    if (info.orientation > 1) info.items.push({ k: '회전 정보', v: 'Orientation ' + info.orientation, hot: false });
+    if (info.hasMakerNote) info.items.push({ k: '제조사 노트', v: 'MakerNote 포함', hot: false });
+    if (info.hasXmp) info.items.push({ k: 'XMP', v: '편집 이력 · 소프트웨어 정보', hot: false });
+    if (info.hasIcc) info.items.push({ k: 'ICC 프로파일', v: '색상 프로파일', hot: false });
+    if (info.hasIptc) info.items.push({ k: 'IPTC', v: '저작권 · 캡션 정보', hot: false });
+    if (info.hasComment) info.items.push({ k: '주석', v: 'JPEG 코멘트', hot: false });
+    return info;
+  }
+
+  function prettyDate(s) {
+    if (!s) return '';
+    var m = String(s).match(/^(\d{4})[:\-](\d{2})[:\-](\d{2})[ T](\d{2}):(\d{2})/);
+    if (m) return m[1] + '-' + m[2] + '-' + m[3] + ' ' + m[4] + ':' + m[5];
+    return String(s);
+  }
+
+  function parseTiff(bytes, base, info) {
+    var little = bytes[base] === 0x49 && bytes[base + 1] === 0x49;
+    var big = bytes[base] === 0x4D && bytes[base + 1] === 0x4D;
+    if (!little && !big) return;
+    function u16(o) {
+      if (o + 1 >= bytes.length) return 0;
+      return little ? (bytes[o] | (bytes[o + 1] << 8)) : ((bytes[o] << 8) | bytes[o + 1]);
+    }
+    function u32(o) {
+      if (o + 3 >= bytes.length) return 0;
+      if (little) {
+        return ((bytes[o]) | (bytes[o + 1] << 8) | (bytes[o + 2] << 16) | (bytes[o + 3] << 24)) >>> 0;
+      }
+      return ((bytes[o] << 24) | (bytes[o + 1] << 16) | (bytes[o + 2] << 8) | bytes[o + 3]) >>> 0;
+    }
+    if (u16(base + 2) !== 0x2A) return;
+
+    var unitSizes = { 1: 1, 2: 1, 3: 2, 4: 4, 5: 8, 6: 1, 7: 1, 8: 2, 9: 4, 10: 8, 11: 4, 12: 8 };
+
+    function readValue(entryOff) {
+      var type = u16(entryOff + 2);
+      var count = u32(entryOff + 4);
+      var unit = unitSizes[type] || 0;
+      if (!unit || count > 100000) return null;
+      var total = unit * count;
+      var vo = total <= 4 ? entryOff + 8 : base + u32(entryOff + 8);
+      if (vo < 0 || vo + total > bytes.length) return null;
+      var i, a;
+      if (type === 2) {
+        var s = '';
+        for (i = 0; i < count; i++) {
+          var c = bytes[vo + i];
+          if (c === 0) break;
+          s += String.fromCharCode(c);
+        }
+        return s.replace(/\s+$/, '');
+      }
+      if (type === 1 || type === 7) {
+        a = [];
+        for (i = 0; i < Math.min(count, 16); i++) a.push(bytes[vo + i]);
+        return count === 1 ? a[0] : a;
+      }
+      if (type === 3) {
+        a = [];
+        for (i = 0; i < Math.min(count, 16); i++) a.push(u16(vo + i * 2));
+        return count === 1 ? a[0] : a;
+      }
+      if (type === 4 || type === 9) {
+        a = [];
+        for (i = 0; i < Math.min(count, 16); i++) a.push(u32(vo + i * (type === 9 ? 4 : 4)));
+        return count === 1 ? a[0] : a;
+      }
+      if (type === 5 || type === 10) {
+        a = [];
+        for (i = 0; i < Math.min(count, 16); i++) {
+          var n = u32(vo + i * 8);
+          var d = u32(vo + i * 8 + 4);
+          a.push(d ? n / d : 0);
+        }
+        return count === 1 ? a[0] : a;
+      }
+      return null;
+    }
+
+    function readIFD(off) {
+      var out = {};
+      if (!off || off <= 0 || off + 2 > bytes.length) return out;
+      var n = u16(off);
+      if (n > 300) return out;
+      for (var i = 0; i < n; i++) {
+        var e = off + 2 + i * 12;
+        if (e + 12 > bytes.length) break;
+        var tag = u16(e);
+        var val = null;
+        try { val = readValue(e); } catch (err) { val = null; }
+        if (val !== null && val !== undefined && val !== '') out[tag] = val;
+      }
+      return out;
+    }
+
+    var ifd0 = readIFD(base + u32(base + 4));
+    if (ifd0[0x010F]) info.make = String(ifd0[0x010F]);
+    if (ifd0[0x0110]) info.model = String(ifd0[0x0110]);
+    if (ifd0[0x0131]) info.software = String(ifd0[0x0131]);
+    if (ifd0[0x0112]) info.orientation = Number(ifd0[0x0112]) || 1;
+    if (ifd0[0x0132]) info.dateTime = String(ifd0[0x0132]);
+
+    if (ifd0[0x8769]) {
+      var ex = readIFD(base + Number(ifd0[0x8769]));
+      if (ex[0x9003]) info.dateTime = String(ex[0x9003]);
+      if (ex[0xA434]) info.lens = String(ex[0xA434]);
+      if (ex[0x927C]) info.hasMakerNote = true;
+    }
+    if (ifd0[0x8825]) {
+      var g = readIFD(base + Number(ifd0[0x8825]));
+      var lat = dms(g[2]), lng = dms(g[4]);
+      if (lat !== null && lng !== null) {
+        var latRef = (g[1] || 'N').toString().charAt(0).toUpperCase();
+        var lngRef = (g[3] || 'E').toString().charAt(0).toUpperCase();
+        info.gps = {
+          lat: (latRef === 'S' ? -1 : 1) * lat,
+          lng: (lngRef === 'W' ? -1 : 1) * lng
+        };
+      }
+    }
+  }
+
+  function dms(v) {
+    if (v === null || v === undefined) return null;
+    if (typeof v === 'number') return v;
+    if (!v.length) return null;
+    var d = Number(v[0]) || 0, m = Number(v[1]) || 0, s = Number(v[2]) || 0;
+    return d + m / 60 + s / 3600;
+  }
+
+  /* ======================= orientation transform ======================= */
+  function applyOrientation(c, o, w, h) {
+    switch (o) {
+      case 2: c.transform(-1, 0, 0, 1, w, 0); break;
+      case 3: c.transform(-1, 0, 0, -1, w, h); break;
+      case 4: c.transform(1, 0, 0, -1, 0, h); break;
+      case 5: c.transform(0, 1, 1, 0, 0, 0); break;
+      case 6: c.transform(0, 1, -1, 0, h, 0); break;
+      case 7: c.transform(0, -1, -1, 0, h, w); break;
+      case 8: c.transform(0, -1, 1, 0, 0, w); break;
+      default: break;
+    }
+  }
+
+  /* ======================= load ======================= */
+  function decodeBlob(file) {
+    return new Promise(function (resolve, reject) {
+      var url = URL.createObjectURL(file);
+      var img = new Image();
+      img.onload = function () { resolve({ src: img, w: img.naturalWidth, h: img.naturalHeight, revoke: url }); };
+      img.onerror = function () { URL.revokeObjectURL(url); reject(new Error('decode')); };
+      img.src = url;
+    });
+  }
+
+  function loadImage(file, opts) {
+    opts = opts || {};
+    if (S.origW && S.strokes.length && !opts.force) {
+      if (!window.confirm('지금까지 가린 부분이 사라집니다. 새 사진을 열까요?')) return Promise.resolve();
+    }
+    setBusy(true, '사진을 여는 중…');
+    return file.arrayBuffer().then(function (buf) {
+      var bytes = new Uint8Array(buf);
+      var info = parseMeta(bytes, file.size, file.type || '');
+      var bmpP = (typeof createImageBitmap === 'function')
+        ? createImageBitmap(file).then(function (b) { return { src: b, w: b.width, h: b.height, bmp: b }; })
+        : Promise.reject(new Error('no bitmap'));
+      return bmpP.catch(function () { return decodeBlob(file); }).then(function (dec) {
+        var sw = dec.w, sh = dec.h;
+        var o = info.orientation || 1;
+        var applied = true;
+        if (o > 4 && info.rawW && info.rawH) {
+          applied = !(sw === info.rawW && sh === info.rawH);
+        }
+        var outW = applied ? sw : (o > 4 ? sh : sw);
+        var outH = applied ? sh : (o > 4 ? sw : sh);
+        if (!outW || !outH) throw new Error('empty');
+
+        var capLong = opts.full ? 8192 : MAX_WORK;
+        var capPix = opts.full ? 30e6 : MAX_PIXELS;
+        var k = Math.min(1, capLong / Math.max(outW, outH), Math.sqrt(capPix / (outW * outH)));
+        var W = Math.max(1, Math.round(outW * k));
+        var H = Math.max(1, Math.round(outH * k));
+
+        var base = S.base;
+        base.width = W; base.height = H;
+        var bctx = base.getContext('2d');
+        bctx.setTransform(1, 0, 0, 1, 0, 0);
+        bctx.fillStyle = '#ffffff';
+        bctx.fillRect(0, 0, W, H);
+        bctx.imageSmoothingEnabled = true;
+        if ('imageSmoothingQuality' in bctx) bctx.imageSmoothingQuality = 'high';
+        bctx.setTransform(W / outW, 0, 0, H / outH, 0, 0);
+        if (!applied && o > 1) {
+          applyOrientation(bctx, o, sw, sh);
+          bctx.drawImage(dec.src, 0, 0, sw, sh);
+        } else {
+          bctx.drawImage(dec.src, 0, 0, sw, sh);
+        }
+
+        if (dec.bmp && dec.bmp.close) { try { dec.bmp.close(); } catch (e) {} }
+        if (dec.revoke) setTimeout(function () { URL.revokeObjectURL(dec.revoke); }, 8000);
+
+        S.file = file;
+        S.fileName = file.name || 'photo.jpg';
+        S.fileSize = file.size;
+        S.full = !!opts.full;
+        S.origW = info.rawW || outW;
+        S.origH = info.rawH || outH;
+        S.outW = outW; S.outH = outH;
+        S.W = W; S.H = H;
+        S.info = info;
+        S.strokes = []; S.redo = []; S.cur = null; S.saved = false;
+
+        canvas.width = W; canvas.height = H;
+        origCanvas.width = W; origCanvas.height = H;
+        ctx.setTransform(1, 0, 0, 1, 0, 0);
+
+        $('#empty').style.display = 'none';
+        wrap.className = 'on';
+        $('#panel').className = 'panel on';
+        $('#metabar').className = 'metabar on';
+        $('#pickBtn2').hidden = false;
+        $('#hint').className = 'hint';
+        renderAll();
+        fitCanvas();
+        syncPanelVar();
+        updateMeta();
+        updateToolState();
+      });
+    }).catch(function (err) {
+      setBusy(false);
+      var msg = '이 사진을 열 수 없어요.';
+      if ((file.type || '').indexOf('hei') >= 0 || /\.hei[cf]$/i.test(file.name || '')) {
+        msg = '아이폰 HEIC 사진은 브라우저에 따라 열리지 않아요. 설정 > 카메라 > 포맷을 "높은 호환성"으로 바꾸거나 JPG로 변환해 주세요.';
+      }
+      toast(msg, 'warn');
+    }).then(function () { setBusy(false); });
+  }
+
+  /* ======================= render / paint ======================= */
+  function renderAll() {
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+    ctx.globalAlpha = 1;
+    ctx.imageSmoothingEnabled = true;
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(0, 0, S.W, S.H);
+    if (S.base.width) ctx.drawImage(S.base, 0, 0);
+    for (var i = 0; i < S.strokes.length; i++) replayStroke(S.strokes[i]);
+  }
+
+  function replayStroke(st) {
+    if (!st.pts || !st.pts.length) return;
+    if (st.mode === 'solid') {
+      solidSeg(st, st.pts[0], st.pts[0]);
+      if (st.pts.length === 1) return;
+      for (var i = 1; i < st.pts.length; i++) solidSeg(st, st.pts[i - 1], st.pts[i]);
+      return;
+    }
+    var small = buildSmall(st);
+    dab(st, small, st.pts[0][0], st.pts[0][1]);
+    for (var j = 1; j < st.pts.length; j++) paintSegment(st, small, st.pts[j - 1], st.pts[j]);
+  }
+
+  function buildSmall(st) {
+    var b = st.mode === 'mosaic' ? st.block : st.k;
+    var sw = Math.max(2, Math.ceil(S.W / b) + 1);
+    var sh = Math.max(2, Math.ceil(S.H / b) + 1);
+    var c = document.createElement('canvas');
+    c.width = sw; c.height = sh;
+    var cx = c.getContext('2d');
+    cx.imageSmoothingEnabled = true;
+    if ('imageSmoothingQuality' in cx) cx.imageSmoothingQuality = 'high';
+    // 한 칸이 정확히 b 픽셀에 대응하도록 그린다(그리드 어긋남 방지)
+    cx.drawImage(canvas, 0, 0, S.W, S.H, 0, 0, S.W / b, S.H / b);
+    return { canvas: c, b: b };
+  }
+
+  function dab(st, small, x, y) {
+    var r = st.brush / 2;
+    var b = small.b;
+    var x0 = Math.floor((x - r) / b) * b;
+    var y0 = Math.floor((y - r) / b) * b;
+    var x1 = Math.ceil((x + r) / b) * b;
+    var y1 = Math.ceil((y + r) / b) * b;
+    if (x0 < 0) x0 = 0;
+    if (y0 < 0) y0 = 0;
+    if (x1 <= x0 || y1 <= y0) return;
+    ctx.save();
+    ctx.beginPath();
+    ctx.arc(x, y, r, 0, Math.PI * 2);
+    ctx.clip();
+    ctx.imageSmoothingEnabled = (st.mode === 'blur');
+    ctx.drawImage(small.canvas, x0 / b, y0 / b, (x1 - x0) / b, (y1 - y0) / b, x0, y0, x1 - x0, y1 - y0);
+    ctx.restore();
+  }
+
+  function paintSegment(st, small, a, b) {
+    var dx = b[0] - a[0], dy = b[1] - a[1];
+    var dist = Math.sqrt(dx * dx + dy * dy);
+    if (dist < 0.6) { dab(st, small, b[0], b[1]); return; }
+    var step = Math.max(2, st.brush * 0.12);
+    var n = Math.ceil(dist / step);
+    if (n > 400) n = 400;
+    for (var i = 1; i <= n; i++) {
+      var t = i / n;
+      dab(st, small, a[0] + dx * t, a[1] + dy * t);
+    }
+  }
+
+  function solidSeg(st, a, b) {
+    ctx.save();
+    ctx.strokeStyle = st.color;
+    ctx.fillStyle = st.color;
+    ctx.lineWidth = st.brush;
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
+    if (a === b || (Math.abs(a[0] - b[0]) < 0.4 && Math.abs(a[1] - b[1]) < 0.4)) {
+      ctx.beginPath();
+      ctx.arc(b[0], b[1], st.brush / 2, 0, Math.PI * 2);
+      ctx.fill();
+    } else {
+      ctx.beginPath();
+      ctx.moveTo(a[0], a[1]);
+      ctx.lineTo(b[0], b[1]);
+      ctx.stroke();
+    }
+    ctx.restore();
+  }
+
+  /* ======================= pointer ======================= */
+  function toImg(e) {
+    var r = canvas.getBoundingClientRect();
+    return [
+      (e.clientX - r.left) * S.W / (r.width || 1),
+      (e.clientY - r.top) * S.H / (r.height || 1)
+    ];
+  }
+
+  function brushScale() {
+    var r = canvas.getBoundingClientRect();
+    if (!r.width) return 1;
+    return S.W / r.width;
+  }
+
+  function hideHint() {
+    var h = $('#hint');
+    if (h && h.className.indexOf('off') < 0) h.className = 'hint off';
+  }
+
+  function onDown(e) {
+    if (!S.W || S.cur) return;
+    if (e.pointerType === 'mouse' && e.button !== 0) return;
+    e.preventDefault();
+    hideHint();
+    try { canvas.setPointerCapture(e.pointerId); } catch (err) {}
+    S.pointerId = e.pointerId;
+    var p = toImg(e);
+    var brush = Math.max(6, Math.round(S.brush * brushScale()));
+    var st = {
+      mode: S.mode,
+      brush: brush,
+      strength: S.strength,
+      color: S.color,
+      pts: [p]
+    };
+    if (st.mode === 'mosaic') st.block = Math.max(4, Math.round(brush * (0.5 - 0.06 * st.strength)));
+    if (st.mode === 'blur') st.k = Math.round(2.6 + st.strength * 1.7);
+
+    S.cur = st;
+    S.strokes.push(st);
+    S.redo = [];
+    if (st.mode === 'solid') {
+      solidSeg(st, p, p);
+    } else {
+      st.small = buildSmall(st);
+      dab(st, st.small, p[0], p[1]);
+    }
+    updateToolState();
+    if (S.saved) { S.saved = false; updateMeta(); }
+  }
+
+  function onMove(e) {
+    if (!S.cur || e.pointerId !== S.pointerId) return;
+    e.preventDefault();
+    var evs = (e.getCoalescedEvents && e.getCoalescedEvents && e.getCoalescedEvents().length) ? e.getCoalescedEvents() : [e];
+    var st = S.cur;
+    for (var i = 0; i < evs.length; i++) {
+      var p = toImg(evs[i]);
+      var last = st.pts[st.pts.length - 1];
+      var dx = p[0] - last[0], dy = p[1] - last[1];
+      if (dx * dx + dy * dy < 0.25) continue;
+      st.pts.push(p);
+      if (st.mode === 'solid') solidSeg(st, last, p);
+      else paintSegment(st, st.small, last, p);
+    }
+  }
+
+  function onUp(e) {
+    if (!S.cur) return;
+    if (e && e.pointerId !== undefined && e.pointerId !== S.pointerId) return;
+    try { canvas.releasePointerCapture(S.pointerId); } catch (err) {}
+    if (S.cur) S.cur.small = null;
+    S.cur = null;
+    S.pointerId = null;
+    updateToolState();
+  }
+
+  canvas.addEventListener('pointerdown', onDown, { passive: false });
+  canvas.addEventListener('pointermove', onMove, { passive: false });
+  canvas.addEventListener('pointerup', onUp);
+  canvas.addEventListener('pointercancel', onUp);
+  canvas.addEventListener('contextmenu', function (e) { e.preventDefault(); });
+
+  /* ======================= tools ======================= */
+  function updateToolState() {
+    $('#undoBtn').disabled = S.strokes.length === 0;
+    $('#redoBtn').disabled = S.redo.length === 0;
+    $('#clearBtn').disabled = S.strokes.length === 0;
+    $('#compareBtn').disabled = !S.W;
+  }
+
+  function undo() {
+    if (!S.strokes.length) return;
+    S.redo.push(S.strokes.pop());
+    renderAll();
+    updateToolState();
+  }
+  function redo() {
+    if (!S.redo.length) return;
+    S.strokes.push(S.redo.pop());
+    renderAll();
+    updateToolState();
+  }
+  function clearAll() {
+    if (!S.strokes.length) return;
+    S.strokes = [];
+    S.redo = [];
+    renderAll();
+    updateToolState();
+    toast('가린 부분을 모두 지웠어요');
+  }
+
+  $('#undoBtn').addEventListener('click', undo);
+  $('#redoBtn').addEventListener('click', redo);
+  $('#clearBtn').addEventListener('click', clearAll);
+
+  function showOriginal(on) {
+    if (!S.W) return;
+    if (on) {
+      origCtx.setTransform(1, 0, 0, 1, 0, 0);
+      origCtx.clearRect(0, 0, S.W, S.H);
+      origCtx.drawImage(S.base, 0, 0);
+      origCanvas.className = 'on';
+      $('#compareTag').className = 'compareTag on';
+    } else {
+      origCanvas.className = '';
+      $('#compareTag').className = 'compareTag';
+    }
+  }
+  (function () {
+    var btn = $('#compareBtn');
+    btn.addEventListener('pointerdown', function (e) {
+      e.preventDefault();
+      try { btn.setPointerCapture(e.pointerId); } catch (err) {}
+      showOriginal(true);
+    });
+    btn.addEventListener('pointerup', function () { showOriginal(false); });
+    btn.addEventListener('pointercancel', function () { showOriginal(false); });
+    btn.addEventListener('pointerleave', function () { showOriginal(false); });
+    btn.addEventListener('blur', function () { showOriginal(false); });
+  })();
+
+  /* ======================= controls ======================= */
+  var modeBtns = Array.prototype.slice.call(document.querySelectorAll('.mode'));
+  modeBtns.forEach(function (b) {
+    b.addEventListener('click', function () {
+      modeBtns.forEach(function (x) { x.className = 'mode'; });
+      b.className = 'mode on';
+      S.mode = b.getAttribute('data-mode');
+      var isSolid = S.mode === 'solid';
+      $('#strengthCol').hidden = isSolid;
+      $('#colorCol').hidden = !isSolid;
+      $('#strengthLabel').textContent = S.mode === 'blur' ? '블러 강도' : '모자이크 강도';
+      syncPanelVar();
+    });
+  });
+
+  $('#brush').addEventListener('input', function () {
+    S.brush = Number(this.value);
+    $('#brushVal').textContent = String(S.brush);
+  });
+  $('#strength').addEventListener('input', function () {
+    S.strength = Number(this.value);
+    $('#strengthVal').textContent = String(S.strength);
+  });
+
+  Array.prototype.forEach.call(document.querySelectorAll('.sw'), function (sw) {
+    sw.addEventListener('click', function () {
+      Array.prototype.forEach.call(document.querySelectorAll('.sw'), function (x) { x.className = 'sw'; });
+      sw.className = 'sw on';
+      S.color = sw.getAttribute('data-color');
+    });
+  });
+
+  Array.prototype.forEach.call(document.querySelectorAll('#fmtSeg button'), function (b) {
+    b.addEventListener('click', function () {
+      Array.prototype.forEach.call(document.querySelectorAll('#fmtSeg button'), function (x) { x.className = ''; });
+      b.className = 'on';
+      S.fmt = b.getAttribute('data-fmt');
+    });
+  });
+
+  /* ======================= meta bar ======================= */
+  function updateMeta() {
+    var bar = $('#metabar');
+    var info = S.info;
+    if (!info) { bar.innerHTML = ''; return; }
+    var found = info.items ? info.items.length : 0;
+    var html = '';
+    html += '<div class="chipRow">';
+    if (S.saved) {
+      html += '<span class="chip saved">✅ EXIF 0건 · 저장 완료</span>';
+    } else if (found > 0) {
+      html += '<span class="chip danger">⚠️ 지울 정보 <b>' + found + '건</b></span>';
+    } else {
+      html += '<span class="chip ok">✅ 지울 정보 없음</span>';
+    }
+    if (info.gps) {
+      html += '<span class="chip danger">📍 위치 <b>' + info.gps.lat.toFixed(4) + ', ' + info.gps.lng.toFixed(4) + '</b></span>';
+    } else {
+      html += '<span class="chip">📍 위치 정보 없음</span>';
+    }
+    var dev = ((info.make || '') + ' ' + (info.model || '')).trim();
+    html += dev
+      ? '<span class="chip warn">📱 <b>' + esc(dev) + '</b></span>'
+      : '<span class="chip">📱 기기 정보 없음</span>';
+    html += info.dateTime
+      ? '<span class="chip warn">🕒 <b>' + esc(prettyDate(info.dateTime)) + '</b></span>'
+      : '<span class="chip">🕒 촬영 시각 없음</span>';
+    html += '<span class="chip">🖼 ' + S.outW + '×' + S.outH + ' · ' + fmtBytes(S.fileSize) + '</span>';
+    html += '</div>';
+    var resized = (!S.full && S.outW && S.W !== S.outW);
+    html += '<div class="metaNote"><span class="grow">' +
+      (S.saved ? '저장한 사진에는 위치·기기·촬영 정보가 없습니다.' : '저장하면 위 정보가 모두 사라집니다.')
+      + '</span>' +
+      (resized ? '<button class="linkish" id="fullBtn">원본 화질로</button>' : '') +
+      '<button class="linkish" id="detailBtn">자세히</button></div>';
+    bar.innerHTML = html;
+    var d = $('#detailBtn');
+    if (d) d.addEventListener('click', openDetails);
+    var fb = $('#fullBtn');
+    if (fb) fb.addEventListener('click', function () {
+      if (!S.file) return;
+      if (S.strokes.length && !window.confirm('원본 화질로 다시 열면 가린 부분이 사라집니다. 계속할까요?')) return;
+      loadImage(S.file, { full: true, force: true });
+    });
+  }
+
+  /* ======================= fit ======================= */
+  function syncPanelVar() {
+    var p = $('#panel');
+    var h = (p && p.className.indexOf('on') >= 0) ? p.offsetHeight : 0;
+    document.documentElement.style.setProperty('--panelh', h + 'px');
+  }
+
+  function fitCanvas() {
+    if (!S.W) return;
+    var aw = Math.max(40, stageInner.clientWidth);
+    var ah = Math.max(40, stageInner.clientHeight);
+    var ratio = Math.min(aw / S.W, ah / S.H);
+    canvas.style.width = Math.floor(S.W * ratio) + 'px';
+    canvas.style.height = Math.floor(S.H * ratio) + 'px';
+  }
+  window.addEventListener('resize', function () { fitCanvas(); syncPanelVar(); });
+  window.addEventListener('orientationchange', function () { setTimeout(fitCanvas, 220); });
+  if (typeof ResizeObserver === 'function') {
+    try { new ResizeObserver(function () { fitCanvas(); }).observe(stageInner); } catch (e) {}
+  }
+
+  /* ======================= modal ======================= */
+  var modal = $('#modal'), sheetBody = $('#sheetBody');
+  function openModal(html) {
+    sheetBody.innerHTML = html;
+    modal.className = 'modal on';
+    return sheetBody;
+  }
+  function closeModal() {
+    modal.className = 'modal';
+    sheetBody.innerHTML = '';
+    if (S.outUrl) { URL.revokeObjectURL(S.outUrl); S.outUrl = ''; }
+    S.outBlob = null;
+  }
+  modal.addEventListener('click', function (e) {
+    var t = e.target;
+    if (t && t.getAttribute && t.getAttribute('data-close')) closeModal();
+  });
+
+  function openDetails() {
+    var info = S.info;
+    if (!info) return;
+    var kv = '';
+    if (info.items && info.items.length) {
+      kv = '<div class="kv">' + info.items.map(function (it) {
+        return '<div class="kvRow"><dt>' + esc(it.k) + '</dt><dd' + (it.hot ? ' style="color:#ff9aa3"' : '') + '>' + esc(it.v) + '</dd></div>';
+      }).join('') + '</div>';
+    } else {
+      kv = '<p class="note">이 사진에는 위치·기기·촬영 정보가 들어 있지 않아요.</p>';
+    }
+    var html = '<h3>사진에 들어 있던 정보</h3>' +
+      '<p class="note">EXIF = 사진 파일에 몰래 따라붙는 위치·기기·시간 기록</p>' +
+      kv +
+      '<div class="okBox">여기서 저장하면 위 정보는 파일에서 <b>완전히 사라집니다</b>. (원본 파일은 건드리지 않아요)</div>' +
+      '<button class="primary fullrow" data-close="1">확인</button>';
+    openModal(html);
+  }
+
+  function openHelp() {
+    var html = '<h3>이렇게 쓰면 됩니다</h3>' +
+      '<p class="note">중고거래·SNS에 사진 올리기 전 30초 정리</p>' +
+      '<ol class="steps">' +
+      '<li><b>사진 선택</b> — 위치·기기·촬영 시간이 들어 있는지 바로 알려드려요.</li>' +
+      '<li><b>손가락으로 문지르기</b> — 얼굴, 계좌번호, 차량번호를 가립니다. 모자이크·블러·단색 가리기 중에 고르세요.</li>' +
+      '<li><b>EXIF 제거하고 저장</b> — 사진을 다시 그려서 저장하므로 원본에 붙은 모든 기록이 지워집니다.</li>' +
+      '</ol>' +
+      '<div class="okBox">사진은 서버로 보내지 않습니다. 인터넷을 끊어도 똑같이 동작해요 — 모든 처리는 브라우저 안에서만 일어납니다.</div>' +
+      '<div class="warnBox">모자이크는 눈으로만 가리는 게 아니라 픽셀을 실제로 뭉개는 방식이에요. 다만 아주 얇은 글씨는 블러보다 <b>모자이크·단색 가리기</b>가 더 안전합니다.</div>' +
+      '<button class="primary fullrow" data-close="1">알겠어요</button>';
+    openModal(html);
+  }
+  $('#helpBtn').addEventListener('click', openHelp);
+
+  /* ======================= save ======================= */
+  function toBlob(cv, mime, q) {
+    return new Promise(function (resolve, reject) {
+      if (cv.toBlob) {
+        cv.toBlob(function (b) { b ? resolve(b) : reject(new Error('toBlob')); }, mime, q);
+        return;
+      }
+      try {
+        var data = cv.toDataURL(mime, q);
+        var bin = atob(data.split(',')[1]);
+        var arr = new Uint8Array(bin.length);
+        for (var i = 0; i < bin.length; i++) arr[i] = bin.charCodeAt(i);
+        resolve(new Blob([arr], { type: mime }));
+      } catch (e) { reject(e); }
+    });
+  }
+
+  function verifyBlob(blob) {
+    return blob.arrayBuffer().then(function (buf) {
+      var info = parseMeta(new Uint8Array(buf), blob.size, blob.type);
+      return {
+        hasExif: info.hasExif,
+        hasGps: !!info.gps,
+        hasDevice: !!(info.make || info.model),
+        hasDate: !!info.dateTime,
+        hasXmp: info.hasXmp,
+        size: blob.size,
+        type: blob.type
+      };
+    });
+  }
+
+  function exportName() {
+    return 'clean_mosaic_' + stamp() + '.' + (S.fmt === 'png' ? 'png' : 'jpg');
+  }
+
+  function doSave() {
+    if (!S.W) { toast('먼저 사진을 골라 주세요'); return; }
+    setBusy(true, 'EXIF 지우고 내보내는 중…');
+    var mime = S.fmt === 'png' ? 'image/png' : 'image/jpeg';
+    toBlob(canvas, mime, 0.92).then(function (blob) {
+      return verifyBlob(blob).then(function (v) {
+        S.outBlob = blob;
+        S.verify = v;
+        setBusy(false);
+        // 공유 시트가 있으면 바로 띄워 '이미지 저장' 한 번으로 끝낸다.
+        return shareFile(blob).then(function (res) {
+          if (res === 'shared') { markSaved('공유'); return; }
+          if (res === 'aborted') { toast('저장을 취소했어요'); return; }
+          showResult(blob, v);
+        });
+      });
+    }).catch(function () {
+      setBusy(false);
+      toast('저장에 실패했어요. 다른 형식으로 해보세요.', 'warn');
+    });
+  }
+
+  function canShareFiles(blob) {
+    try {
+      if (!navigator.canShare || !navigator.share) return false;
+      return navigator.canShare({ files: [new File([blob], exportName(), { type: blob.type })] });
+    } catch (e) { return false; }
+  }
+
+  function shareFile(blob) {
+    var file;
+    try { file = new File([blob], exportName(), { type: blob.type }); }
+    catch (e) { return Promise.resolve('unsupported'); }
+    if (!(navigator.canShare && navigator.share && navigator.canShare({ files: [file] }))) {
+      return Promise.resolve('unsupported');
+    }
+    return navigator.share({ files: [file], title: 'EXIF 제거된 사진' }).then(function () {
+      return 'shared';
+    }).catch(function (err) {
+      if (err && err.name === 'AbortError') return 'aborted';
+      return 'failed';
+    });
+  }
+
+  function showResult(blob, v) {
+    var thumb = canvas.toDataURL('image/jpeg', 0.7);
+    var okAll = !v.hasExif && !v.hasGps && !v.hasDevice && !v.hasDate;
+    var html = '<h3>저장 준비 완료</h3>' +
+      '<p class="note">' + (S.fmt === 'png' ? 'PNG · 무손실' : 'JPEG · 고화질(0.92)') + ' · ' + fmtBytes(blob.size) + '</p>' +
+      '<div class="previewBox"><img alt="저장할 사진 미리보기" src="' + thumb + '"></div>' +
+      '<ul class="vlist">' +
+      '<li><span class="tick">✓</span>위치 정보(GPS) <b>' + (v.hasGps ? '남아 있음' : '없음') + '</b></li>' +
+      '<li><span class="tick">✓</span>기기 정보 <b>' + (v.hasDevice ? '남아 있음' : '없음') + '</b></li>' +
+      '<li><span class="tick">✓</span>촬영 시간 <b>' + (v.hasDate ? '남아 있음' : '없음') + '</b></li>' +
+      '<li><span class="tick">✓</span>EXIF 블록 <b>' + (v.hasExif ? '남아 있음' : '0건') + '</b></li>' +
+      '</ul>' +
+      (okAll
+        ? '<div class="okBox">파일을 직접 다시 열어 확인했습니다. <b>메타데이터 0건</b> — 안심하고 올리세요.</div>'
+        : '<div class="warnBox">일부 정보가 남아 있어요. 다시 저장해 주세요.</div>') +
+      '<div class="row2">' +
+      '<button class="primary" id="shareBtn">공유 · 사진에 저장</button>' +
+      '<button id="downloadBtn">파일로 저장</button>' +
+      '</div>' +
+      '<p class="note" style="text-align:center;margin:0 0 10px">아이폰은 공유 시트에서 <b>이미지 저장</b>을 누르면 사진 앱에 들어갑니다.</p>' +
+      '<button class="ghost fullrow" data-close="1">닫기</button>';
+    openModal(html);
+
+    if (!canShareFiles(blob)) {
+      var sb = $('#shareBtn');
+      sb.textContent = '공유 시트 없음';
+      sb.disabled = true;
+      sb.style.opacity = '.45';
+    }
+    $('#shareBtn').addEventListener('click', doShare);
+    $('#downloadBtn').addEventListener('click', doDownload);
+  }
+
+  function markSaved(how) {
+    S.saved = true;
+    updateMeta();
+    toast('EXIF 0건 · ' + how + ' 완료', 'ok');
+    closeModal();
+  }
+
+  function doDownload() {
+    if (!S.outBlob) return;
+    var url = URL.createObjectURL(S.outBlob);
+    var a = document.createElement('a');
+    a.href = url;
+    a.download = exportName();
+    a.rel = 'noopener';
+    document.body.appendChild(a);
+    a.click();
+    setTimeout(function () {
+      try { a.parentNode.removeChild(a); } catch (e) {}
+      URL.revokeObjectURL(url);
+    }, 15000);
+    markSaved('파일 저장');
+  }
+
+  function doShare() {
+    if (!S.outBlob) return;
+    shareFile(S.outBlob).then(function (res) {
+      if (res === 'shared') markSaved('공유');
+      else if (res === 'aborted') { /* 취소는 무시 */ }
+      else toast('공유가 열리지 않아요. "파일로 저장"을 눌러 주세요', 'warn');
+    });
+  }
+
+  $('#saveBtn').addEventListener('click', doSave);
+
+  /* ======================= file input & drop ======================= */
+  function pick() { fileInput.value = ''; fileInput.click(); }
+  $('#pickBtn').addEventListener('click', pick);
+  $('#pickBtn2').addEventListener('click', pick);
+  fileInput.addEventListener('change', function () {
+    var f = this.files && this.files[0];
+    if (f) loadImage(f, {});
+  });
+
+  ['dragenter', 'dragover'].forEach(function (ev) {
+    document.addEventListener(ev, function (e) { e.preventDefault(); });
+  });
+  document.addEventListener('drop', function (e) {
+    e.preventDefault();
+    var dt = e.dataTransfer;
+    if (dt && dt.files && dt.files[0]) loadImage(dt.files[0], {});
+  });
+  document.addEventListener('paste', function (e) {
+    var items = e.clipboardData && e.clipboardData.items;
+    if (!items) return;
+    for (var i = 0; i < items.length; i++) {
+      if (items[i].type && items[i].type.indexOf('image') === 0) {
+        var f = items[i].getAsFile();
+        if (f) { loadImage(f, {}); break; }
+      }
+    }
+  });
+
+  document.addEventListener('keydown', function (e) {
+    var mod = e.metaKey || e.ctrlKey;
+    if (!mod) return;
+    var k = e.key.toLowerCase();
+    if (k === 'z' && !e.shiftKey) { e.preventDefault(); undo(); }
+    else if ((k === 'z' && e.shiftKey) || k === 'y') { e.preventDefault(); redo(); }
+  });
+
+  /* ======================= init ======================= */
+  updateToolState();
+  fitCanvas();
+  syncPanelVar();
+  window.EXIFMOSAIC = { state: S, loadImage: loadImage, renderAll: renderAll, undo: undo, redo: redo, parseMeta: parseMeta };
+})();
+</script>
+</body>
+</html>

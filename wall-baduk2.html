@@ -207,9 +207,16 @@ input{font-family:inherit}
 .chip.p2{border-color:rgba(245,184,61,.45)}
 .chip.p0 .sc{color:#8db6ff}.chip.p1 .sc{color:#ff97a8}.chip.p2 .sc{color:#ffd479}
 .chip.act{background:rgba(255,255,255,.1);box-shadow:0 0 0 1.5px rgba(255,255,255,.45) inset}
-.prog{position:relative;height:15px;border-radius:8px;background:rgba(255,255,255,.06);overflow:hidden;border:1px solid var(--line)}
+.prog-row{display:flex;align-items:center;gap:6px}
+.prog{flex:1 1 auto;min-width:0;position:relative;height:16px;border-radius:8px;background:rgba(255,255,255,.06);overflow:hidden;border:1px solid var(--line)}
 .prog-bar{height:100%;width:0%;border-radius:8px;background:linear-gradient(90deg,#5f86d6,#f472b6 62%,#ffd479);transition:width .35s ease}
 .prog-txt{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:800;letter-spacing:.4px;color:#e7eefc;text-shadow:0 1px 2px rgba(0,0,0,.6)}
+.new-mini{
+  flex:0 0 auto;height:18px;padding:0 8px;border-radius:7px;font-size:9.5px;font-weight:800;color:#93a6c8;
+  background:rgba(255,255,255,.045);border:1px solid var(--line);display:inline-flex;align-items:center;gap:3px;
+  white-space:nowrap;line-height:1;
+}
+.new-mini:active{background:rgba(255,255,255,.12);color:#e6eefc}
 .board-wrap{flex:1 1 auto;min-height:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px}
 .legend{font-size:10.5px;color:#8698b8;font-weight:800;letter-spacing:.1px;display:flex;align-items:center;gap:4px;white-space:nowrap}
 .legend .lg{width:11px;height:11px;display:inline-block;margin-left:2px}
@@ -225,6 +232,8 @@ input{font-family:inherit}
 .status b{color:#fff}
 .status .pt{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:5px;vertical-align:1px}
 .btns{display:flex;gap:6px}
+.board-btns{width:100%;max-width:392px}
+.bottom .movebar{margin:0 auto}
 .btn{
   flex:1;height:42px;border-radius:12px;font-size:12px;font-weight:800;color:#c9d6ec;
   background:rgba(255,255,255,.055);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;gap:4px;
@@ -567,7 +576,10 @@ input{font-family:inherit}
         </div>
       </div>
       <div class="scores" id="scores"></div>
-      <div class="prog"><div class="prog-bar" id="progBar"></div><div class="prog-txt" id="progTxt">분리 0%</div></div>
+      <div class="prog-row">
+        <div class="prog"><div class="prog-bar" id="progBar"></div><div class="prog-txt" id="progTxt">분리 0%</div></div>
+        <button class="new-mini" id="newBtn" title="새 게임">⟲ 새 게임</button>
+      </div>
     </div>
 
     <main class="board-wrap">
@@ -612,19 +624,18 @@ input{font-family:inherit}
         <g id="gTrail"></g>
         <g id="gEdgeHit"></g>
       </svg>
-      <button class="movebar" id="moveBar" aria-label="최근 수 전체 히스토리 열기">
-        <div class="mb-rows" id="mbRows"></div>
-        <div class="mb-more"><b id="mbCount">0수</b><em>전체 ›</em></div>
-      </button>
+      <div class="btns board-btns">
+        <button class="btn" id="undoBtn">↩ 되돌리기</button>
+        <button class="btn hide" id="breakBtn">🔨 벽 부수기 <b id="breakCnt">1</b></button>
+      </div>
     </main>
 
     <div class="bottom">
       <div class="status" id="status"></div>
-      <div class="btns">
-        <button class="btn" id="undoBtn">↩ 되돌리기</button>
-        <button class="btn hide" id="breakBtn">🔨 벽 부수기 <b id="breakCnt">1</b></button>
-        <button class="btn" id="newBtn">⟲ 새 게임</button>
-      </div>
+      <button class="movebar" id="moveBar" aria-label="최근 수 전체 히스토리 열기">
+        <div class="mb-rows" id="mbRows"></div>
+        <div class="mb-more"><b id="mbCount">0수</b><em>전체 ›</em></div>
+      </button>
     </div>
   </section>
 
@@ -818,7 +829,7 @@ input{font-family:inherit}
     /* 흑과 백 · 박진감 넘치는 1:1 심리전 그루브 — A 단조 */
     bw: {
       bpm: 128, div: 4, steps: 64,
-      padDur: 1.5, padGain: 0.19, bassGain: 0.48, leadGain: 0.66,
+      padDur: 1.5, padGain: 0.14, bassGain: 0.38, leadGain: 0.56,
       pad: [[0, [110.00, 164.81, 220.00, 261.63]],
             [16, [87.31, 130.81, 174.61, 220.00]],
             [32, [98.00, 146.83, 196.00, 246.94]],

@@ -299,6 +299,120 @@
   .modal .mrow{display:flex;gap:8px;margin-top:16px}
   .modal .mrow .primary,.modal .mrow .ghost{flex:1;height:42px}
 
+  /* ---------- 족보 버튼 (로비 도크 / 게임 헤더) ---------- */
+  .dock-rank,.hdrank{display:inline-flex;align-items:center;justify-content:center;gap:3px;
+    height:28px;padding:0 10px;border-radius:999px;flex:0 0 auto;
+    font-size:11px;font-weight:800;letter-spacing:.01em;color:#f0dfc2;line-height:1;
+    background:linear-gradient(180deg,rgba(255,255,255,.075),rgba(255,255,255,.025));
+    border:1px solid rgba(251,191,36,.28);box-shadow:0 2px 8px rgba(0,0,0,.22)}
+  .dock-rank{margin-left:auto;pointer-events:none}
+  #lobby.show .dock-rank{pointer-events:auto}
+  .hdrank{height:26px;padding:0 9px;font-size:10.5px}
+  .dock-rank:active,.hdrank:active{background:rgba(251,191,36,.16)}
+
+  /* ---------- 결과 배너: 승패 사유 포함 ---------- */
+  .banner.rv{display:flex;flex-direction:column;gap:1px;padding:5px 8px}
+  .banner .bp1{font-size:12.5px;font-weight:900;line-height:1.24;letter-spacing:-.01em;word-break:keep-all}
+  .banner .bp1 b{color:#ffe6a8}
+  .banner .bp2{font-size:10px;font-weight:800;line-height:1.3;color:#f2cf95;letter-spacing:0;word-break:keep-all}
+
+  /* ---------- 종료 모달: 최종 라운드 상세 ---------- */
+  #endModal .modal.endm{max-width:344px;max-height:calc(100dvh - 22px);overflow-y:auto;
+    padding:15px 14px 13px;text-align:center;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+  #endModal .modal.endm::-webkit-scrollbar{display:none}
+  .lastround{margin-top:11px;padding:9px 9px 10px;border-radius:14px;
+    border:1px solid var(--line);background:linear-gradient(160deg,rgba(251,191,36,.075),rgba(244,114,182,.04))}
+  .lrcap{display:flex;align-items:center;justify-content:space-between;font-size:9px;font-weight:900;
+    letter-spacing:.10em;color:#e6c88a}
+  .lrcap b{font-size:10px;color:#ffe6a8;letter-spacing:.02em}
+  .lrcomm{display:flex;align-items:center;gap:7px;margin-top:7px;padding:5px 7px;border-radius:10px;
+    background:rgba(0,0,0,.26);border:1px solid var(--line2)}
+  .lrcomm .lrl{flex:0 0 36px;font-size:8.5px;font-weight:900;line-height:1.2;color:#d9c4a1;text-align:left}
+  .lrcomm .lrcc{display:flex;gap:4px;margin:0 auto}
+  .mh{display:grid;grid-template-columns:1fr auto;align-items:center;gap:1px 6px;
+    margin-top:6px;padding:5px 7px 6px;border-radius:10px;border:1px solid var(--line2);
+    background:rgba(255,255,255,.025);text-align:left}
+  .mh.win{border-color:rgba(251,191,36,.5);
+    background:linear-gradient(90deg,rgba(251,191,36,.16),rgba(244,114,182,.05))}
+  .mh .mwho{font-size:10.5px;font-weight:900;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .mh .mcat{font-size:9.5px;font-weight:800;color:#e9d6bb;text-align:right;white-space:nowrap}
+  .mh.win .mcat{color:#ffd98a}
+  .mh .mcards{grid-column:1 / span 2;display:flex;align-items:center;gap:3px;margin-top:3px}
+  .mh .mcards .mdiv{width:1px;height:24px;margin:0 3px;flex:0 0 auto;
+    background:linear-gradient(180deg,rgba(251,191,36,0),rgba(251,191,36,.45),rgba(251,191,36,0))}
+  .mini.pk0{box-shadow:0 0 0 1.5px var(--rose)}
+  .mini.pk1{box-shadow:0 0 0 1.5px var(--gold)}
+  .lrreason{margin-top:9px;padding:7px 9px;border-radius:10px;font-size:11px;font-weight:900;line-height:1.35;
+    color:#fff2d8;background:rgba(251,191,36,.12);border:1px solid rgba(251,191,36,.38);word-break:keep-all}
+  .lrreason.draw{color:#ffd9ea;background:rgba(244,114,182,.1);border-color:rgba(244,114,182,.38)}
+  #endModal .again{width:100%;height:46px;margin-top:12px}
+  .mrow2{display:flex;gap:8px;margin-top:8px}
+  .mrow2 .ghost{flex:1;height:38px}
+  .rank-open{margin-top:8px;width:100%;height:32px;border-radius:10px;font-size:11.5px;font-weight:800;
+    color:#f3dfbb;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.12)}
+  .rank-open:active{background:rgba(251,191,36,.14)}
+  /* 접힌 상태(판 보기) — 모달을 접고 뒤의 4×4 판을 그대로 노출 */
+  #endModal.boardview{background:rgba(4,3,5,.08);padding:0;overflow:hidden;pointer-events:none;
+    -webkit-backdrop-filter:none;backdrop-filter:none}
+  #endModal.boardview .endm{display:none}
+  #endModal.boardview .boardbar{display:flex}
+  body.bview .gfoot{visibility:hidden}
+  .boardbar{display:none;position:absolute;left:12px;right:12px;
+    bottom:calc(env(safe-area-inset-bottom,0px) + 10px);align-items:center;gap:9px;
+    padding:8px 9px 8px 12px;border-radius:14px;pointer-events:auto;
+    background:rgba(22,16,19,.94);border:1px solid rgba(251,191,36,.32);
+    box-shadow:0 14px 36px rgba(0,0,0,.6);-webkit-backdrop-filter:blur(9px);backdrop-filter:blur(9px)}
+  .boardbar .bb-main{flex:1;min-width:0;text-align:left}
+  .boardbar .bb-tt{font-size:12px;font-weight:900;color:#fff4e2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .boardbar .bb-sub{font-size:9.5px;font-weight:700;color:var(--dim);margin-top:2px;
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .boardbar .bb-btn{flex:0 0 auto;height:34px;padding:0 13px;border-radius:10px;font-size:12px;font-weight:900;
+    color:#241a12;background:linear-gradient(160deg,#ffe6a8,#f7c15a)}
+  .boardbar .bb-btn:active{filter:brightness(1.06)}
+
+  /* ---------- 족보표 모달 ---------- */
+  #rankModal{z-index:70}
+  #rankModal .modal.rkm{max-width:344px;padding:0;text-align:left;max-height:calc(100dvh - 22px);
+    display:flex;flex-direction:column;border-radius:20px;overflow:hidden}
+  .rk-head{display:flex;align-items:center;gap:8px;padding:13px 14px 10px;
+    border-bottom:1px solid var(--line2);flex:0 0 auto}
+  .rk-head .t{font-size:14.5px;font-weight:900;color:#fff4e2;display:flex;align-items:center;gap:6px}
+  .rk-head .t em{font-style:normal;font-size:9.5px;font-weight:800;color:#f9c3dc;border-radius:999px;
+    padding:2px 6px;border:1px solid rgba(244,114,182,.35);background:rgba(244,114,182,.1)}
+  .rk-x{margin-left:auto;width:28px;height:28px;border-radius:999px;font-size:12px;font-weight:900;
+    color:#e7dccb;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.12);line-height:1}
+  .rk-x:active{background:rgba(255,255,255,.12)}
+  .rk-scroll{flex:1 1 auto;min-height:0;overflow-y:auto;padding:9px 11px 4px;
+    display:flex;flex-direction:column;gap:5px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+  .rk-scroll::-webkit-scrollbar{display:none}
+  .rk-scroll.more{-webkit-mask-image:linear-gradient(180deg,#000 0,#000 calc(100% - 22px),transparent 100%);
+    mask-image:linear-gradient(180deg,#000 0,#000 calc(100% - 22px),transparent 100%)}
+  .rk-row{display:grid;grid-template-columns:14px 1fr;gap:2px 6px;padding:6px 8px;border-radius:11px;
+    border:1px solid var(--line2);background:rgba(255,255,255,.026)}
+  .rk-row.top{border-color:rgba(251,191,36,.36);
+    background:linear-gradient(100deg,rgba(251,191,36,.11),rgba(244,114,182,.05))}
+  .rk-row .no{grid-column:1;grid-row:1;font-size:11px;font-weight:900;color:var(--gold);
+    text-align:center;line-height:1.5}
+  .rk-row .nm{grid-column:2;grid-row:1;display:flex;align-items:baseline;gap:5px;min-width:0;
+    font-size:11.5px;font-weight:900;color:#ffeacb}
+  .rk-row .nm .nmt{min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .rk-row .nm em{font-style:normal;font-size:8.5px;font-weight:800;color:#f9c3dc;flex:0 0 auto;
+    padding:1px 5px;border-radius:999px;background:rgba(244,114,182,.1);border:1px solid rgba(244,114,182,.28)}
+  .rk-b{grid-column:2;grid-row:2;display:flex;align-items:center;gap:7px;margin-top:2px;min-width:0}
+  .rk-b .cond{flex:1;min-width:0;font-size:9px;line-height:1.4;color:var(--dim);word-break:keep-all}
+  .rk-c{display:flex;gap:2px;flex:0 0 auto}
+  .rkc{width:18px;height:24px;border-radius:3px;display:flex;flex-direction:column;align-items:center;
+    justify-content:center;border:1px solid rgba(255,255,255,.45);flex:0 0 auto;
+    background:linear-gradient(160deg,#fbf5e8,#e7d9c3);color:#241a14}
+  .rkc.red{color:#c2295a}
+  .rkc .rkn{font-size:8.5px;font-weight:900;line-height:1}
+  .rkc .sus{font-size:7px;line-height:1}
+  .rk-foot{flex:0 0 auto;padding:9px 14px calc(11px + env(safe-area-inset-bottom,0px));
+    border-top:1px solid var(--line2);background:rgba(0,0,0,.22)}
+  .rk-foot .rl{margin:0;font-size:9px;line-height:1.5;color:var(--dim2);word-break:keep-all}
+  .rk-foot .rl b{color:#ffdfae}
+  .rk-foot .rk-ok{width:100%;height:34px;margin-top:8px;border-radius:10px}
+
   #toast{position:fixed;left:50%;bottom:calc(env(safe-area-inset-bottom,0px) + 18px);transform:translate(-50%,10px);
     z-index:80;padding:9px 15px;border-radius:999px;font-size:12px;font-weight:800;color:#fff2e3;
     background:rgba(28,21,25,.96);border:1px solid rgba(251,191,36,.35);
@@ -320,6 +434,9 @@
 
   /* ---------- 낮은 화면 ---------- */
   @media (max-height:760px){
+    .banner .bp1{font-size:11.5px}
+    .banner .bp2{font-size:9.5px}
+    .bestline{padding:4px 8px}
     .cell{height:68px}
     .cell .face .rk{font-size:19px}
     .status{height:32px}
@@ -334,6 +451,21 @@
     .comm{padding:4px 7px}
     .cc{width:30px;height:41px}
   }
+  @media (max-width:370px){
+    .rk-scroll{padding:7px 9px 4px;gap:4px}
+    .rk-row{padding:5px 7px}
+    .rk-row .nm{font-size:11px}
+    .rk-b .cond{font-size:8.5px;line-height:1.35}
+    .rkc{width:17px;height:22px}
+    .rkc .rkn{font-size:8px}
+    .rk-foot{padding:8px 12px calc(10px + env(safe-area-inset-bottom,0px))}
+    .rk-head{padding:11px 12px 9px}
+  }
+  @media (max-width:340px){
+    .rk-row{padding:4px 6px}
+    .rk-scroll{gap:3px}
+    .rk-foot .rl{font-size:7.5px}
+  }
   @media (prefers-reduced-motion:reduce){
     *{animation:none !important;transition:none !important}
   }
@@ -346,6 +478,7 @@
   <section id="lobby" class="screen show">
     <div class="portal-dock">
       <a class="portal-pill" href="./index.html" aria-label="아케이드 홈으로"><span class="chev">‹</span>홈</a>
+      <button class="dock-rank" id="rankBtnLobby" type="button" aria-label="족보표 보기">🃏 족보</button>
     </div>
     <div class="lobby-scroll"><div class="lobby-inner">
       <header class="brand">
@@ -448,6 +581,7 @@
       <div class="gmeta">
         <span class="scorebig"><span class="s0" id="scoreA">0</span> : <span class="s1" id="scoreB">0</span></span>
         <span class="pill" id="roundPill">R1</span>
+        <button class="hdrank" id="rankBtnGame" type="button" aria-label="족보표 보기">족보</button>
       </div>
     </header>
 
@@ -505,13 +639,45 @@
 
   <!-- 종료 모달 -->
   <div id="endModal" class="overlay hide">
-    <div class="modal">
+    <div class="modal endm">
       <div class="mcrown" id="endCrown">👑</div>
       <h2 id="endTitle"><span>선홍 승리</span></h2>
       <div class="mscore" id="endScore">1 : 0 · 단판</div>
-      <div class="mrow">
-        <button id="againBtn" class="primary">한 판 더</button>
+
+      <div class="lastround" id="lastRound">
+        <div class="lrcap"><span>최종 라운드</span><b id="lrRound">R1</b></div>
+        <div class="lrcomm"><span class="lrl">공용<br>3장</span><span class="lrcc" id="lrComm"></span></div>
+        <div id="lrHands"></div>
+        <div class="lrreason" id="lrReason">—</div>
+      </div>
+
+      <button id="againBtn" class="primary again">한 판 더</button>
+      <div class="mrow2">
         <button id="lobbyBtn" class="ghost">로비로</button>
+        <button id="seeBoardBtn" class="ghost">판 보기</button>
+      </div>
+      <button id="endRankBtn" class="rank-open" type="button">🃏 족보표 보기</button>
+    </div>
+    <div class="boardbar" id="boardBar" aria-hidden="true">
+      <div class="bb-main">
+        <div class="bb-tt" id="bbTitle">🏆 승리</div>
+        <div class="bb-sub" id="bbSub"></div>
+      </div>
+      <button class="bb-btn" id="backToResultBtn" type="button">결과 보기</button>
+    </div>
+  </div>
+
+  <!-- 족보표 -->
+  <div id="rankModal" class="overlay hide">
+    <div class="modal rkm">
+      <div class="rk-head">
+        <div class="t">🃏 포커 족보표<em>높은 순</em></div>
+        <button class="rk-x" id="rankClose" type="button" aria-label="족보표 닫기">✕</button>
+      </div>
+      <div class="rk-scroll" id="rankList"></div>
+      <div class="rk-foot">
+        <p class="rl"><b>무늬(♠♥♦♣) 우열 없음</b> · 같은 족보는 <b>구성 카드 → 키커</b> 순 비교 · 완전 동점은 <b>무승부</b></p>
+        <button class="ghost rk-ok" id="rankOk" type="button">닫기</button>
       </div>
     </div>
   </div>
@@ -620,6 +786,106 @@
     }
     return best ? { hand: best, idx: [bi, bj] } : null;
   }
+
+  /* =========================================================
+     1-b. 족보 표기 · 승패 사유
+        같은 족보면 구성 카드(vals)를 앞에서부터 비교해
+        어느 요소에서 앞섰는지를 한국어 한 줄로 돌려준다.
+     ========================================================= */
+  function handTitle(h) {
+    if (!h) return '—';
+    var v = h.vals;
+    switch (h.cat) {
+      case 8: return '스트레이트 플러시 (' + (v[0] === 14 ? '로열' : rankLabel(v[0]) + '탑') + ')';
+      case 7: return '포카드 (' + rankLabel(v[0]) + ')';
+      case 6: return '풀하우스 (' + rankLabel(v[0]) + '·' + rankLabel(v[1]) + ')';
+      case 5: return '플러시 (' + rankLabel(v[0]) + '높음)';
+      case 4: return '스트레이트 (' + rankLabel(v[0]) + '탑)';
+      case 3: return '트리플 (' + rankLabel(v[0]) + ')';
+      case 2: return '투페어 (' + rankLabel(v[0]) + '·' + rankLabel(v[1]) + ')';
+      case 1: return '원페어 (' + rankLabel(v[0]) + ')';
+      default: return '하이 카드 (' + rankLabel(v[0]) + ')';
+    }
+  }
+
+  function firstDiff(a, b) {
+    var n = Math.max(a.length, b.length);
+    for (var i = 0; i < n; i++) {
+      var x = a[i] || 0, y = b[i] || 0;
+      if (x !== y) return { i: i, x: x, y: y };
+    }
+    return null;
+  }
+
+  /* a 가 b 를 이길 때(또는 완전 동점일 때)의 사유 문자열 */
+  function clashReason(a, b) {
+    if (!a || !b) return '';
+    if (a.cat !== b.cat) {
+      return '족보 우위 (' + CAT_NAMES[a.cat] + ' > ' + CAT_NAMES[b.cat] + ')';
+    }
+    var d = firstDiff(a.vals, b.vals);
+    if (!d) return '완전 동점 (같은 족보 · 같은 구성)';
+    var X = rankLabel(d.x), Y = rankLabel(d.y);
+    var nth = (d.i + 1);
+    switch (a.cat) {
+      case 1:
+        return d.i === 0 ? '원페어 숫자 우위 (' + X + ' > ' + Y + ')'
+                         : '키커 우위 (' + X + ' > ' + Y + ')';
+      case 2:
+        return d.i === 0 ? '높은 페어 우위 (' + X + ' > ' + Y + ')'
+             : d.i === 1 ? '낮은 페어 우위 (' + X + ' > ' + Y + ')'
+                         : '키커 우위 (' + X + ' > ' + Y + ')';
+      case 3:
+        return d.i === 0 ? '트리플 숫자 우위 (' + X + ' > ' + Y + ')'
+                         : '키커 우위 (' + X + ' > ' + Y + ')';
+      case 4:
+      case 8:
+        return '가장 높은 카드 우위 (' + X + '탑 > ' + Y + '탑)';
+      case 6:
+        return d.i === 0 ? '트리플 숫자 우위 (' + X + ' > ' + Y + ')'
+                         : '페어 숫자 우위 (' + X + ' > ' + Y + ')';
+      case 7:
+        return d.i === 0 ? '포카드 숫자 우위 (' + X + ' > ' + Y + ')'
+                         : '키커 우위 (' + X + ' > ' + Y + ')';
+      case 5:
+        return d.i === 0 ? '높은 카드 우위 (' + X + ' > ' + Y + ')'
+                         : nth + '번째 카드 우위 (' + X + ' > ' + Y + ')';
+      default:
+        return d.i === 0 ? '높은 카드 우위 (' + X + ' > ' + Y + ')'
+                         : nth + '번째 카드 우위 (' + X + ' > ' + Y + ')';
+    }
+  }
+
+  /* 9단계 족보표 — 높은 순. cards = [rank, suit] (0♠ 1♥ 2♦ 3♣) */
+  var RANK_TABLE = [
+    { cat: 8, name: '스트레이트 플러시', tag: '로열 포함',
+      cond: '같은 무늬 5장이 숫자 연속 · 로열(A-K-Q-J-10) 포함, A-2-3-4-5(백스트레이트)도 인정',
+      cards: [[14, 0], [13, 0], [12, 0], [11, 0], [10, 0]] },
+    { cat: 7, name: '포카드', tag: '',
+      cond: '같은 숫자 4장 + 아무 1장',
+      cards: [[9, 3], [9, 1], [9, 2], [9, 0], [14, 0]] },
+    { cat: 6, name: '풀하우스', tag: '',
+      cond: '같은 숫자 3장 + 같은 숫자 2장',
+      cards: [[13, 0], [13, 1], [13, 2], [7, 3], [7, 0]] },
+    { cat: 5, name: '플러시', tag: '',
+      cond: '같은 무늬 5장 · 숫자까지 연속이면 스트레이트 플러시',
+      cards: [[14, 1], [11, 1], [9, 1], [6, 1], [3, 1]] },
+    { cat: 4, name: '스트레이트', tag: '백스트레이트 인정',
+      cond: '숫자 5장 연속 · 무늬 무관 · A-2-3-4-5는 5탑(가장 낮음)',
+      cards: [[9, 0], [8, 1], [7, 2], [6, 3], [5, 0]] },
+    { cat: 3, name: '트리플', tag: '',
+      cond: '같은 숫자 3장 + 서로 다른 2장',
+      cards: [[12, 0], [12, 1], [12, 2], [14, 3], [8, 0]] },
+    { cat: 2, name: '투페어', tag: '',
+      cond: '같은 숫자 2장 × 2쌍 + 아무 1장',
+      cards: [[11, 0], [11, 1], [8, 2], [8, 3], [14, 0]] },
+    { cat: 1, name: '원페어', tag: '',
+      cond: '같은 숫자 2장 + 서로 다른 3장',
+      cards: [[10, 0], [10, 1], [14, 2], [13, 3], [4, 0]] },
+    { cat: 0, name: '하이 카드', tag: '',
+      cond: '아무것도 맞지 않음 · 가장 높은 카드부터 차례로 비교',
+      cards: [[14, 0], [12, 1], [9, 2], [5, 3], [2, 0]] }
+  ];
 
   /* =========================================================
      2. 상태
@@ -1191,7 +1457,8 @@
     var h1 = eval5(S.picks[1].map(function (i) { return S.board[i]; }).concat(S.comm));
     var c = compareHands(h0, h1);
     var winner = c > 0 ? 0 : (c < 0 ? 1 : -1);
-    S.result = { hands: [h0, h1], winner: winner };
+    var reason = (winner === 1) ? clashReason(h1, h0) : clashReason(h0, h1);
+    S.result = { hands: [h0, h1], winner: winner, reason: reason };
     if (winner >= 0) { S.wins[winner] += 1; S.points[winner] += 1; }
     else { S.draws += 1; S.points[0] += 0.5; S.points[1] += 0.5; }
     S.best = bestCombination(S.board, S.comm);
@@ -1279,6 +1546,7 @@
   function showEnd() {
     if (!S.result) return;
     S.endShown = true;
+    setBoardView(false);
     var w = matchWinner();
     $('#endCrown').textContent = w >= 0 ? '👑' : '🤝';
     $('#endTitle').innerHTML = w >= 0
@@ -1289,11 +1557,97 @@
     else if (S.format === 'bo3') line = S.wins[0] + ' : ' + S.wins[1] + ' · ' + S.round + '판';
     else line = fmtPts(S.points[0]) + ' : ' + fmtPts(S.points[1]) + ' · ' + S.round + 'R';
     $('#endScore').textContent = line;
+    renderEndDetail(w);
     $('#endModal').classList.remove('hide');
   }
+
+  /* 종료 모달 — 마지막 라운드의 공용패·양측 패·족보·승패 사유 */
+  function renderEndDetail(w) {
+    var lr = $('#lastRound');
+    var ok = !!(S.result && S.result.hands && S.picks[0] && S.picks[1]);
+    lr.classList.toggle('hide', !ok);
+    if (!ok) return;
+
+    $('#lrRound').textContent = 'R' + Math.max(1, S.round);
+
+    var cm = '';
+    for (var i = 0; i < 3; i++) cm += miniHTML(S.comm[i] || null, '');
+    $('#lrComm').innerHTML = cm;
+
+    var h = '';
+    for (var seat = 0; seat < 2; seat++) {
+      var win = (S.result.winner === seat);
+      var pk = S.picks[seat];
+      var cards = miniHTML(S.board[pk[0]], 'pk' + seat) + miniHTML(S.board[pk[1]], 'pk' + seat);
+      cards += '<i class="mdiv"></i>';
+      for (var j = 0; j < 3; j++) cards += miniHTML(S.comm[j], '');
+      h += '<div class="mh' + (win ? ' win' : '') + '">' +
+        '<span class="mwho">' + (win ? '👑 ' : '') + esc(S.names[seat]) + '</span>' +
+        '<span class="mcat">' + esc(handTitle(S.result.hands[seat])) + '</span>' +
+        '<span class="mcards">' + cards + '</span>' +
+        '</div>';
+    }
+    $('#lrHands').innerHTML = h;
+
+    var rsn = $('#lrReason');
+    rsn.textContent = (S.result.winner < 0 ? '🤝 ' : '🏆 ') + (S.result.reason || '');
+    rsn.classList.toggle('draw', S.result.winner < 0);
+
+    $('#bbTitle').textContent = (w >= 0 ? '🏆 ' + S.names[w] + ' 승리' : '🤝 무승부');
+    $('#bbSub').textContent = S.result.reason || '';
+  }
+
   function hideEnd() {
     $('#endModal').classList.add('hide');
+    setBoardView(false);
     S.endShown = false;
+  }
+
+  /* 모달 ↔ 판 보기 전환 (벽바둑 2와 같은 방식) */
+  function setBoardView(on) {
+    var m = $('#endModal');
+    if (!m) return;
+    m.classList.toggle('boardview', !!on);
+    document.body.classList.toggle('bview', !!on);
+    var bar = $('#boardBar');
+    if (bar) bar.setAttribute('aria-hidden', on ? 'false' : 'true');
+  }
+
+  function rkcHTML(rc) {
+    return '<span class="rkc' + (SUITS[rc[1]].red ? ' red' : '') + '">' +
+      '<b class="rkn">' + rankLabel(rc[0]) + '</b><i class="sus">' + SUITS[rc[1]].sym + '</i></span>';
+  }
+
+  function renderRankList() {
+    var box = $('#rankList');
+    if (!box || box.getAttribute('data-done')) return;
+    var h = '';
+    RANK_TABLE.forEach(function (row, i) {
+      h += '<div class="rk-row' + (i === 0 ? ' top' : '') + '">' +
+        '<span class="no">' + (i + 1) + '</span>' +
+        '<span class="nm"><span class="nmt">' + esc(row.name) + '</span>' +
+        (row.tag ? '<em>' + esc(row.tag) + '</em>' : '') + '</span>' +
+        '<span class="rk-b"><span class="cond">' + esc(row.cond) + '</span>' +
+        '<span class="rk-c">' + row.cards.map(rkcHTML).join('') + '</span></span>' +
+        '</div>';
+    });
+    box.innerHTML = h;
+    box.setAttribute('data-done', '1');
+  }
+
+  function openRank() {
+    renderRankList();
+    $('#rankModal').classList.remove('hide');
+    syncRankScroll();
+  }
+  function closeRank() {
+    $('#rankModal').classList.add('hide');
+  }
+  /* 내용이 넘칠 때만 아래쪽 페이드로 스크롤 가능함을 알린다 */
+  function syncRankScroll() {
+    var box = $('#rankList');
+    if (!box) return;
+    box.classList.toggle('more', box.scrollHeight > box.clientHeight + 2);
   }
   function fmtPts(n) { return (Math.round(n * 10) / 10).toString(); }
   function esc(s) {
@@ -1477,16 +1831,16 @@
     var best = $('#bestLine');
     if (S.phase === 'reveal' && S.result) {
       var w = S.result.winner;
-      var txt;
-      if (w < 0) txt = '무승부 <span class="vs">·</span> 같은 족보 · 같은 키커';
-      else {
-        var o = 1 - w;
-        txt = '<span class="crown">👑</span><b>' + esc(S.names[w]) + '</b><span class="sp"> </span>승' +
-          ' <span class="vs">·</span> ' +
-          S.result.hands[w].name + ' &gt; ' + S.result.hands[o].name;
-      }
-      b.innerHTML = txt;
-      b.className = 'banner show';
+      var hA = S.result.hands[0], hB = S.result.hands[1];
+      var rsn = S.result.reason || (w === 1 ? clashReason(hB, hA) : clashReason(hA, hB));
+      var head;
+      if (w < 0) head = '🤝 <b>무승부</b>';
+      else head = '<span class="crown">👑</span><b>' + esc(S.names[w]) + '</b> 승' +
+        ' <span class="vs">·</span> ' + esc(handTitle(S.result.hands[w])) +
+        ' &gt; ' + esc(handTitle(S.result.hands[1 - w]));
+      b.innerHTML = '<span class="bp1">' + head + '</span>' +
+        '<span class="bp2">' + esc(rsn) + '</span>';
+      b.className = 'banner show rv';
       if (S.best) {
         best.classList.add('show');
         $('#bestName').textContent = S.best.hand.name;
@@ -1775,6 +2129,14 @@
       if (S.phase === 'reveal') { nextStep(); return; }
     });
     $('#quitBtn').addEventListener('click', goLobby);
+    $('#rankBtnLobby').addEventListener('click', openRank);
+    $('#rankBtnGame').addEventListener('click', openRank);
+    $('#endRankBtn').addEventListener('click', openRank);
+    $('#rankClose').addEventListener('click', closeRank);
+    $('#rankOk').addEventListener('click', closeRank);
+    $('#rankModal').addEventListener('click', function (e) { if (e.target === this) closeRank(); });
+    $('#seeBoardBtn').addEventListener('click', function () { setBoardView(true); });
+    $('#backToResultBtn').addEventListener('click', function () { setBoardView(false); });
     $('#lobbyBtn').addEventListener('click', function () {
       hideEnd();
       goLobby();
@@ -1788,9 +2150,13 @@
       }
       newMatch();
     });
+    window.addEventListener('resize', syncRankScroll);
     $('#curtain').addEventListener('click', curtainDown);
     document.addEventListener('keydown', function (e) {
-      if (e.key === 'Escape' && S.mode === 'local' && S.curtain != null) curtainDown();
+      if (e.key !== 'Escape') return;
+      if (!$('#rankModal').classList.contains('hide')) { closeRank(); return; }
+      if (!document.getElementById('endModal').classList.contains('hide')) { setBoardView(false); return; }
+      if (S.mode === 'local' && S.curtain != null) curtainDown();
     });
   }
 
@@ -1829,7 +2195,8 @@
     cfg: { pickSec: function () { return PICK_SEC_CFG; }, setPickSec: function (v) { PICK_SEC_CFG = v; } },
     engine: {
       newDeck: newDeck, shuffle: shuffle, deal: deal, eval5: eval5, compare: compareHands,
-      best: bestCombination, rankLabel: rankLabel, cardLabel: cardLabel, CAT_NAMES: CAT_NAMES
+      best: bestCombination, rankLabel: rankLabel, cardLabel: cardLabel, CAT_NAMES: CAT_NAMES,
+      handTitle: handTitle, clashReason: clashReason, RANK_TABLE: RANK_TABLE
     },
     ctrl: {
       start: startPressed, flipNow: flipNow, select: onCell, confirm: confirmPick,
@@ -1837,7 +2204,10 @@
       curtainDown: curtainDown, showEnd: showEnd,
       matchOver: isMatchOver, matchWinner: matchWinner
     },
-    ui: { render: render, setMode: setMode },
+    ui: {
+      render: render, setMode: setMode,
+      openRank: openRank, closeRank: closeRank, boardView: setBoardView, endDetail: renderEndDetail
+    },
     setTable: function (board, comm) {
       var norm = function (c) { return Array.isArray(c) ? { r: c[0], s: c[1] } : { r: c.r, s: c.s }; };
       S.board = board.map(norm);

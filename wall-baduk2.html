@@ -445,6 +445,36 @@ input{font-family:inherit}
   color:#231405;background:linear-gradient(180deg,#ffeecb 0%,#fbbf24 60%,#f4c470 100%);
   border:1px solid rgba(255,255,255,.3)}
 .ov-boardbar .obb-btn:active{filter:brightness(.97)}
+
+/* ---------- 사운드 토글 (BGM · 효과음) ---------- */
+.aa-seg{
+  display:inline-flex;align-items:center;flex:0 0 auto;margin-left:auto;
+  height:28px;padding:0;border-radius:999px;overflow:hidden;pointer-events:auto;
+  background:linear-gradient(180deg,rgba(255,255,255,.075),rgba(255,255,255,.025));
+  border:1px solid rgba(255,212,121,.30);
+  box-shadow:0 2px 8px rgba(0,0,0,.22);
+}
+.aa-btn{
+  position:relative;display:inline-flex;align-items:center;justify-content:center;
+  width:25px;height:26px;padding:0;line-height:1;color:#f3e6cd;background:none;border:0;
+}
+.aa-btn + .aa-btn{box-shadow:inset 1px 0 0 rgba(255,255,255,.10)}
+.aa-btn .ai{font-size:11px;line-height:1}
+.aa-btn:active{background:rgba(255,212,121,.18)}
+.aa-btn.off{opacity:.5}
+.aa-btn.off .ai{filter:grayscale(1)}
+.aa-btn.off::after{
+  content:"";position:absolute;left:4px;right:4px;top:50%;height:1.5px;border-radius:2px;
+  background:#ffd479;transform:rotate(-38deg);opacity:.95;pointer-events:none;
+}
+@media (max-width:360px){
+  .top-row{gap:4px}
+  .top-row .icon-btn{width:28px}
+  .timer{min-width:46px;padding:0 5px;font-size:12px}
+  .turn-chip{padding:0 7px;font-size:11.5px}
+  .aa-btn{width:23px}
+  .aa-btn .ai{font-size:10.5px}
+}
 </style>
 </head>
 <body>
@@ -454,6 +484,10 @@ input{font-family:inherit}
   <section class="screen on" id="home">
     <div class="portal-dock">
       <a class="portal-pill" href="./index.html" aria-label="아케이드 홈으로"><span class="chev">‹</span>홈</a>
+      <div class="aa-seg" role="group" aria-label="사운드 설정">
+        <button class="aa-btn" type="button" data-aa="bgm" aria-pressed="true" title="배경음악 끄기"><span class="ai">♪</span></button>
+        <button class="aa-btn" type="button" data-aa="sfx" aria-pressed="true" title="효과음 끄기"><span class="ai">🔊</span></button>
+      </div>
     </div>
     <div class="home-wrap">
       <div class="brand">
@@ -528,6 +562,10 @@ input{font-family:inherit}
         <div class="timer" id="timerChip">1:30</div>
         <div class="net-badge hide" id="netBadge"><span class="nd"></span><span class="nt">연결됨</span></div>
         <button class="icon-btn" id="helpBtn" aria-label="규칙">?</button>
+        <div class="aa-seg" role="group" aria-label="사운드 설정">
+          <button class="aa-btn" type="button" data-aa="bgm" aria-pressed="true" title="배경음악 끄기"><span class="ai">♪</span></button>
+          <button class="aa-btn" type="button" data-aa="sfx" aria-pressed="true" title="효과음 끄기"><span class="ai">🔊</span></button>
+        </div>
       </div>
       <div class="scores" id="scores"></div>
       <div class="prog"><div class="prog-bar" id="progBar"></div><div class="prog-txt" id="progTxt">분리 0%</div></div>
@@ -723,6 +761,490 @@ input{font-family:inherit}
 
 </div>
 
+<!-- AA-ENGINE:START -->
+<script>
+/* ============================================================
+   아케이드 공용 사운드 엔진 · Web Audio API 합성 (외부 음원 파일 0)
+   - BGM / 효과음 개별 온·오프, localStorage 공유
+     arcade_bgm_on (기본 '1') · arcade_sfx_on (기본 '1')
+   - iOS Safari: 첫 제스처(pointerdown/touchstart/click)에서
+     AudioContext 생성 + resume({passive:true})
+   - 탭이 숨겨지면 BGM 정지, 다시 보이면(BGM ON이면) 재개
+   ============================================================ */
+(function () {
+  'use strict';
+  var LS_BGM = 'arcade_bgm_on', LS_SFX = 'arcade_sfx_on';
+  var BGM_GAIN = 0.075, SFX_GAIN = 0.5;
+  var AC = window.AudioContext || window.webkitAudioContext || null;
+  var ctx = null, busBgm = null, busSfx = null, noiseBuf = null;
+  var state = { bgm: readFlag(LS_BGM), sfx: readFlag(LS_SFX) };
+  var game = 'baduk';
+  var bgmTimer = null, bgmStep = 0, bgmNext = 0, live = [];
+  var hidden = false, lastSfx = 0;
+
+  /* ---------------- 설정 저장 ---------------- */
+  function readFlag(k) {
+    try { var v = localStorage.getItem(k); return v === null ? true : v === '1'; }
+    catch (e) { return true; }
+  }
+  function saveFlag(k, v) { try { localStorage.setItem(k, v ? '1' : '0'); } catch (e) {} }
+
+  /* ---------------- 트랙(게임별 BGM) ----------------
+     pad  : [시작스텝, [주파수...]]
+     bass : [시작스텝, 주파수, 길이(초)]
+     lead : [시작스텝, 주파수, 길이(초)]
+     hats : [스텝, 세기]                                    */
+  var TRACKS = {
+    /* 벽바둑 2 · 차분한 전략 — D 도리안 펜타토닉 젠 루프 */
+    baduk: {
+      bpm: 60, div: 2, steps: 32,
+      padDur: 5.8, padGain: 0.30, bassGain: 0.54, leadGain: 0.75,
+      pad: [[0, [146.83, 174.61, 220.00, 261.63]],
+            [16, [130.81, 164.81, 196.00, 246.94]]],
+      bass: [[0, 73.42, 5.2], [16, 65.41, 5.2]],
+      lead: [[2, 349.23, 1.6], [4, 440.00, 1.8], [7, 523.25, 1.4], [10, 587.33, 2.2],
+             [14, 440.00, 1.4], [18, 392.00, 1.6], [21, 349.23, 1.2], [24, 392.00, 1.4],
+             [26, 440.00, 1.2], [29, 293.66, 2.6]],
+      hats: []
+    },
+    /* 흑과 백 · 긴장감 있는 미니멀 피아노/벨 — A 단조 */
+    bw: {
+      bpm: 74, div: 2, steps: 32,
+      padDur: 4.6, padGain: 0.33, bassGain: 0.51, leadGain: 0.81,
+      pad: [[0, [110.00, 164.81, 220.00]], [16, [98.00, 146.83, 196.00]]],
+      bass: [[0, 82.41, 4.4], [16, 73.42, 4.4]],
+      lead: [[0, 440.00, 2.4], [3, 523.25, 1.2], [6, 659.25, 1.6], [9, 587.33, 1.2],
+             [12, 493.88, 1.6], [16, 392.00, 2.2], [19, 493.88, 1.2], [22, 587.33, 1.4],
+             [25, 523.25, 1.2], [28, 440.00, 2.6]],
+      hats: [[0, 0.020], [4, 0.013], [8, 0.020], [12, 0.013],
+             [16, 0.020], [20, 0.013], [24, 0.020], [28, 0.013]]
+    },
+    /* 기억포커 · 세련된 로파이 라운지 — Fmaj7 / Dm7 / B♭maj7 / C7 */
+    mp: {
+      bpm: 84, div: 2, steps: 32, swing: 0.13,
+      padDur: 2.3, padGain: 0.26, bassGain: 0.48, leadGain: 0.69,
+      pad: [[0, [174.61, 220.00, 329.63]],
+            [8, [146.83, 174.61, 261.63]],
+            [16, [116.54, 174.61, 293.66]],
+            [24, [130.81, 164.81, 233.08]]],
+      bass: [[0, 87.31, 1.7], [8, 146.83, 1.7], [16, 116.54, 1.7], [24, 130.81, 1.7]],
+      lead: [[2, 440.00, 1.2], [5, 523.25, 1.0], [7, 440.00, 1.2], [11, 392.00, 1.2],
+             [14, 349.23, 1.6], [18, 293.66, 1.2], [21, 349.23, 1.2], [26, 329.63, 1.4],
+             [30, 261.63, 1.8]],
+      hats: [[1, 0.030], [5, 0.022], [9, 0.030], [13, 0.022],
+             [17, 0.030], [21, 0.022], [25, 0.030], [29, 0.022]]
+    }
+  };
+
+  function index(t) {
+    if (t._m) return t._m;
+    var m = { pad: {}, bass: {}, lead: {}, hats: {} };
+    (t.pad || []).forEach(function (e) { m.pad[e[0]] = e; });
+    (t.bass || []).forEach(function (e) { m.bass[e[0]] = e; });
+    (t.lead || []).forEach(function (e) { m.lead[e[0]] = e; });
+    (t.hats || []).forEach(function (e) { m.hats[e[0]] = e; });
+    t._m = m;
+    return m;
+  }
+
+  /* ---------------- 오디오 그래프 ---------------- */
+  function ensure() {
+    if (ctx || !AC) return ctx;
+    try {
+      ctx = new AC();
+      busBgm = ctx.createGain();
+      busSfx = ctx.createGain();
+      busBgm.gain.value = 0.0001;
+      busSfx.gain.value = SFX_GAIN;
+      var lp = ctx.createBiquadFilter();
+      lp.type = 'lowpass';
+      lp.frequency.value = 5200;
+      lp.Q.value = 0.35;
+      busBgm.connect(lp);
+      lp.connect(ctx.destination);
+      busSfx.connect(ctx.destination);
+    } catch (e) { ctx = null; }
+    return ctx;
+  }
+
+  function noise() {
+    if (noiseBuf || !ctx) return noiseBuf;
+    try {
+      var n = Math.floor(ctx.sampleRate * 0.4);
+      noiseBuf = ctx.createBuffer(1, n, ctx.sampleRate);
+      var d = noiseBuf.getChannelData(0);
+      for (var i = 0; i < n; i++) d[i] = Math.random() * 2 - 1;
+    } catch (e) { noiseBuf = null; }
+    return noiseBuf;
+  }
+
+  function keep(o) {
+    live.push(o);
+    o.onended = function () {
+      var i = live.indexOf(o);
+      if (i >= 0) live.splice(i, 1);
+    };
+  }
+
+  /* 부드러운 패드 한 음 */
+  function padVoice(f, when, dur, g) {
+    try {
+      var o = ctx.createOscillator(), gn = ctx.createGain(), lp = ctx.createBiquadFilter();
+      o.type = 'triangle';
+      o.frequency.value = f;
+      o.detune.value = Math.random() * 7 - 3.5;
+      lp.type = 'lowpass';
+      lp.frequency.value = 1500;
+      lp.Q.value = 0.4;
+      gn.gain.value = 0.0001;
+      o.connect(lp); lp.connect(gn); gn.connect(busBgm);
+      var a = Math.min(1.1, dur * 0.35), r = Math.min(2.8, dur * 0.55);
+      gn.gain.setValueAtTime(0.0001, when);
+      gn.gain.exponentialRampToValueAtTime(g, when + a);
+      gn.gain.exponentialRampToValueAtTime(0.0001, when + dur + r);
+      o.start(when);
+      o.stop(when + dur + r + 0.05);
+      keep(o);
+    } catch (e) {}
+  }
+
+  /* 벨/플럭 계열 리드 한 음 */
+  function leadVoice(f, when, dur, g) {
+    try {
+      var o = ctx.createOscillator(), o2 = ctx.createOscillator(), gn = ctx.createGain(),
+          gn2 = ctx.createGain(), lp = ctx.createBiquadFilter();
+      o.type = 'sine'; o.frequency.value = f;
+      o2.type = 'triangle'; o2.frequency.value = f * 2.002;
+      lp.type = 'lowpass'; lp.frequency.value = 3200; lp.Q.value = 0.5;
+      gn2.gain.value = 0.16;
+      gn.gain.value = 0.0001;
+      o.connect(lp); o2.connect(gn2); gn2.connect(lp);
+      lp.connect(gn); gn.connect(busBgm);
+      gn.gain.setValueAtTime(0.0001, when);
+      gn.gain.exponentialRampToValueAtTime(g, when + 0.02);
+      gn.gain.exponentialRampToValueAtTime(g * 0.34, when + 0.28);
+      gn.gain.exponentialRampToValueAtTime(0.0001, when + dur);
+      o.start(when); o2.start(when);
+      o.stop(when + dur + 0.03); o2.stop(when + dur + 0.03);
+      keep(o); keep(o2);
+    } catch (e) {}
+  }
+
+  /* 낮은 베이스 한 음 */
+  function bassVoice(f, when, dur, g) {
+    try {
+      var o = ctx.createOscillator(), gn = ctx.createGain();
+      o.type = 'sine'; o.frequency.value = f;
+      gn.gain.value = 0.0001;
+      o.connect(gn); gn.connect(busBgm);
+      gn.gain.setValueAtTime(0.0001, when);
+      gn.gain.exponentialRampToValueAtTime(g, Math.min(0.5, dur * 0.3) + when);
+      gn.gain.exponentialRampToValueAtTime(0.0001, when + dur);
+      o.start(when); o.stop(when + dur + 0.04);
+      keep(o);
+    } catch (e) {}
+  }
+
+  /* 숨소리 같은 로파이 햇 */
+  function hatVoice(when, g) {
+    var b = noise();
+    if (!b) return;
+    try {
+      var s = ctx.createBufferSource(), bp = ctx.createBiquadFilter(), gn = ctx.createGain();
+      s.buffer = b;
+      bp.type = 'bandpass'; bp.frequency.value = 5400; bp.Q.value = 1.1;
+      gn.gain.value = 0.0001;
+      s.connect(bp); bp.connect(gn); gn.connect(busBgm);
+      gn.gain.setValueAtTime(0.0001, when);
+      gn.gain.exponentialRampToValueAtTime(g, when + 0.006);
+      gn.gain.exponentialRampToValueAtTime(0.0001, when + 0.085);
+      s.start(when); s.stop(when + 0.1);
+      keep(s);
+    } catch (e) {}
+  }
+
+  /* ---------------- BGM 스케줄러 ---------------- */
+  function stepDur(t) { return 60 / t.bpm / t.div; }
+
+  function playStep(t, step, when) {
+    var m = index(t);
+    var sw = t.swing ? (step % 2 ? t.swing * stepDur(t) : 0) : 0;
+    var at = when + sw;
+    if (m.pad[step]) {
+      var chord = m.pad[step][1];
+      for (var i = 0; i < chord.length; i++) padVoice(chord[i], at, t.padDur, t.padGain);
+    }
+    if (m.bass[step]) bassVoice(m.bass[step][1], at, m.bass[step][2] || 2, t.bassGain);
+    if (m.lead[step]) leadVoice(m.lead[step][1], at, m.lead[step][2] || 1.4, t.leadGain);
+    if (m.hats[step]) hatVoice(at, m.hats[step][1]);
+  }
+
+  function pump() {
+    if (!ctx || !bgmTimer) return;
+    if (ctx.state !== 'running') return;
+    var t = TRACKS[game];
+    if (!t) return;
+    var now = ctx.currentTime;
+    var guard = 0;
+    while (bgmNext < now + 0.40 && guard++ < 128) {
+      playStep(t, bgmStep, bgmNext);
+      bgmStep = (bgmStep + 1) % t.steps;
+      bgmNext += stepDur(t);
+    }
+  }
+
+  function startBgm() {
+    if (!state.bgm || hidden || bgmTimer) return;
+    var c = ensure();
+    if (!c) return;
+    if (c.state !== 'running') {
+      try {
+        var p = c.resume();
+        if (p && p.then) p.then(function () { if (state.bgm && !hidden) startBgm(); }).catch(function () {});
+      } catch (e) {}
+      return;
+    }
+    bgmStep = 0;
+    bgmNext = c.currentTime + 0.16;
+    try {
+      busBgm.gain.cancelScheduledValues(c.currentTime);
+      busBgm.gain.setValueAtTime(Math.max(0.0001, busBgm.gain.value), c.currentTime);
+      busBgm.gain.setTargetAtTime(BGM_GAIN, c.currentTime, 0.6);
+    } catch (e) {}
+    bgmTimer = setInterval(pump, 140);
+    pump();
+    paint();
+  }
+
+  function stopBgm() {
+    if (bgmTimer) { clearInterval(bgmTimer); bgmTimer = null; }
+    if (!ctx) return;
+    var now = ctx.currentTime;
+    try {
+      busBgm.gain.cancelScheduledValues(now);
+      busBgm.gain.setTargetAtTime(0.0001, now, 0.05);
+    } catch (e) {}
+    var list = live.slice();
+    live.length = 0;
+    for (var i = 0; i < list.length; i++) { try { list[i].stop(now + 0.35); } catch (e) {} }
+    paint();
+  }
+
+  /* ---------------- 효과음 ---------------- */
+  function tone(when, f, dur, g, type, to, lp) {
+    try {
+      var o = ctx.createOscillator(), gn = ctx.createGain(), flt = null;
+      o.type = type || 'sine';
+      o.frequency.setValueAtTime(f, when);
+      if (to) o.frequency.exponentialRampToValueAtTime(Math.max(20, to), when + dur);
+      if (lp) { flt = ctx.createBiquadFilter(); flt.type = 'lowpass'; flt.frequency.value = lp; }
+      gn.gain.setValueAtTime(0.0001, when);
+      gn.gain.exponentialRampToValueAtTime(g, when + Math.min(0.018, dur * 0.3));
+      gn.gain.exponentialRampToValueAtTime(0.0001, when + dur);
+      if (flt) { o.connect(flt); flt.connect(gn); } else o.connect(gn);
+      gn.connect(busSfx);
+      o.start(when); o.stop(when + dur + 0.02);
+      keep(o);
+    } catch (e) {}
+  }
+
+  function hiss(when, dur, g, type, f, q) {
+    var b = noise();
+    if (!b) return;
+    try {
+      var s = ctx.createBufferSource(), flt = ctx.createBiquadFilter(), gn = ctx.createGain();
+      s.buffer = b;
+      flt.type = type || 'bandpass';
+      flt.frequency.value = f || 2200;
+      flt.Q.value = q || 0.9;
+      gn.gain.setValueAtTime(0.0001, when);
+      gn.gain.exponentialRampToValueAtTime(g, when + 0.008);
+      gn.gain.exponentialRampToValueAtTime(0.0001, when + dur);
+      s.connect(flt); flt.connect(gn); gn.connect(busSfx);
+      s.start(when); s.stop(when + dur + 0.03);
+      keep(s);
+    } catch (e) {}
+  }
+
+  function seq(when, notes, gap, dur, g, type) {
+    for (var i = 0; i < notes.length; i++) tone(when + gap * i, notes[i], dur, g, type || 'triangle');
+  }
+
+  var SFX = {
+    /* 공통 UI */
+    click: function (t) { tone(t, 720, 0.075, 0.15, 'triangle', 540, 2800); },
+    tap: function (t) { tone(t, 560, 0.06, 0.11, 'sine', 470); },
+    select: function (t) { tone(t, 880, 0.085, 0.14, 'sine'); tone(t + 0.006, 1320, 0.055, 0.05, 'sine'); },
+    deselect: function (t) { tone(t, 640, 0.1, 0.12, 'sine', 430); },
+
+    /* 벽바둑 2 */
+    place: function (t) { tone(t, 392, 0.28, 0.15, 'triangle', null, 1800); tone(t + 0.02, 587.33, 0.22, 0.08, 'sine'); },
+    move: function (t) { tone(t, 494, 0.16, 0.12, 'sine', 660); hiss(t, 0.08, 0.03, 'bandpass', 3200, 1.4); },
+    wall: function (t) { tone(t, 1180, 0.06, 0.13, 'triangle', 880, 3200); hiss(t, 0.055, 0.05, 'bandpass', 2600, 1.2); },
+    brk: function (t) { hiss(t, 0.26, 0.10, 'lowpass', 900, 0.7); tone(t, 190, 0.28, 0.11, 'sawtooth', 62, 700); },
+    pass: function (t) { tone(t, 523.25, 0.13, 0.11, 'sine'); tone(t + 0.12, 392, 0.2, 0.10, 'sine'); },
+    tick: function (t) { tone(t, 1568, 0.035, 0.06, 'sine'); },
+
+    /* 흑과 백 */
+    confirm: function (t) { tone(t, 587.33, 0.14, 0.12, 'triangle', null, 3000); tone(t + 0.07, 783.99, 0.3, 0.11, 'triangle', null, 3200); },
+    rvWin: function (t) { seq(t, [523.25, 659.25, 783.99], 0.085, 0.36, 0.12, 'triangle'); },
+    rvLose: function (t) { seq(t, [523.25, 415.30, 349.23], 0.095, 0.4, 0.11, 'triangle'); },
+    rvDraw: function (t) { tone(t, 440, 0.3, 0.10, 'triangle', null, 2600); tone(t + 0.24, 440, 0.3, 0.09, 'triangle', null, 2600); },
+
+    /* 기억포커 */
+    memStart: function (t) { seq(t, [392, 523.25, 659.25], 0.1, 0.24, 0.10, 'sine'); },
+    memEnd: function (t) { seq(t, [659.25, 523.25], 0.13, 0.3, 0.10, 'sine'); },
+    flip: function (t) { tone(t, 330, 0.12, 0.10, 'sine', 660); hiss(t, 0.07, 0.03, 'bandpass', 3600, 1.6); },
+    reveal: function (t) { tone(t, 196, 0.4, 0.10, 'triangle', null, 1200); seq(t + 0.05, [523.25, 659.25, 783.99], 0.06, 0.16, 0.07, 'sine'); },
+
+    /* 종료 */
+    win: function (t) {
+      seq(t, [523.25, 659.25, 783.99, 1046.50], 0.11, 0.42, 0.14, 'triangle');
+      tone(t + 0.44, 1046.50, 0.9, 0.09, 'sine');
+      tone(t + 0.44, 783.99, 0.85, 0.07, 'triangle', null, 3600);
+    },
+    lose: function (t) {
+      seq(t, [440.00, 415.30, 349.23, 261.63], 0.13, 0.5, 0.12, 'triangle');
+      tone(t + 0.52, 174.61, 1.0, 0.07, 'sine');
+    },
+    draw: function (t) {
+      tone(t, 523.25, 0.5, 0.10, 'triangle', null, 2800);
+      tone(t + 0.18, 523.25, 0.6, 0.09, 'sine');
+      tone(t + 0.36, 392, 0.7, 0.08, 'triangle', null, 2400);
+    }
+  };
+
+  function sfx(name) {
+    if (!state.sfx) return;
+    var c = ensure();
+    if (!c) return;
+    if (c.state !== 'running') {
+      try { var p = c.resume(); if (p && p.catch) p.catch(function () {}); } catch (e) {}
+      return;
+    }
+    lastSfx = Date.now();
+    try {
+      var fn = SFX[name] || SFX.click;
+      fn(c.currentTime + 0.002);
+    } catch (e) {}
+  }
+
+  /* ---------------- 토글 UI ---------------- */
+  function paint() {
+    var btns = document.querySelectorAll('[data-aa]');
+    for (var i = 0; i < btns.length; i++) {
+      var b = btns[i], k = b.getAttribute('data-aa'), on = !!state[k];
+      b.classList.toggle('off', !on);
+      b.setAttribute('aria-pressed', on ? 'true' : 'false');
+      var ic = b.querySelector('.ai');
+      if (ic) ic.textContent = (k === 'bgm') ? '♪' : (on ? '🔊' : '🔇');
+      b.title = (k === 'bgm' ? '배경음악' : '효과음') + (on ? ' 끄기' : ' 켜기');
+      b.setAttribute('aria-label', b.title);
+    }
+  }
+
+  function toggle(k) {
+    if (k !== 'bgm' && k !== 'sfx') return;
+    state[k] = !state[k];
+    saveFlag(k === 'bgm' ? LS_BGM : LS_SFX, state[k]);
+    ensure();
+    if (k === 'bgm') { if (state.bgm) startBgm(); else stopBgm(); }
+    paint();
+    if (k === 'sfx' && state.sfx) sfx('click');
+  }
+
+  function bindUI() {
+    var btns = document.querySelectorAll('[data-aa]');
+    for (var i = 0; i < btns.length; i++) {
+      (function (b) {
+        b.addEventListener('click', function (e) {
+          e.preventDefault();
+          e.stopPropagation();
+          toggle(b.getAttribute('data-aa'));
+        });
+      })(btns[i]);
+    }
+    paint();
+  }
+
+  /* ---------------- 제스처 · 탭 전환 ---------------- */
+  function onGesture(e) {
+    var c = ensure();
+    if (!c) return;
+    if (c.state !== 'running') {
+      try { var p = c.resume(); if (p && p.catch) p.catch(function () {}); } catch (e2) {}
+    }
+    /* 사운드 토글 자체를 누른 경우는 토글 로직이 시작/정지를 결정한다 */
+    var onToggle = !!(e && e.target && e.target.closest && e.target.closest('[data-aa]'));
+    if (state.bgm && !onToggle) startBgm();
+  }
+
+  try {
+    var opts = { passive: true, capture: true };
+    ['pointerdown', 'touchstart', 'click', 'keydown'].forEach(function (ev) {
+      document.addEventListener(ev, onGesture, opts);
+    });
+  } catch (e) {
+    ['pointerdown', 'touchstart', 'click'].forEach(function (ev) {
+      document.addEventListener(ev, onGesture);
+    });
+  }
+
+  document.addEventListener('visibilitychange', function () {
+    hidden = !!document.hidden;
+    if (hidden) stopBgm();
+    else if (state.bgm) startBgm();
+  });
+
+  window.addEventListener('storage', function (e) {
+    if (!e || (e.key !== LS_BGM && e.key !== LS_SFX)) return;
+    state.bgm = readFlag(LS_BGM);
+    state.sfx = readFlag(LS_SFX);
+    if (state.bgm) startBgm(); else stopBgm();
+    paint();
+  });
+
+  /* 일반 버튼 클릭음 (요소 핸들러가 먼저 자기 효과음을 재생하면 생략) */
+  document.addEventListener('click', function (e) {
+    var el = e.target && e.target.closest ? e.target.closest('button, a.portal-pill') : null;
+    if (!el || el.hasAttribute('data-aa') || el.hasAttribute('data-nosfx')) return;
+    if (Date.now() - lastSfx < 45) return;
+    sfx('click');
+  });
+
+  /* ---------------- 공개 API ---------------- */
+  window.AA = {
+    init: function (g) {
+      game = TRACKS[g] ? g : 'baduk';
+      index(TRACKS[game]);
+      paint();
+      return this;
+    },
+    sfx: sfx,
+    toggle: toggle,
+    isOn: function (k) { return !!state[k]; },
+    set: function (k, v) { if (!!state[k] !== !!v) toggle(k); },
+    ui: paint,
+    state: function () {
+      return {
+        game: game, bgm: state.bgm, sfx: state.sfx,
+        ctx: !!ctx, ctxState: ctx ? ctx.state : 'none',
+        playing: !!bgmTimer, step: bgmStep,
+        voices: live.length, gain: busBgm ? Math.round(busBgm.gain.value * 10000) / 10000 : null,
+        hidden: hidden
+      };
+    }
+  };
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', bindUI);
+  } else {
+    bindUI();
+  }
+})();
+</script>
+<!-- AA-ENGINE:END -->
+
 <script>
 "use strict";
 /* =========================================================
@@ -758,6 +1280,18 @@ const hexA = (hex, a) => {
 const clampStr = (s, n) => (s && s.length > n) ? s.slice(0, n) : s;
 const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c =>
   ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+
+/* ---------------- 사운드 (BGM · 효과음) ---------------- */
+const aaSfx = n => { try { window.AA && window.AA.sfx(n); } catch (e) {} };
+/** 종료 효과음 — 승리 팡파레 / 패배 / 무승부 */
+function overSfx() {
+  if (!st) return;
+  const w = st.winner;
+  if (w == null || w < 0) { aaSfx('draw'); return; }
+  if (st.net === 'online') { aaSfx(w === mySeat() ? 'win' : 'lose'); return; }
+  if (st.ai && st.ai[1] && !st.ai[0]) { aaSfx(w === 0 ? 'win' : 'lose'); return; }
+  aaSfx('win');
+}
 
 /* ---------------- 좌표 · 히스토리 표기 ---------------- */
 const cellName = i => String.fromCharCode(65 + cx(i)) + (cy(i) + 1);      /* A1 = 좌상단 */
@@ -1071,6 +1605,7 @@ function recordPass(p) {
 }
 function doPass() {
   if (!st) return;
+  aaSfx('pass');
   recordPass(st.turn);
   st.passes++;
   if (st.passes >= st.players) { finishByScore('blocked'); return; }
@@ -1180,6 +1715,9 @@ function commitTurn(pieceId, mv, wallKey) {
   }
   pc.cell = mv.to;
   if (wallKey) st.walls.add(wallKey);
+  if (broke.length) aaSfx('brk');
+  else if (wallKey) aaSfx('wall');
+  else aaSfx('move');
   pushHistory({
     t: 'move', n: st.moveCount + 1, p: pc.p, type: pc.type,
     from: from, to: mv.to, wall: wallKey || null, broke: broke.slice(), pieceId: pc.id
@@ -1208,6 +1746,7 @@ function doPlace(cell) {
   if (!q || !canPlaceAt(st, cell)) return false;
   if (isGuest()) { netSend({ t: 'act', a: 'place', cell: cell }); guestAwait(); return true; }
   st.pieces.push({ id: 'k' + (st.pieces.length + 1), p: q.p, type: q.type, cell: cell });
+  aaSfx('place');
   st.placeIdx++;
   st.analysis = analyze(st);
   pushHistory({ t: 'place', n: st.placeIdx, p: q.p, type: q.type, cell: cell });
@@ -1250,6 +1789,7 @@ function startTimer() {
     st.timeLeft--;
     renderTimer();
     if (st.timeLeft <= 0) { stopTimer(); autoAct(); }
+    else if (st.timeLeft <= 5) aaSfx('tick');
   }, 1000);
 }
 
@@ -1669,6 +2209,7 @@ function netPush() {
 }
 function applySnapshot(snap) {
   if (!snap) return;
+  const prevMc = st ? st.moveCount : 0, prevPl = st ? (st.placeIdx || 0) : 0;
   st.players = snap.players;
   st.phase = snap.phase;
   st.turn = snap.turn;
@@ -1684,6 +2225,14 @@ function applySnapshot(snap) {
   st.moveHistory = (snap.hist || []).slice();
   st.winner = snap.over ? snap.over.winner : -2;
   st.overReason = snap.over ? snap.over.reason : null;
+  if (st.phase !== 'over') {
+    if ((snap.mc || 0) > prevMc) {
+      const lm = st.lastMove;
+      aaSfx(lm && lm.broke && lm.broke.length ? 'brk' : (lm && lm.wall ? 'wall' : 'move'));
+    } else if ((snap.placeIdx || 0) > prevPl) {
+      aaSfx('place');
+    }
+  }
   clearTimeout(guestWaitTimer);
   st.analysis = analyze(st);
   if (st.phase === 'over') {
@@ -2277,6 +2826,7 @@ function renderAll() {
   renderScores(); renderButtons(); renderTimer();
   renderMoveBar();
   const s = $('#status'); if (s) s.innerHTML = statusHTML();
+  if (st.phase === 'over' && !st._sfxOver) { st._sfxOver = true; overSfx(); }
 }
 
 /* ---------------- 토스트 ---------------- */
@@ -2306,15 +2856,18 @@ function selectPiece(id) {
   st.move = null; st.wallOpts = [];
   st.moves = legalMoves(st, pc);
   if (!st.moves.length) {
+    aaSfx('deselect');
     toast(pc.type === 'S' ? '사각 말: 이 방향이 모두 막혔습니다' : '원형 말: 이동할 칸이 없습니다');
     st.selPiece = null;
+  } else {
+    aaSfx('select');
   }
   renderAll();
 }
 function undo() {
   if (st.busy) return;
-  if (st.move) { st.move = null; st.wallOpts = []; renderAll(); return; }
-  if (st.selPiece != null) { st.selPiece = null; st.moves = []; renderAll(); return; }
+  if (st.move) { st.move = null; st.wallOpts = []; aaSfx('deselect'); renderAll(); return; }
+  if (st.selPiece != null) { st.selPiece = null; st.moves = []; aaSfx('deselect'); renderAll(); return; }
 }
 function onCell(t) {
   const cell = +t.getAttribute('data-cell');
@@ -2335,7 +2888,7 @@ function onCell(t) {
 
   const pc = st.pieces.find(x => x.cell === cell);
   if (pc && pc.p === st.turn) {
-    if (st.selPiece === pc.id) { st.selPiece = null; st.moves = []; renderAll(); }
+    if (st.selPiece === pc.id) { st.selPiece = null; st.moves = []; aaSfx('deselect'); renderAll(); }
     else selectPiece(pc.id);
     return;
   }
@@ -2671,6 +3224,7 @@ bindUI();
 buildStatic();
 syncHomeFields();
 netBadge();
+try { window.AA && AA.init('baduk'); } catch (e) {}
 
 /* 초대 링크(?room=1234)로 들어온 경우 자동 참가 */
 (function autoJoin() {

@@ -1107,7 +1107,7 @@ function turnSetup() {
     st.turn = q.p;
     renderAll();
     if (st.net === 'online') {
-      if (st.turn === mySeat()) startTimer();
+      startTimer();
       return;
     }
     if (st.ai[q.p]) { st.busy = true; renderAll(); schedule(aiAct, 420 + Math.random() * 300); }
@@ -1117,7 +1117,7 @@ function turnSetup() {
 
   renderAll();
   if (st.net === 'online') {
-    if (st.turn !== mySeat()) return;             // 상대 차례: 입력 대기
+    if (st.turn !== mySeat()) { startTimer(); return; }             // 상대 차례: 카운트다운만 표시
     if (!hasAnyMove(st, st.turn)) {
       st.busy = true; renderAll();
       toast('이동 가능한 수가 없습니다 · 턴 넘김');
@@ -1158,8 +1158,8 @@ function finishByScore(reason) {
   st.winner = decideWinner(st.analysis, st.players);
   stopTimer();
   renderAll();
-  showOver();
   netPush();
+  schedule(() => { if (st && st.phase === 'over' && !$('#overModal').classList.contains('on')) showOver(); }, 1800);
 }
 
 function commitTurn(pieceId, mv, wallKey) {
@@ -1191,7 +1191,11 @@ function commitTurn(pieceId, mv, wallKey) {
   st.landed = mv.to;
 
   finalizeAnalysis(st);
-  if (st.phase === 'over') { stopTimer(); renderAll(); showOver(); netPush(); return; }
+  if (st.phase === 'over') {
+    stopTimer(); renderAll(); netPush();
+    schedule(() => { if (st && st.phase === 'over' && !$('#overModal').classList.contains('on')) showOver(); }, 1800);
+    return;
+  }
   st.turn = (st.turn + 1) % st.players;
   turnSetup();
   netPush();
@@ -1230,7 +1234,6 @@ function renderTimer() {
   if (!el) return;
   if (!st || st.phase === 'over') { el.textContent = '--'; el.classList.remove('warn'); return; }
   if (!st.timeLimit) { el.textContent = '∞'; el.classList.remove('warn'); return; }
-  if (st.net === 'online' && st.turn !== mySeat()) { el.textContent = '···'; el.classList.remove('warn'); return; }
   el.textContent = fmtTime(Math.max(0, st.timeLeft));
   el.classList.toggle('warn', st.timeLeft <= 10);
 }
@@ -1683,7 +1686,11 @@ function applySnapshot(snap) {
   st.overReason = snap.over ? snap.over.reason : null;
   clearTimeout(guestWaitTimer);
   st.analysis = analyze(st);
-  if (st.phase === 'over') { stopTimer(); renderAll(); showOver(); return; }
+  if (st.phase === 'over') {
+    stopTimer(); renderAll();
+    schedule(() => { if (st && st.phase === 'over' && !$('#overModal').classList.contains('on')) showOver(); }, 1800);
+    return;
+  }
   turnSetup();
 }
 

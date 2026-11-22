@@ -2328,7 +2328,10 @@ function onCell(t) {
     doPlace(cell);
     return;
   }
-  if (st.move) return;   /* 벽 놓는 단계 */
+  if (st.move) {
+    if (cell === st.move.to || cell === st.move.from) undo();
+    return;   /* 벽 놓는 단계 */
+  }
 
   const pc = st.pieces.find(x => x.cell === cell);
   if (pc && pc.p === st.turn) {

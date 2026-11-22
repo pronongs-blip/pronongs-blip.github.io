@@ -1517,7 +1517,8 @@ let overBoardView = false;   /* true = 결과 모달을 접고 최종 판을 노
 /* 종료 사유 문구 */
 const OVER_REASON = {
   separated: '모든 말의 영역이 완전히 분리되었습니다.',
-  blocked: '양쪽 모두 이동할 수 없어 영역 점수로 판정했습니다.'
+  blocked: '양쪽 모두 이동할 수 없어 영역 점수로 판정했습니다.',
+  deadlock: '공유 구역이 막혀 더 이상 분리할 수 없어 영역 점수로 판정했습니다.'
 };
 function pureRegionCount(A, players) {
   const cnt = new Array(players).fill(0);
@@ -1613,11 +1614,44 @@ function schedule(fn, ms) {
   setTimeout(() => { if (!st || st.token !== tok || st.seq !== seq) return; fn(); }, ms);
 }
 
+function canAct(g, p) {
+  if (hasAnyMove(g, p)) return true;
+  if (g.players === 3 && g.breakLeft[p] > 0) {
+    for (const pc of piecesOf(g, p)) if (legalMoves(g, pc, true).length) return true;
+  }
+  return false;
+}
+
+function isDeadlocked(g) {
+  if (!g || g.phase !== 'play' || !g.analysis || g.analysis.separated) return false;
+  const sharedRegs = g.analysis.regions.filter(rg => rg.players.size > 1);
+  if (!sharedRegs.length) return false;
+  for (const rg of sharedRegs) {
+    for (const p of rg.players) if (canAct(g, p)) return false;
+    if (g.players === 3) {
+      const cellSet = new Set(rg.cells);
+      for (let r = 0; r < g.players; r++) {
+        if (rg.players.has(r) || g.breakLeft[r] <= 0) continue;
+        for (const pc of piecesOf(g, r)) {
+          for (const mv of legalMoves(g, pc, true)) {
+            if (cellSet.has(mv.to)) return false;
+          }
+        }
+      }
+    }
+  }
+  return true;
+}
+
 function finalizeAnalysis(g) {
   g.analysis = analyze(g);
   if (g.phase === 'play' && g.analysis.separated) {
     g.phase = 'over';
     g.overReason = 'separated';
+    g.winner = decideWinner(g.analysis, g.players);
+  } else if (g.phase === 'play' && isDeadlocked(g)) {
+    g.phase = 'over';
+    g.overReason = 'deadlock';
     g.winner = decideWinner(g.analysis, g.players);
   }
 }
@@ -2654,7 +2688,16 @@ function renderScores() {
   }
   const pr = A ? A.progress : 0;
   $('#progBar').style.width = pr + '%';
-  $('#progTxt').textContent = st.phase === 'place' ? '배치 중' : ('분리 진행 ' + pr + '%');
+  if (st.phase === 'place') {
+    const q = st.placeQueue[st.placeIdx];
+    const nq = st.placeQueue[st.placeIdx + 1];
+    const nextLbl = nq
+      ? ('다음 ' + dispName(nq.p) + (q && nq.p === q.p ? '(연속)' : ''))
+      : '다음 대국 시작';
+    $('#progTxt').textContent = '배치 ' + (st.placeIdx + 1) + '/' + st.placeQueue.length + ' · ' + nextLbl;
+  } else {
+    $('#progTxt').textContent = '분리 진행 ' + pr + '%';
+  }
   renderTurnChip();
   netBadge();
 }
@@ -2673,8 +2716,10 @@ function renderTurnChip() {
   } else if (st.phase === 'place') {
     const q = st.placeQueue[st.placeIdx];
     p = q ? q.p : st.turn;
-    label = dispName(p) + ' 차례';
-    phase = '말 배치';
+    const g = q && q.type === 'S' ? '■ 사각' : '● 원형';
+    if (online && p === mySeat()) label = '내 차례!';
+    else label = dispName(p) + (st.ai[p] ? ' AI' : '') + ' 차례';
+    phase = g + ' 배치';
   } else if (online && st.turn === mySeat()) {
     p = mySeat();
     label = '내 차례!';
@@ -2817,10 +2862,16 @@ function statusHTML() {
   }
   if (st.phase === 'place') {
     const q = st.placeQueue[st.placeIdx];
-    const type = q.type === 'S' ? '사각 ■ (직진 1~2칸)' : '원형 ● (1칸·꺾기)';
+    const nq = st.placeQueue[st.placeIdx + 1];
+    const pGlyph = q.type === 'S' ? '■ 사각' : '● 원형';
+    const pDesc = q.type === 'S' ? '직진 1~2칸' : '1칸·꺾기';
+    const pieceTag = '<span style="color:' + COLORS[q.p] + '">' + pGlyph + '</span> <span style="color:#9eb0cf">(' + pDesc + ')</span>';
+    const nextInfo = nq
+      ? ' · 다음: <span class="pt" style="background:' + COLORS[nq.p] + '"></span><b>' + dispName(nq.p) + '</b>' + (nq.p === q.p ? ' <span style="color:#ffd479">(연속)</span>' : '') + ' (' + (nq.type === 'S' ? '■ 사각' : '● 원형') + ')'
+      : ' · 다음: <b style="color:#ffd479">대국 시작</b>';
     const wait = st.net === 'online' && q.p !== mySeat();
-    if (wait) return '<span class="pt" style="background:' + COLORS[q.p] + '"></span><b>' + dispName(q.p) + '</b> 님이 말을 놓는 중…';
-    return '<span class="pt" style="background:' + COLORS[q.p] + '"></span><b>' + dispName(q.p) + '</b> · ' + type + ' 놓을 칸 탭 <span style="color:#8ea0c0">(' + (st.placeIdx + 1) + '/' + st.placeQueue.length + ')</span>';
+    if (wait) return '<span class="pt" style="background:' + COLORS[q.p] + '"></span><b>' + dispName(q.p) + '</b> · ' + pieceTag + ' 배치 중' + nextInfo;
+    return '<span class="pt" style="background:' + COLORS[q.p] + '"></span><b>' + dispName(q.p) + '</b> · ' + pieceTag + ' 놓기' + nextInfo;
   }
   const t = st.turn;
   const nm = '<span class="pt" style="background:' + COLORS[t] + '"></span><b>' + dispName(t) + (st.ai[t] ? ' AI' : '') + '</b>';

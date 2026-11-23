@@ -115,9 +115,9 @@
     font-family:"Times New Roman",Georgia,serif;text-transform:uppercase}
   .seg{display:grid;grid-auto-flow:column;grid-auto-columns:1fr;gap:4px;padding:4px;border-radius:13px;
     background:rgba(255,255,255,.04);border:1px solid var(--line2)}
-  .seg .mode,.seg .lv{height:34px;border-radius:10px;font-size:12px;font-weight:700;color:var(--dim);
+  .seg .mode,.seg .lv,.seg .tm{height:34px;border-radius:10px;font-size:12px;font-weight:700;color:var(--dim);
     transition:background .16s,color .16s,box-shadow .16s}
-  .seg .mode.on,.seg .lv.on{color:#241a12;background:linear-gradient(160deg,#ffe6a8,#f7c15a);
+  .seg .mode.on,.seg .lv.on,.seg .tm.on{color:#241a12;background:linear-gradient(160deg,#ffe6a8,#f7c15a);
     box-shadow:0 4px 12px -6px rgba(251,191,36,.9)}
   .pane{display:flex;flex-direction:column;gap:8px;margin-top:10px}
   .fld{display:flex;align-items:center;gap:9px;font-size:12px;color:var(--dim)}
@@ -152,6 +152,9 @@
   .ghead .gmeta{display:flex;align-items:center;gap:8px}
   .pill{font-size:11px;font-weight:800;padding:4px 9px;border-radius:999px;color:#f6d98a;
     background:rgba(251,191,36,.09);border:1px solid rgba(251,191,36,.28);letter-spacing:.04em}
+  .pill.timer{font-variant-numeric:tabular-nums;min-width:42px;text-align:center}
+  .pill.timer.warn{background:rgba(211,72,72,.20);border-color:rgba(211,72,72,.55);color:#ffb0b0;animation:pulseWarn 1s infinite}
+  @keyframes pulseWarn{0%,100%{opacity:1}50%{opacity:.55}}
   .scorebig{font-size:15px;font-weight:900;letter-spacing:.06em;font-variant-numeric:tabular-nums}
   .scorebig .s0{color:#ffd7ea}.scorebig .s1{color:#ffe6a8}
 
@@ -426,6 +429,13 @@
           </div>
         </div>
 
+        <div class="fld" style="margin-top:8px"><span>제한시간</span>
+          <div class="seg" id="timeSeg" style="flex:1">
+            <button class="tm" data-val="60">60초</button>
+            <button class="tm on" data-val="90">90초</button>
+            <button class="tm" data-val="0">무제한</button>
+          </div>
+        </div>
         <div style="height:10px"></div>
         <button id="startBtn" class="primary">대국 시작</button>
       </div>
@@ -456,6 +466,7 @@
       <div class="gmeta">
         <span class="scorebig"><span class="s0" id="scoreA">0</span> : <span class="s1" id="scoreB">0</span></span>
         <span class="pill" id="roundPill">R1 / 9</span>
+        <span class="pill timer" id="timerChip">1:30</span>
         <div class="aa-seg" role="group" aria-label="사운드 설정">
           <button class="aa-btn" type="button" data-aa="bgm" aria-pressed="true" title="배경음악 끄기"><span class="ai">♪</span></button>
           <button class="aa-btn" type="button" data-aa="sfx" aria-pressed="true" title="효과음 끄기"><span class="ai">🔊</span></button>
@@ -1107,7 +1118,10 @@
     sel: null,
     aiThinking: false,
     aiLevel: 'hard',
-    room: null
+    room: null,
+    timeLimit: 90,
+    timeLeft: 90,
+    timer: null
   };
 
 
@@ -1423,13 +1437,17 @@
           return { r: h.r, leader: h.leader, tiles: h.tiles.slice(), winner: h.winner };
         })
       } : null,
-      lastResult: S.lastResult ? { round: S.lastResult.round, winner: S.lastResult.winner } : null
+      lastResult: S.lastResult ? { round: S.lastResult.round, winner: S.lastResult.winner } : null,
+      timeLimit: S.timeLimit,
+      timeLeft: S.timeLeft
     };
   }
 
   function applySnap(sn) {
     if (!sn) return;
     var prevPhase = S.phase;
+    var prevTurn = S.turn;
+    var prevRound = S.round;
     S.names = sn.names.slice();
     S.round = sn.round;
     S.scores = sn.scores.slice();
@@ -1442,6 +1460,10 @@
     S.plays = sn.plays.slice();
     S.hV = sn.history.slice();
     S.lastResult = sn.lastResult;
+    S.timeLimit = sn.timeLimit != null ? sn.timeLimit : 90;
+    if (sn.timeLeft != null && (prevPhase !== sn.phase || prevTurn !== sn.turn || prevRound !== sn.round || S.timeLeft <= 0)) {
+      S.timeLeft = sn.timeLeft;
+    }
     S.pending = false;
     S.sel = null;
     S.active = true;
@@ -1450,9 +1472,11 @@
       var wr = S.lastResult.winner;
       aaSfx(wr < 0 ? 'rvDraw' : (wr === S.mySeat ? 'rvWin' : 'rvLose'));
     }
-    if (sn.phase === 'over') { S.winner = sn.over.winner; S.end = sn.over; showEnd(); }
+    if (sn.phase === 'over') { stopTimer(); S.winner = sn.over.winner; S.end = sn.over; showEnd(); }
     else { S.end = null; $('#endModal').classList.add('hide'); }
     if (S.screen !== 'game') showScreen('game');
+    if (S.phase === 'play') startTimerLoop();
+    else { stopTimer(); renderTimer(); }
     render();
     Net.lastSnap = sn;
   }
@@ -1467,12 +1491,78 @@
      ========================================================= */
   function seatName(i) { return S.names[i] || ('P' + (i + 1)); }
 
+  function fmtTime(s) {
+    var m = Math.floor(s / 60), r = s % 60;
+    return m + ':' + (r < 10 ? '0' + r : r);
+  }
+  function renderTimer() {
+    var elChip = $('#timerChip');
+    if (!elChip) return;
+    if (!S.active || S.phase !== 'play') {
+      elChip.textContent = '--';
+      elChip.classList.remove('warn');
+      return;
+    }
+    if (!S.timeLimit) {
+      elChip.textContent = '∞';
+      elChip.classList.remove('warn');
+      return;
+    }
+    var t = Math.max(0, S.timeLeft | 0);
+    elChip.textContent = fmtTime(t);
+    elChip.classList.toggle('warn', t <= 10);
+  }
+  function stopTimer() {
+    if (S.timer) { clearInterval(S.timer); S.timer = null; }
+  }
+  function startTimerLoop() {
+    stopTimer();
+    renderTimer();
+    if (!S.active || S.phase !== 'play' || !S.timeLimit) return;
+    S.timer = setInterval(function () {
+      if (!S.active || S.phase !== 'play') { stopTimer(); renderTimer(); return; }
+      if (S.curtain != null || S.aiThinking) return;
+      if (S.timeLeft > 0) S.timeLeft--;
+      renderTimer();
+      if (S.timeLeft <= 0) {
+        if (S.mode === 'online' && Net.role === 'guest') return;
+        stopTimer();
+        autoPlayTimeOut();
+      }
+    }, 1000);
+  }
+  function resetTurnTimer() {
+    S.timeLeft = S.timeLimit;
+    startTimerLoop();
+  }
+  function autoPlayTimeOut() {
+    if (!S.active || S.phase !== 'play') return;
+    var seat = S.turn;
+    var hand = S.hands[seat] || [];
+    if (!hand.length) return;
+    var n = hand[Math.floor(Math.random() * hand.length)];
+    toast(seatName(seat) + ' 시간 초과 · 랜덤 타일 제출');
+    if (!submitTile(seat, n)) return;
+    aaSfx('confirm');
+    if (S.mode === 'local') {
+      S.viewSeat = (S.phase === 'play') ? S.turn : 1 - S.turn;
+      if (S.phase === 'play') S.curtain = S.turn;
+      else { S.curtain = null; if (S.phase === 'over') showEnd(); }
+      render();
+      return;
+    }
+    S.viewSeat = 0;
+    afterMoveLocal();
+  }
+
   function newGame() {
+    stopTimer();
+    var first = Math.floor(Math.random() * 2);
     S.active = true;
     S.scores = [0, 0];
     S.round = 1;
-    S.leader = 0;
-    S.turn = 0;
+    S.leader = first;
+    S.turn = first;
     S.hands = [TILES.slice(), TILES.slice()];
     S.counts = [{ b: 5, w: 4 }, { b: 5, w: 4 }];
     S.plays = [null, null];
@@ -1486,11 +1576,13 @@
     S.sel = null;
     S.aiThinking = false;
     S._sfxEnd = false;
-    S.viewSeat = (S.mode === 'local') ? 0 : S.mySeat;
-    S.curtain = (S.mode === 'local') ? 0 : null;
+    S.viewSeat = (S.mode === 'local') ? first : S.mySeat;
+    S.curtain = (S.mode === 'local') ? first : null;
     $('#endModal').classList.add('hide');
     showScreen('game');
+    resetTurnTimer();
     render();
+    toast('선 플레이어: ' + seatName(first));
     if (S.mode === 'ai') maybeAi();
   }
 
@@ -1511,7 +1603,8 @@
     S.plays[seat] = { tile: n, color: colorOf(n) };
     S.turn = 1 - seat;
     S.sel = null;
-    if (S.plays[0] && S.plays[1]) judgeNow();
+    if (S.plays[0] && S.plays[1]) { stopTimer(); judgeNow(); renderTimer(); }
+    else resetTurnTimer();
     return true;
   }
 
@@ -1556,6 +1649,7 @@
       S.viewSeat = S.mySeat;
       S.curtain = null;
     }
+    resetTurnTimer();
     render();
     if (S.mode === 'ai') maybeAi();
     if (S.mode === 'online' && Net.role === 'host') netPush();
@@ -2121,9 +2215,11 @@
   }
 
   function goLobby() {
+    stopTimer();
     S.active = false;
     S.phase = 'play';
     S.curtain = null;
+    renderTimer();
     $('#curtain').classList.add('hide');
     $('#endModal').classList.add('hide');
     showScreen('lobby');
@@ -2216,6 +2312,12 @@
       b.addEventListener('click', function () {
         S.aiLevel = b.dataset.val;
         $$('#lvSeg .lv').forEach(function (x) { x.classList.toggle('on', x === b); });
+      });
+    });
+    $$('#timeSeg .tm').forEach(function (b) {
+      b.addEventListener('click', function () {
+        S.timeLimit = parseInt(b.dataset.val, 10) || 0;
+        $$('#timeSeg .tm').forEach(function (x) { x.classList.toggle('on', x === b); });
       });
     });
     $('#makeRoom').addEventListener('click', makeRoom);

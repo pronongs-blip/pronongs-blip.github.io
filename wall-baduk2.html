@@ -1581,26 +1581,31 @@ function newGame(cfg) {
   st.seq = seq;
 
   const players = st.players;
+  const first = Math.floor(Math.random() * players);
   const fixed = [], queue = [];
   if (players === 2) {
     /* 고정 2말(180도 대칭) */
     fixed.push({ p: 0, type: 'S', cell: idx(2, 5) }, { p: 0, type: 'C', cell: idx(4, 5) });
     fixed.push({ p: 1, type: 'S', cell: idx(4, 1) }, { p: 1, type: 'C', cell: idx(2, 1) });
-    /* 나머지 2말씩 교대 배치 */
-    queue.push({ p: 0, type: 'S' }, { p: 1, type: 'S' }, { p: 0, type: 'C' }, { p: 1, type: 'C' });
+    /* 나머지 2말씩 랜덤 선 플레이어부터 교대 배치 */
+    const second = 1 - first;
+    queue.push({ p: first, type: 'S' }, { p: second, type: 'S' }, { p: first, type: 'C' }, { p: second, type: 'C' });
   } else {
-    /* 3인전: 스네이크 1→2→3→3→2→1 */
-    queue.push({ p: 0, type: 'S' }, { p: 1, type: 'S' }, { p: 2, type: 'S' },
-               { p: 2, type: 'C' }, { p: 1, type: 'C' }, { p: 0, type: 'C' });
+    /* 3인전: 랜덤 선 플레이어부터 스네이크 1→2→3→3→2→1 */
+    const order = [first, (first + 1) % 3, (first + 2) % 3];
+    queue.push({ p: order[0], type: 'S' }, { p: order[1], type: 'S' }, { p: order[2], type: 'S' },
+               { p: order[2], type: 'C' }, { p: order[1], type: 'C' }, { p: order[0], type: 'C' });
   }
   let id = 0;
   for (const f of fixed) st.pieces.push({ id: 'k' + (id++), p: f.p, type: f.type, cell: f.cell });
   st.placeQueue = queue;
+  st.turn = first;
   st.analysis = analyze(st);
 
   pieceNodes.forEach(n => n.remove());
   pieceNodes.clear();
   buildStatic();
+  pushHistory({ t: 'phase', label: '랜덤 선: ' + dispName(first) + ' 먼저 시작' }, false);
   turnSetup();
 }
 
@@ -1824,9 +1829,9 @@ function doPlace(cell) {
   pushHistory({ t: 'place', n: st.placeIdx, p: q.p, type: q.type, cell: cell });
   if (st.placeIdx >= st.placeQueue.length) {
     st.phase = 'play';
-    st.turn = 0;
+    st.turn = st.placeQueue.length ? st.placeQueue[0].p : 0;
     finalizeAnalysis(st);
-    pushHistory({ t: 'phase', label: '배치 완료 · 본 게임 시작' }, false);
+    pushHistory({ t: 'phase', label: '배치 완료 · 본 게임 시작 (선: ' + dispName(st.turn) + ')' }, false);
   } else {
     st.turn = st.placeQueue[st.placeIdx].p;
   }

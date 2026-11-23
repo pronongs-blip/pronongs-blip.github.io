@@ -1822,51 +1822,78 @@
       var leaderSeat = S.leader;
       var meLeader = (leaderSeat === seat) && !S.plays[opp];
       var level = S.aiLevel || 'hard';
-      var winP = function (dist, t) {
-        var s = 0;
-        for (var n = 0; n < t; n++) s += dist[n] || 0;
-        return s;
+      var pickWeighted = function (items) {
+        var sum = 0, i;
+        for (i = 0; i < items.length; i++) sum += Math.max(0.01, items[i].w);
+        var r = Math.random() * sum;
+        for (i = 0; i < items.length; i++) {
+          r -= Math.max(0.01, items[i].w);
+          if (r <= 0) return items[i].t;
+        }
+        return items[items.length - 1].t;
       };
 
       if (level === 'normal') {
-        /* 보통: 중간값 위주, 가끔 실수 섞인 단순 플레이 */
-        var pool = hand.filter(function (n) { return n >= 2 && n <= 6; });
-        if (!pool.length) pool = hand;
-        var pick = pool[Math.floor(Math.random() * pool.length)];
-        if (Math.random() < 0.22) pick = hand[Math.floor(Math.random() * hand.length)];
-        return pick;
+        /* 보통: 색·크기를 골고루 섞어 예측 불가능하게 플레이 */
+        var scoredN = hand.map(function (t) {
+          var midBias = 1.3 - Math.abs(t - 4) * 0.14;
+          return { t: t, w: Math.max(0.35, midBias) * (0.6 + Math.random() * 0.8) };
+        });
+        return pickWeighted(scoredN);
       }
 
-      /* 어려움 */
+      /* 어려움: 선이 낸 색 조건부 확률 정규화 + 전략적 가중치 랜덤 */
+      var myScore = S.scores[seat], oppScore = S.scores[opp];
+      var roundsLeft = hand.length;
+
       if (!meLeader) {
-        /* 후: 선이 낸 색만 보고, 그 색의 남은 분포로 상대 숫자를 추정해 최소 승리 타일 */
         var lc = S.plays[opp] ? S.plays[opp].color : null;
-        var distF = this.dist(opp, lc);
-        var need = S.scores[seat] >= 4;
-        var threshold = need ? 0.5 : 0.62;
-        var bestWin = null;
-        for (var i = 0; i < hand.length; i++) {
-          if (winP(distF, hand[i]) >= threshold) { bestWin = hand[i]; break; }
-        }
-        if (bestWin != null) return bestWin;
-        /* 이길 수 없다면 가장 낮은 타일을 버린다 */
-        return hand[0];
+        var rawF = this.dist(opp, lc);
+        /* 선이 낸 색(lc)에 해당하는 타일만의 조건부 확률분포로 정규화 (합 = 1) */
+        var cSum = 0;
+        TILES.forEach(function (n) {
+          if (!lc || colorOf(n) === lc) cSum += (rawF[n] || 0);
+        });
+        var winProb = function (t) {
+          if (!cSum) return t / 8;
+          var s = 0;
+          for (var n = 0; n < t; n++) {
+            if (!lc || colorOf(n) === lc) s += (rawF[n] || 0) / cSum;
+          }
+          return s;
+        };
+        var scoredF = hand.map(function (t) {
+          var pWin = winProb(t);
+          var saveCost = (t / 8) * (roundsLeft > 3 ? 0.42 : 0.18);
+          var urgency = (oppScore >= 4 || myScore >= 4) ? 1.35 : 1.0;
+          var score = pWin * urgency - saveCost;
+          /* 이길 확률이 아주 낮으면 약한 패를 섞어서 버림 (순서대로 버리지 않음) */
+          var w = pWin >= 0.45 ? Math.exp(score * 3.2) : (0.9 - t * 0.08 + Math.random() * 0.35);
+          return { t: t, w: Math.max(0.05, w) };
+        });
+        return pickWeighted(scoredF);
       }
 
-      /* 선: 내가 낸 색을 보고 상대가 고를 가장 싼 응답을 예상해 최소 승리 타일 */
-      var distL = this.dist(opp, null);
-      if (S.scores[seat] >= 4 && hand.indexOf(8) >= 0 && Math.random() < 0.75) return 8;  /* 매치 포인트 확정 */
-      var guess = 0, gw = 0;
-      TILES.forEach(function (n) { guess += n * (distL[n] || 0); gw += (distL[n] || 0); });
-      guess = gw ? guess / gw : 4;
-      var resp = null;
-      for (var r = 0; r < 9; r++) {
-        if ((distL[r] || 0) > 0.02 && r > guess) { resp = r; break; }
-      }
-      if (resp == null) return hand[0];
-      var win2 = hand.filter(function (t) { return t > resp; });
-      if (win2.length) return win2[0];
-      return hand[hand.length - 1];
+      /* 선: 점수·남은 라운드·보유 패를 반영해 강패 압박, 중간 탐색, 약패 블러핑을 혼합 */
+      if (myScore >= 4 && hand.indexOf(8) >= 0 && Math.random() < 0.7) return 8;
+      var rawL = this.dist(opp, null);
+      var lSum = 0;
+      TILES.forEach(function (n) { lSum += (rawL[n] || 0); });
+      var scoredL = hand.map(function (t) {
+        var beatRatio = 0;
+        if (lSum > 0) {
+          for (var n = 0; n < t; n++) beatRatio += (rawL[n] || 0) / lSum;
+        } else {
+          beatRatio = t / 8;
+        }
+        /* 강패(6~8), 중패(3~5), 약패(0~2)를 라운드와 점수 상황에 따라 고르게 변주 */
+        var role = t >= 6 ? 1.1 : (t >= 3 ? 1.25 : 0.95);
+        if (oppScore > myScore && t >= 5) role += 0.35;
+        if (roundsLeft >= 7 && t <= 5 && t >= 2) role += 0.25;
+        var w = (0.4 + beatRatio * 0.8) * role * (0.7 + Math.random() * 0.7);
+        return { t: t, w: Math.max(0.05, w) };
+      });
+      return pickWeighted(scoredL);
     }
   };
 

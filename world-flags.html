@@ -339,6 +339,19 @@
     opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;white-space:nowrap;
     max-width:88vw;overflow:hidden;text-overflow:ellipsis}
   #toast.show{opacity:1;transform:translate(-50%,0)}
+  /* 상대 제출 알림 — 정답·선택은 감추고 '제출 완료' 상태만 */
+  #rivalToast{position:fixed;left:50%;top:calc(env(safe-area-inset-top,0px) + 44px);
+    transform:translate(-50%,-16px) scale(.96);z-index:58;display:flex;align-items:center;justify-content:center;gap:7px;
+    width:calc(100vw - 28px);max-width:412px;padding:9px 14px;border-radius:14px;
+    font-size:12.5px;font-weight:800;letter-spacing:.01em;
+    color:#fff6e2;white-space:nowrap;overflow:hidden;
+    background:linear-gradient(160deg,#3e60a9,#141d31);
+    border:1px solid rgba(251,191,36,.62);
+    box-shadow:0 12px 30px -10px rgba(0,0,0,.88),inset 0 1px 0 rgba(255,255,255,.14);
+    opacity:0;pointer-events:none;transition:opacity .22s ease,transform .26s cubic-bezier(.2,1.3,.4,1)}
+  #rivalToast.show{opacity:1;transform:translate(-50%,0) scale(1)}
+  #rivalToast .ri{font-size:14px;line-height:1}
+  #rivalToast b{color:#ffe6a8}
 
   /* ---------- 종료 모달 ---------- */
   .overlay{position:fixed;inset:0;z-index:40;display:flex;align-items:center;justify-content:center;
@@ -484,6 +497,7 @@
           <li><b>선택 45초</b> — 25개 보기(5×5) 중 <b>앞서 나온 10개 중 정확히 5개</b>만 섞여 있습니다.</li>
           <li>25개 중 5개를 탭해 고르고 <b>제출</b>. 다시 탭하면 선택이 취소됩니다.</li>
           <li>맞힌 개수가 점수. 온라인 1:1은 <b>정답 개수 → 소요 시간</b> 순으로 승패를 가립니다.</li>
+          <li>온라인 1:1에서 <b>상대가 먼저 제출</b>하면 <b>⚡ 알림</b>만 뜹니다. 정답 개수·선택한 국기는 공개되지 않습니다.</li>
           <li><b>지옥 난이도</b>는 아일랜드↔코트디부아르, 차드↔루마니아, 인도네시아↔폴란드처럼 <b>색 배열만 다른 국기</b>를 오답으로 깔아둡니다.</li>
         </ol>
       </details>
@@ -561,6 +575,7 @@
     </div>
   </div>
 
+  <div id="rivalToast" role="status" aria-live="polite"><span class="ri">⚡</span><span><b id="rtName">상대</b>님이 다 풀고 제출했어요!</span></div>
   <div id="toast"></div>
 </div>
 
@@ -856,6 +871,11 @@ window.WF_META_RAW = {"pool":[["ad","안도라"],["ae","아랍에미리트"],["a
     wfMemEnd: function (t) { seq(t, [783.99, 659.25, 523.25], 0.1, 0.24, 0.10, 'triangle'); },
     wfWarn: function (t) { tone(t, 880, 0.09, 0.12, 'square', null, 2200); },
     wfGood: function (t) { seq(t, [659.25, 987.77], 0.06, 0.16, 0.10, 'sine'); },
+    /* 상대 제출 알림 — 올라가는 2음 핑 + 반짝임 */
+    wfRival: function (t) {
+      seq(t, [987.77, 1318.51], 0.075, 0.15, 0.09, 'triangle');
+      hiss(t, 0.06, 0.020, 'bandpass', 3200, 1.1);
+    },
     wfBad: function (t) { tone(t, 196, 0.22, 0.11, 'sawtooth', 130, 900); },
     win: function (t) {
       seq(t, [523.25, 659.25, 783.99, 1046.50], 0.11, 0.42, 0.14, 'triangle');
@@ -1166,7 +1186,7 @@ window.WF_META_RAW = {"pool":[["ad","안도라"],["ae","아랍에미리트"],["a
     round: 0, seed: 0, seq: [], answers: [], grid: [], sel: [],
     phase: 'lobby', scores: [], results: [],
     memStart: 0, pickStart: 0, lastStep: -1, lastWarn: 0,
-    result: null, opp: null, oppSub: false, oppName: '지혜',
+    result: null, opp: null, oppSub: false, oppName: '지혜', rivalPending: false,
     recentSeq: loadRecent(), oppFinal: null, finalShown: false, oppLeft: false,
     onlineReady: false, host: false
   };
@@ -1189,6 +1209,29 @@ window.WF_META_RAW = {"pool":[["ad","안도라"],["ae","아랍에미리트"],["a
     t.classList.add('show');
     clearTimeout(t._tm);
     t._tm = setTimeout(function () { t.classList.remove('show'); }, ms || 1800);
+  }
+  /* 상대 제출 실시간 알림 — 맞힌 개수·선택 국기는 절대 노출하지 않고 '제출 완료'만 */
+  var rivalTm = 0;
+  function rivalAlert(name) {
+    var pc = document.querySelector('.picktop .pc');
+    if (pc) pc.textContent = '⚡ 상대 제출 완료';
+    var el = $('#rivalToast');
+    if (!el) return;
+    var nm = String(name || S.names[1 - S.seat] || Net.peerName || '상대').slice(0, 10);
+    $('#rtName').textContent = nm;
+    el.classList.remove('show');
+    void el.offsetWidth;
+    el.classList.add('show');
+    aaSfx('wfRival');
+    clearTimeout(rivalTm);
+    rivalTm = setTimeout(function () { el.classList.remove('show'); }, 6000);
+  }
+  function clearRival() {
+    clearTimeout(rivalTm);
+    var el = $('#rivalToast');
+    if (el) el.classList.remove('show');
+    var pc = document.querySelector('.picktop .pc');
+    if (pc) pc.textContent = '다시 탭하면 취소';
   }
   function setTimer(txt, warn) {
     var el = $('#timerChip');
@@ -1239,6 +1282,7 @@ window.WF_META_RAW = {"pool":[["ad","안도라"],["ae","아랍에미리트"],["a
     S.recentSeq = pushRecent(S.recentSeq, data.seq);
     saveRecent(S.recentSeq);
     S.sel = []; S.result = null; S.opp = null; S.oppSub = false; S.oppLeft = false;
+    S.rivalPending = false; clearRival();
     if (r) S.round = r;
     S.results = S.results || [];
     screen('game');
@@ -1333,6 +1377,11 @@ window.WF_META_RAW = {"pool":[["ad","안도라"],["ae","아랍에미리트"],["a
     S.lastWarn = 0;
     aaSfx('wfMemEnd');
     view('pick');
+    /* 암기 중에 상대가 먼저 제출했다면 선택 시작과 함께 알린다 */
+    if (S.rivalPending) {
+      S.rivalPending = false;
+      if (S.mode === 'online' && Net.room) rivalAlert();
+    }
     var grid = $('#grid');
     var html = '';
     var startNo = 1;
@@ -1412,6 +1461,7 @@ window.WF_META_RAW = {"pool":[["ad","안도라"],["ae","아랍에미리트"],["a
     if (S.phase !== 'pick') return;
     var ms = Math.round(now() - S.pickStart);
     if (auto) toast('시간 종료 · 자동 제출');
+    S.rivalPending = false; clearRival();
     S.phase = 'res';
     S.result = grade(S.sel);
     S.result.ms = ms;
@@ -1428,6 +1478,7 @@ window.WF_META_RAW = {"pool":[["ad","안도라"],["ae","아랍에미리트"],["a
   function fmtSec(ms) { return (ms / 1000).toFixed(1) + '초'; }
 
   function showResult() {
+    clearRival();
     view('res');
     setTimer('—');
     var r = S.result;
@@ -1649,7 +1700,8 @@ window.WF_META_RAW = {"pool":[["ad","안도라"],["ae","아랍에미리트"],["a
     Net.reset();
     $('#inviteBox').classList.add('hide');
     S.round = 0; S.scores = []; S.results = [];
-    S.oppFinal = null; S.finalShown = false; S.oppLeft = false;
+    S.oppFinal = null; S.finalShown = false; S.oppLeft = false; S.oppSub = false;
+    S.rivalPending = false; clearRival();
     paintBadge();
   }
 
@@ -1951,6 +2003,12 @@ window.WF_META_RAW = {"pool":[["ad","안도라"],["ae","아랍에미리트"],["a
     if (m.t === 'sub') {
       if (m.round !== S.round) return;
       S.opp = { count: m.count, ms: m.ms, picks: m.picks || [] };
+      S.oppSub = true;
+      /* 아직 풀고 있는 쪽에만 '상대 제출 완료' 알림(점수·국기는 비공개) */
+      if (S.mode === 'online' && Net.room) {
+        if (S.phase === 'pick') rivalAlert(m.name);
+        else if (S.phase === 'mem' || S.phase === 'count') S.rivalPending = true;
+      }
       paintVS();
       return;
     }
@@ -2150,6 +2208,8 @@ window.WF_META_RAW = {"pool":[["ad","안도라"],["ae","아랍에미리트"],["a
     renderEnd: renderEnd,
     enterPick: enterPick,
     submit: submit,
+    rivalAlert: rivalAlert,
+    clearRival: clearRival,
     grade: grade,
     toLobby: toLobby,
     names: NAMES,

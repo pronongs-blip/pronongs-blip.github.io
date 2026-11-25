@@ -1570,7 +1570,9 @@ window.WF_META_RAW = {"pool":[["ad","안도라"],["ae","아랍에미리트"],["a
       var self = this;
       this.seen = {}; this.seq = 0; this.peer = null; this.peerName = null;
       this.cloud = false; this.connecting = true; this.lastErr = '';
-      if (typeof BroadcastChannel !== 'undefined') {
+      var bcOff = false;
+      try { bcOff = new URLSearchParams(location.search).get('bc') === '0'; } catch (e) {}
+      if (!bcOff && typeof BroadcastChannel !== 'undefined') {
         try {
           this.bc = new BroadcastChannel('wf1-' + this.room);
           this.bc.onmessage = function (ev) { self._in(typeof ev.data === 'string' ? ev.data : ''); };

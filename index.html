@@ -8,7 +8,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="DEVIL'S ARCADE">
-<meta name="description" content="두뇌 서바이벌 아케이드. 벽바둑 2 · 흑과 백 · 기억포커 · 유배지 만국기 게임 4종.">
+<meta name="description" content="두뇌 서바이벌 아케이드. 벽바둑 2 · 흑과 백 · 기억포커 · 유배지 만국기 · 결! 합! · 인디언 포커 게임 6종.">
 <title>DEVIL'S ARCADE · 두뇌 서바이벌 아케이드</title>
 <link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png">
 <link rel="icon" type="image/png" href="./apple-touch-icon.png">
@@ -70,16 +70,16 @@ body::before{
 .stat i{width:6px;height:6px;border-radius:50%;background:var(--ok);display:block}
 
 /* ---------- 게임 목록 ---------- */
-.stage{flex:1 1 auto;display:flex;flex-direction:column;justify-content:center;gap:8px;padding:14px 0 10px;min-height:0}
+.stage{flex:1 1 auto;display:flex;flex-direction:column;justify-content:center;gap:8px;padding:12px 0 8px;min-height:0}
 .stage>section{flex:0 0 auto;display:flex;flex-direction:column;min-height:0}
 .shead{display:flex;align-items:baseline;justify-content:space-between;padding:0 2px 2px}
 .shead .lb{font-size:11px;font-weight:800;letter-spacing:.14em;color:var(--dim2);text-transform:uppercase}
 .shead .cnt{font-size:11px;font-weight:800;color:var(--dim2)}
 
-.cards{flex:0 0 auto;display:flex;flex-direction:column;gap:11px;min-height:0}
+.cards{flex:0 0 auto;display:flex;flex-direction:column;gap:8px;min-height:0}
 .card{
-  position:relative;display:flex;align-items:center;gap:13px;
-  flex:0 0 auto;min-height:118px;padding:13px 14px 13px 13px;border-radius:16px;
+  position:relative;display:flex;align-items:center;gap:12px;
+  flex:0 0 auto;min-height:98px;padding:11px 13px 11px 12px;border-radius:16px;
   text-decoration:none;color:inherit;
   background:var(--panel);border:1px solid var(--line);
   transition:background .15s ease,border-color .15s ease;
@@ -87,18 +87,18 @@ body::before{
 .card:active{background:var(--panel2);border-color:rgba(255,255,255,.2)}
 .card:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
 .ic{
-  flex:0 0 auto;width:50px;height:50px;border-radius:14px;
+  flex:0 0 auto;width:44px;height:44px;border-radius:13px;
   display:flex;align-items:center;justify-content:center;
   background:rgba(var(--ac),.13);border:1px solid rgba(var(--ac),.30);color:rgb(var(--ac));
 }
-.ic svg{width:27px;height:27px}
+.ic svg{width:24px;height:24px}
 .card.c-warm{--ac:232,238,250}
 .card.c-cool{--ac:110,160,255}
 .card.c-mint{--ac:90,214,178}
 
 .body{flex:1 1 auto;min-width:0;display:flex;flex-direction:column;gap:3px}
 .line1{display:flex;align-items:center;gap:7px;min-width:0}
-.nm{font-size:16.5px;font-weight:900;letter-spacing:-.01em;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.nm{font-size:16px;font-weight:900;letter-spacing:-.01em;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .bdg{
   flex:0 0 auto;font-size:9.5px;font-weight:900;line-height:1;letter-spacing:.02em;
   padding:4px 6px;border-radius:5px;
@@ -107,13 +107,13 @@ body::before{
 .bdg.hot{color:#04121f;background:#7fc4ff}
 .bdg.cnt{color:#c9d5e8;background:rgba(255,255,255,.09)}
 .bdg[hidden]{display:none}
-.ds{font-size:12.5px;line-height:1.4;font-weight:600;color:var(--dim)}
-.mt{font-size:10.5px;font-weight:700;color:var(--dim2)}
+.ds{font-size:12px;line-height:1.35;font-weight:600;color:var(--dim)}
+.mt{font-size:10.5px;font-weight:700;color:var(--dim2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .mt .when[hidden]{display:none}
 .go{flex:0 0 auto;font-size:19px;font-weight:700;color:var(--dim2);line-height:1}
 
 /* ---------- 하단 ---------- */
-.foot{flex:0 0 auto;margin-top:auto;display:flex;flex-direction:column;align-items:center;gap:8px;padding-top:14px}
+.foot{flex:0 0 auto;margin-top:auto;display:flex;align-items:center;justify-content:space-between;gap:8px;padding-top:14px}
 .rst{
   -webkit-appearance:none;appearance:none;margin:0;padding:5px 11px;border-radius:8px;
   font-family:inherit;font-size:10.5px;font-weight:700;line-height:1.4;
@@ -123,6 +123,64 @@ body::before{
 .rst:active{color:#e6edf9;border-color:var(--line)}
 .rst:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
 .rst.arm{color:#ffd9e2;border-color:rgba(255,120,150,.55);background:rgba(255,120,150,.12)}
+.rst.hbtn{color:#cfe0ff;border-color:rgba(122,164,255,.38);background:rgba(122,164,255,.10);font-weight:800}
+.rst.hbtn:active{background:rgba(122,164,255,.2);color:#fff}
+
+/* ---------- 경기 기록 모달 ---------- */
+.hmodal{
+  position:fixed;inset:0;z-index:90;display:flex;align-items:flex-end;justify-content:center;
+  background:rgba(5,8,14,.82);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);
+}
+.hmodal.hide{display:none}
+.hsheet{
+  width:100%;max-width:430px;max-height:80vh;max-height:80dvh;display:flex;flex-direction:column;
+  background:#0d121c;border:1px solid rgba(255,255,255,.11);border-bottom:0;
+  border-radius:22px 22px 0 0;padding:16px 14px calc(env(safe-area-inset-bottom,0px) + 14px);
+  animation:hup .22s ease both;
+}
+@keyframes hup{from{transform:translateY(16px);opacity:.5}to{transform:none;opacity:1}}
+.hhead{display:flex;align-items:flex-start;gap:10px;flex:0 0 auto}
+.hhead h2{margin:0;font-size:17px;font-weight:900;letter-spacing:-.01em;color:#fff}
+.hhead p{margin:4px 0 0;font-size:10.5px;font-weight:700;color:var(--dim2)}
+.hx{
+  margin-left:auto;flex:0 0 auto;width:30px;height:30px;border-radius:999px;font-size:12px;font-weight:900;
+  color:#cfd9ea;background:rgba(255,255,255,.06);border:1px solid var(--line);line-height:1;
+}
+.hx:active{background:rgba(255,255,255,.14)}
+.htabs{display:flex;gap:5px;margin:12px 0 10px;flex:0 0 auto;padding:4px;border-radius:12px;
+  background:rgba(255,255,255,.045);border:1px solid var(--line2)}
+.htabs .tab{
+  flex:1 1 0;height:32px;border-radius:9px;font-size:12px;font-weight:800;color:#b6c3d8;
+  display:flex;align-items:center;justify-content:center;gap:5px;
+  background:none;border:0;font-family:inherit;cursor:pointer;-webkit-appearance:none;appearance:none;
+}
+.htabs .tab.on{background:var(--acc);color:#1a1204}
+.htabs .tab b{font-size:10px;font-weight:900;opacity:.75}
+.hlist{flex:1 1 auto;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;
+  display:flex;flex-direction:column;gap:7px;padding-bottom:2px}
+.hrow{
+  display:flex;align-items:center;gap:9px;padding:9px 10px;border-radius:12px;
+  background:var(--panel);border:1px solid rgba(255,255,255,.08);flex:0 0 auto;
+}
+.hres{
+  flex:0 0 30px;height:30px;border-radius:9px;display:flex;align-items:center;justify-content:center;
+  font-size:12px;font-weight:900;letter-spacing:-.02em;
+}
+.hres.w{background:rgba(52,211,153,.16);color:#6ee7b7;border:1px solid rgba(52,211,153,.35)}
+.hres.l{background:rgba(255,120,150,.14);color:#ff9db8;border:1px solid rgba(255,120,150,.3)}
+.hres.d{background:rgba(122,164,255,.14);color:#b6ccff;border:1px solid rgba(122,164,255,.3)}
+.hbody{flex:1 1 auto;min-width:0;display:flex;flex-direction:column;gap:2px}
+.h1{display:flex;align-items:center;gap:5px;min-width:0}
+.h1 b{font-size:13px;font-weight:900;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hvs{
+  flex:0 0 auto;font-size:8.5px;font-weight:900;letter-spacing:.02em;padding:2px 5px;border-radius:5px;
+}
+.hvs.pvp{color:#8fb4ff;background:rgba(122,164,255,.14);border:1px solid rgba(122,164,255,.3)}
+.hvs.ai{color:#ffd88a;background:rgba(255,194,71,.13);border:1px solid rgba(255,194,71,.3)}
+.h2{font-size:10.5px;font-weight:700;color:#8c9ab2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ht{flex:0 0 auto;text-align:right;font-size:9.5px;font-weight:800;color:var(--dim2);line-height:1.35;font-variant-numeric:tabular-nums}
+.hempty{padding:26px 8px;text-align:center;font-size:12px;font-weight:700;color:var(--dim2);line-height:1.6}
+.hempty b{display:block;font-size:22px;margin-bottom:6px}
 
 /* ---------- 넓은 화면 ---------- */
 @media (min-width:760px){
@@ -153,9 +211,13 @@ body::before{
   .ic svg{width:23px;height:23px}
 }
 @media (max-height:700px) and (max-width:759px){
-  .stage{justify-content:flex-start;padding-top:12px}
-  .card{min-height:84px}
-  .cards{gap:8px}
+  .stage{justify-content:flex-start;padding-top:8px}
+  .card{min-height:76px;padding:8px 11px}
+  .cards{gap:7px}
+}
+@media (min-height:701px) and (max-height:780px) and (max-width:759px){
+  .card{min-height:88px}
+  .cards{gap:7px}
 }
 @media (prefers-reduced-motion:reduce){*{transition:none !important}}
 </style>
@@ -180,7 +242,7 @@ body::before{
 
   <div class="stage">
     <section aria-label="게임">
-      <div class="shead"><span class="lb">GAMES</span><span class="cnt">4 TITLES</span></div>
+      <div class="shead"><span class="lb">GAMES</span><span class="cnt">6 TITLES</span></div>
       <div class="cards">
 
         <a class="card c-cool" href="./wall-baduk2.html" data-app-id="wall-baduk2" data-released="2026-11-21">
@@ -245,15 +307,70 @@ body::before{
           <span class="go" aria-hidden="true">›</span>
         </a>
 
+        <a class="card c-mint" href="./gyeol-hap.html" data-app-id="gyeol-hap" data-released="2026-11-26">
+          <span class="ic" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round">
+              <rect x="2.9" y="2.9" width="18.2" height="18.2" rx="3.4"/>
+              <path d="M8.9 2.9v18.2M15.1 2.9v18.2M2.9 8.9h18.2M2.9 15.1h18.2" stroke-width="1.1" opacity=".55"/>
+              <circle cx="5.9" cy="5.9" r="1.7" fill="currentColor" stroke="none"/>
+              <path d="M12 10.6l1.9 3.3h-3.8z" fill="currentColor" stroke="none"/>
+              <rect x="16.2" y="16.2" width="3.4" height="3.4" rx=".7" fill="currentColor" stroke="none"/>
+            </svg>
+          </span>
+          <span class="body">
+            <span class="line1"><span class="nm">결! 합!</span><span class="bdg" data-slot="badge" hidden></span></span>
+            <span class="ds">9장에서 합 3장 · 결 선언 승부</span>
+            <span class="mt"><span class="when" data-slot="when" hidden></span></span>
+          </span>
+          <span class="go" aria-hidden="true">›</span>
+        </a>
+
+        <a class="card c-warm" href="./indian-poker.html" data-app-id="indian-poker" data-released="2026-11-26">
+          <span class="ic" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round">
+              <rect x="2.9" y="5.6" width="11.6" height="15.2" rx="2.2" transform="rotate(-13 8.7 13.2)"/>
+              <rect x="10.3" y="3.4" width="10.8" height="15.2" rx="2.2" transform="rotate(9 15.7 11)" fill="#0a0d14"/>
+              <path d="M13.6 9.9a1.9 1.9 0 1 1 2.2 2.1c-.6.1-.9.5-.9 1.1" stroke-width="1.5" stroke-linecap="round"/>
+              <circle cx="14.9" cy="15.4" r=".95" fill="currentColor" stroke="none"/>
+            </svg>
+          </span>
+          <span class="body">
+            <span class="line1"><span class="nm">인디언 포커</span><span class="bdg" data-slot="badge" hidden></span></span>
+            <span class="ds">상대 카드만 보이는 칩 베팅 심리전</span>
+            <span class="mt"><span class="when" data-slot="when" hidden></span></span>
+          </span>
+          <span class="go" aria-hidden="true">›</span>
+        </a>
+
       </div>
     </section>
   </div>
 
   <footer class="foot">
-    <button class="rst" type="button" id="resetStats" aria-pressed="false" title="이 기기에 저장된 실행 기록을 지웁니다">기록 초기화</button>
+    <button class="rst hbtn" type="button" id="histBtn" aria-haspopup="dialog">📜 기록</button>
+    <button class="rst" type="button" id="resetStats" aria-pressed="false" title="이 기기에 저장된 실행 기록과 경기 기록을 지웁니다">기록 초기화</button>
   </footer>
 
 </main>
+
+<!-- ================= 경기 기록 ================= -->
+<div class="hmodal hide" id="histModal" role="dialog" aria-modal="true" aria-labelledby="histTitle">
+  <div class="hsheet">
+    <div class="hhead">
+      <div>
+        <h2 id="histTitle">📜 경기 기록</h2>
+        <p id="histSub">최근 100경기 · 이 기기에만 저장</p>
+      </div>
+      <button class="hx" type="button" id="histClose" aria-label="기록 닫기">✕</button>
+    </div>
+    <div class="htabs" id="histTabs" role="tablist">
+      <button class="tab on" type="button" data-v="all" role="tab" aria-selected="true">전체 <b>0</b></button>
+      <button class="tab" type="button" data-v="pvp" role="tab" aria-selected="false">사람 <b>0</b></button>
+      <button class="tab" type="button" data-v="ai" role="tab" aria-selected="false">AI <b>0</b></button>
+    </div>
+    <div class="hlist" id="histList"></div>
+  </div>
+</div>
 
 <script>
 /* ============================================================
@@ -297,10 +414,37 @@ body::before{
         out[id] = { clicks: clicks, lastOpened: last,
           wins: Math.max(0, Math.floor(Number(s.wins) || 0)),
           losses: Math.max(0, Math.floor(Number(s.losses) || 0)),
-          draws: Math.max(0, Math.floor(Number(s.draws) || 0)) };
+          draws: Math.max(0, Math.floor(Number(s.draws) || 0)),
+          pvp: grp(s.pvp), ai: grp(s.ai) };
       }
     });
     return out;
+  }
+
+  function grp(g) {
+    if (!g || typeof g !== "object") return null;
+    var w = Math.max(0, Math.floor(Number(g.wins) || 0));
+    var l = Math.max(0, Math.floor(Number(g.losses) || 0));
+    var d = Math.max(0, Math.floor(Number(g.draws) || 0));
+    if (!w && !l && !d) return null;
+    return { wins: w, losses: l, draws: d };
+  }
+
+  function partOf(g) {
+    if (!g) return "";
+    return g.wins + "승 " + g.losses + "패" + (g.draws ? " " + g.draws + "무" : "");
+  }
+
+  /* 카드 전적 — AI 대전과 사람 대전을 구분해서 보여준다 */
+  function recOf(s) {
+    var seg = [];
+    var pv = partOf(s.pvp), ai = partOf(s.ai);
+    if (pv) seg.push("사람 " + pv);
+    if (ai) seg.push("AI " + ai);
+    if (seg.length) return seg.join(" · ") + " · ";
+    var w = s.wins || 0, l = s.losses || 0, d = s.draws || 0;
+    if (!w && !l && !d) return "";
+    return w + "승 " + l + "패" + (d ? " " + d + "무" : "") + " · ";
   }
 
   function writeStats(all) {
@@ -386,11 +530,7 @@ body::before{
 
       if (when) {
         if (s.clicks > 0) {
-          var rec = "";
-          var w = Math.max(0, Math.floor(Number(s.wins) || 0));
-          var l = Math.max(0, Math.floor(Number(s.losses) || 0));
-          var d = Math.max(0, Math.floor(Number(s.draws) || 0));
-          if (w + l + d > 0) rec = w + "승 " + l + "패" + (d ? " " + d + "무" : "") + " · ";
+          var rec = recOf(s);
           var label = rec + "최근 " + (ago(s.lastOpened) || "오늘");
           if (when.textContent !== label) when.textContent = label;
           when.title = "마지막 실행 " + fullTime(s.lastOpened);
@@ -456,10 +596,111 @@ body::before{
       }
       disarm();
       clearStats();
+      try { window.localStorage.removeItem("yg_arcade_history_v1"); } catch (e) { /* noop */ }
       render();
+      try { window.HIST && window.HIST.render(); } catch (e) { /* noop */ }
+      if (pillTxt) pillTxt.textContent = "READY";
     });
   }
 
+  render();
+})();
+</script>
+
+<script>
+/* ============================================================
+   경기 기록 모달 (yg_arcade_history_v1)
+   ============================================================ */
+(function () {
+  "use strict";
+  var KEY = "yg_arcade_history_v1";
+  var modal = document.getElementById("histModal");
+  var list = document.getElementById("histList");
+  var tabs = document.getElementById("histTabs");
+  var btn = document.getElementById("histBtn");
+  var closeBtn = document.getElementById("histClose");
+  if (!modal || !list || !tabs || !btn) return;
+
+  var filter = "all";
+  var RES = { win: ["w", "승"], loss: ["l", "패"], draw: ["d", "무"] };
+  var VS = { pvp: "사람", ai: "AI" };
+
+  function read() {
+    try {
+      var a = JSON.parse(window.localStorage.getItem(KEY) || "[]");
+      return Array.isArray(a) ? a : [];
+    } catch (e) { return []; }
+  }
+  function pad2(n) { return (n < 10 ? "0" : "") + n; }
+  function dayOf(ts) { var d = new Date(ts); return pad2(d.getMonth() + 1) + "-" + pad2(d.getDate()); }
+  function timeOf(ts) { var d = new Date(ts); return pad2(d.getHours()) + ":" + pad2(d.getMinutes()); }
+  function esc(s) {
+    return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) {
+      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
+    });
+  }
+
+  function render() {
+    var all = read();
+    var cnt = { all: all.length, pvp: 0, ai: 0 };
+    all.forEach(function (e) { cnt[(e && e.vs === "ai") ? "ai" : "pvp"] += 1; });
+
+    Array.prototype.forEach.call(tabs.querySelectorAll(".tab"), function (t) {
+      var v = t.getAttribute("data-v");
+      var on = (v === filter);
+      t.classList.toggle("on", on);
+      t.setAttribute("aria-selected", on ? "true" : "false");
+      var b = t.querySelector("b");
+      if (b) b.textContent = cnt[v] || 0;
+    });
+
+    var rows = all.filter(function (e) {
+      if (filter === "all") return true;
+      return ((e && e.vs === "ai") ? "ai" : "pvp") === filter;
+    });
+
+    if (!rows.length) {
+      list.innerHTML = '<div class="hempty"><b>📜</b>' +
+        (all.length ? "이 조건의 경기가 없습니다." : "아직 경기 기록이 없습니다.<br>게임을 한 판 끝내면 여기에 쌓립니다.") +
+        "</div>";
+      return;
+    }
+
+    var h = "";
+    rows.forEach(function (e) {
+      var r = RES[e.result] || RES.draw;
+      var vs = (e.vs === "ai") ? "ai" : "pvp";
+      var line = [];
+      if (e.myName) line.push(String(e.myName) + (e.oppName ? " vs " + String(e.oppName) : ""));
+      if (e.scoreText) line.push(String(e.scoreText));
+      h += '<div class="hrow">' +
+        '<span class="hres ' + r[0] + '">' + r[1] + "</span>" +
+        '<span class="hbody"><span class="h1"><b>' + esc(e.game || e.id || "게임") + "</b>" +
+        '<span class="hvs ' + vs + '">' + VS[vs] + "</span></span>" +
+        '<span class="h2">' + esc(line.join(" · ")) + "</span></span>" +
+        '<span class="ht">' + dayOf(e.playedAt) + "<br>" + timeOf(e.playedAt) + "</span>" +
+        "</div>";
+    });
+    list.innerHTML = h;
+  }
+
+  function open() { modal.classList.remove("hide"); render(); }
+  function close() { modal.classList.add("hide"); }
+
+  btn.addEventListener("click", open);
+  if (closeBtn) closeBtn.addEventListener("click", close);
+  modal.addEventListener("click", function (e) { if (e.target === modal) close(); });
+  tabs.addEventListener("click", function (e) {
+    var t = e.target && e.target.closest ? e.target.closest(".tab") : null;
+    if (!t) return;
+    filter = t.getAttribute("data-v") || "all";
+    render();
+  });
+  document.addEventListener("keydown", function (e) {
+    if (e.key === "Escape" && !modal.classList.contains("hide")) close();
+  });
+
+  window.HIST = { render: render, open: open, close: close };
   render();
 })();
 </script>

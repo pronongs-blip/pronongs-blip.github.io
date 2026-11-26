@@ -433,10 +433,14 @@ input{font-family:inherit}
 .ov-see:active{background:rgba(255,212,121,.2)}
 .ov-see-row + .rules-close{margin-top:8px}
 /* 접힌(보드 보기) 상태 — 얇은 결과 배너만 남기고 최종 판을 그대로 노출 */
-#overModal.boardview{background:rgba(4,7,14,.10);backdrop-filter:none;-webkit-backdrop-filter:none;
-  padding:0;overflow:hidden;pointer-events:none}
-#overModal.boardview .card{display:none}
+#overModal.boardview{
+  background:transparent !important;
+  -webkit-backdrop-filter:none !important;backdrop-filter:none !important;
+  padding:0 !important;overflow:hidden;pointer-events:none}
+#overModal.boardview .card{display:none !important}
 #overModal.boardview .ov-boardbar{display:flex}
+body.ovview .bottom{visibility:hidden}
+body.ovview .board-btns{visibility:hidden}
 .ov-boardbar{display:none;position:absolute;left:12px;right:12px;
   bottom:calc(env(safe-area-inset-bottom,0px) + 12px);align-items:center;gap:9px;
   padding:8px 9px 8px 12px;border-radius:14px;pointer-events:auto;
@@ -633,7 +637,7 @@ details.more[open] summary::after{transform:rotate(-90deg)}
 #endModal .mrow .ghost,#overModal .mrow .ghost{flex:0 0 36%;height:50px}
 .res-stat{margin:10px 0 0;padding:10px 12px;border-radius:12px;background:#111723;border:1px solid rgba(255,255,255,.10);
   display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:12.5px;font-weight:800;color:#93a3bd}
-.res-stat b{color:#ffc247;font-size:14.5px;font-weight:900}
+.res-stat b{color:#ffc247;font-size:13px;font-weight:900;line-height:1.4;text-align:right;flex:1 1 auto;min-width:0}
 </style>
 </head>
 <body>
@@ -1495,18 +1499,28 @@ details.more[open] summary::after{transform:rotate(-90deg)}
 })();
 </script>
 
-<!-- 아케이드 전적 기록 (yg_arcade_stats_v1 확장) -->
+<!-- 아케이드 전적 기록 (yg_arcade_stats_v1 · yg_arcade_history_v1) -->
 <script>
 window.ARC = window.ARC || {
   KEY: 'yg_arcade_stats_v1',
+  HKEY: 'yg_arcade_history_v1',
   read: function () { try { return JSON.parse(localStorage.getItem(this.KEY) || '{}') || {}; } catch (e) { return {}; } },
-  record: function (id, res) {
+  /* 상대 구분: ai(혼자·AI 대전) / pvp(한 기기·온라인 사람 대전) */
+  vsOf: function (mode) { return (mode === 'ai' || mode === 'solo' || !mode) ? 'ai' : 'pvp'; },
+  record: function (id, res, vs) {
     try {
       var all = this.read(), s = all[id] || {};
       s.wins = Math.max(0, +s.wins || 0);
       s.losses = Math.max(0, +s.losses || 0);
       s.draws = Math.max(0, +s.draws || 0);
       if (res === 'win') s.wins++; else if (res === 'lose') s.losses++; else s.draws++;
+      var k = (vs === 'ai') ? 'ai' : ((vs === 'pvp') ? 'pvp' : this.vsOf(''));
+      var g = s[k] || {};
+      g.wins = Math.max(0, +g.wins || 0);
+      g.losses = Math.max(0, +g.losses || 0);
+      g.draws = Math.max(0, +g.draws || 0);
+      if (res === 'win') g.wins++; else if (res === 'lose') g.losses++; else g.draws++;
+      s[k] = g;
       s.played = s.wins + s.losses + s.draws;
       s.lastResult = res;
       s.lastPlayed = Date.now();
@@ -1514,11 +1528,26 @@ window.ARC = window.ARC || {
       localStorage.setItem(this.KEY, JSON.stringify(all));
     } catch (e) {}
   },
+  part: function (g) {
+    if (!g) return '';
+    var w = Math.max(0, +g.wins || 0), l = Math.max(0, +g.losses || 0), d = Math.max(0, +g.draws || 0);
+    if (!w && !l && !d) return '';
+    return w + '승 ' + l + '패' + (d ? ' ' + d + '무' : '');
+  },
   line: function (id) {
     var s = this.read()[id] || {};
-    var w = +s.wins || 0, l = +s.losses || 0, d = +s.draws || 0;
+    var w = Math.max(0, +s.wins || 0), l = Math.max(0, +s.losses || 0), d = Math.max(0, +s.draws || 0);
     if (!w && !l && !d) return '';
-    return '통산 ' + w + '승 ' + l + '패' + (d ? ' ' + d + '무' : '');
+    var tot = '통산 ' + w + '승 ' + l + '패' + (d ? ' ' + d + '무' : '');
+    var pv = this.part(s.pvp), ai = this.part(s.ai);
+    var parts = [];
+    if (pv) parts.push('사람 ' + pv);
+    if (ai) parts.push('AI ' + ai);
+    if (!parts.length) return tot;
+    if (parts.length === 1 && (w + l + d) === ((pv ? (+s.pvp.wins || 0) + (+s.pvp.losses || 0) + (+s.pvp.draws || 0) : 0) + (ai ? (+s.ai.wins || 0) + (+s.ai.losses || 0) + (+s.ai.draws || 0) : 0))) {
+      return tot + ' · ' + parts[0];
+    }
+    return tot + ' · ' + parts.join(' · ');
   },
   show: function (id, modal) {
     var root = typeof modal === 'string' ? document.querySelector(modal) : modal;
@@ -1535,8 +1564,41 @@ window.ARC = window.ARC || {
       if (foot && foot.parentNode === box) box.insertBefore(el, foot); else box.appendChild(el);
     }
     el.querySelector('b').textContent = txt;
-  }
+  },
+  /* 경기 히스토리 — 최신순 최대 100건 */
+  save: function (o) {
+    try {
+      o = o || {};
+      var arr = [];
+      try { arr = JSON.parse(localStorage.getItem(this.HKEY) || '[]') || []; } catch (e) { arr = []; }
+      if (!Array.isArray(arr)) arr = [];
+      var r = o.result;
+      if (r !== 'win' && r !== 'loss' && r !== 'draw') r = 'draw';
+      var mode = String(o.mode || '');
+      arr.unshift({
+        id: String(o.game || ''),
+        game: String(o.title || o.game || ''),
+        mode: mode,
+        vs: (o.vs === 'ai' || o.vs === 'pvp') ? o.vs : this.vsOf(mode),
+        myName: String(o.myName || ''),
+        oppName: String(o.oppName || ''),
+        result: r,
+        scoreText: String(o.scoreText || ''),
+        playedAt: Date.now()
+      });
+      if (arr.length > 100) arr.length = 100;
+      localStorage.setItem(this.HKEY, JSON.stringify(arr));
+    } catch (e) {}
+  },
+  history: function () {
+    try {
+      var a = JSON.parse(localStorage.getItem(this.HKEY) || '[]');
+      return Array.isArray(a) ? a : [];
+    } catch (e) { return []; }
+  },
+  clearHistory: function () { try { localStorage.removeItem(this.HKEY); } catch (e) {} }
 };
+</script>
 </script>
 
 
@@ -3307,7 +3369,7 @@ function showModal(sel) {
 function hideModal(sel) {
   const m = $(sel);
   if (m) { m.classList.remove('on'); m.classList.remove('boardview'); }
-  if (sel === '#overModal') overBoardView = false;
+  if (sel === '#overModal') { overBoardView = false; document.body.classList.remove('ovview'); }
   if (st && !document.querySelector('.overlay.on')) st.paused = false;
 }
 function startGame(cfg) {
@@ -3341,7 +3403,14 @@ function showOver() {
   if (!st._arcDone && window.ARC) {
     st._arcDone = true;
     const seat = (st.net === 'online') ? (st.seat || 0) : 0;
-    ARC.record('wall-baduk2', (w < 0) ? 'draw' : (w === seat ? 'win' : 'lose'));
+    const _res = (w < 0) ? 'draw' : (w === seat ? 'win' : 'lose');
+    const _vs = (st.net === 'online' || !(st.ai || []).some(Boolean)) ? 'pvp' : 'ai';
+    ARC.record('wall-baduk2', _res, _vs);
+    if (ARC.save) ARC.save({
+      game: 'wall-baduk2', title: '벽바둑 2', vs: _vs, mode: (st.net === 'online') ? 'online' : (_vs === 'ai' ? 'ai' : 'local'),
+      myName: dispName(seat), oppName: (function () { const o = []; for (let p = 0; p < st.players; p++) if (p !== seat) o.push(dispName(p)); return o.join(', '); })(),
+      result: _res, scoreText: scoreLine()
+    });
     ARC.show('wall-baduk2', '#overModal');
   }
   $('#ovEmoji').textContent = w > -1 ? '🏆' : '🤝';
@@ -3434,6 +3503,7 @@ function setOverBoardView(on) {
   const m = $('#overModal');
   if (!m) return;
   m.classList.toggle('boardview', overBoardView);
+  document.body.classList.toggle('ovview', overBoardView);
   const bar = $('#ovBoardBar');
   if (bar) bar.setAttribute('aria-hidden', overBoardView ? 'false' : 'true');
   if (overBoardView && st) renderAll();   /* 최종 판 영역 하이라이트·마지막 수 다시 그리기 */

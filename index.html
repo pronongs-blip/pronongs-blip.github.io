@@ -3,25 +3,22 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#070b14">
+<meta name="theme-color" content="#0a0d14">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="선홍 ♥ 지혜공주님">
-<meta name="description" content="지혜공주님과 선홍만을 위한 미니 아케이드. 게임 4종(벽바둑 2·흑과 백·기억포커·유배지 만국기)과 사진 EXIF 삭제·모자이크, 9:16 릴스 프레임 유틸리티를 한 곳에서.">
-<title>👑 선홍 ♥ 지혜공주님 아케이드</title>
+<meta name="apple-mobile-web-app-title" content="DEVIL'S ARCADE">
+<meta name="description" content="두뇌 서바이벌 아케이드. 벽바둑 2 · 흑과 백 · 기억포커 · 유배지 만국기 게임 4종.">
+<title>DEVIL'S ARCADE · 두뇌 서바이벌 아케이드</title>
 <link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png">
 <link rel="icon" type="image/png" href="./apple-touch-icon.png">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='88'%3E%F0%9F%91%91%3C/text%3E%3C/svg%3E">
 <style>
 :root{
-  --bg:#070b14; --panel:#0e1526; --panel2:#141d31; --line:rgba(255,255,255,.09);
-  --txt:#e9effb; --dim:#8ea0c0; --gold:#ffd479;
-  --rose:#f472b6; --rose2:#fda4af; --amber:#fbbf24;
-  --ok:#38d39f;
-  --rose-rgb:244,114,182;
-  --ivory-rgb:232,226,212;
-  --gold-rgb:251,191,36;
+  --bg:#0a0d14; --panel:#121826; --panel2:#161e2e;
+  --line:rgba(255,255,255,.10); --line2:rgba(255,255,255,.06);
+  --txt:#f3f6fc; --dim:#9aa8c0; --dim2:#7b8aa5;
+  --acc:#ffc247; --acc2:#5b8cff; --ok:#34d399;
+  --acc-rgb:255,194,71;
 }
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{margin:0;padding:0}
@@ -31,27 +28,14 @@ body{
   color:var(--txt);
   font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Malgun Gothic","Pretendard",system-ui,sans-serif;
   font-size:15px;
-  background:
-    radial-gradient(95% 52% at 50% -6%, rgba(var(--rose-rgb),.17) 0%, rgba(var(--gold-rgb),.07) 38%, rgba(var(--rose-rgb),0) 72%),
-    radial-gradient(130% 86% at 50% -12%, #1b2847 0%, #101a2e 40%, #070b14 100%);
-  background-attachment:fixed;
+  background:var(--bg);
   -webkit-font-smoothing:antialiased;
   word-break:keep-all;
   overflow-wrap:break-word;
 }
-/* 은은한 격자 + 하단 골드 지평선 */
 body::before{
   content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
-  background-image:
-    linear-gradient(rgba(255,255,255,.028) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255,255,255,.028) 1px, transparent 1px);
-  background-size:34px 34px;
-  -webkit-mask-image:radial-gradient(80% 62% at 50% 22%, #000 0%, transparent 78%);
-  mask-image:radial-gradient(80% 62% at 50% 22%, #000 0%, transparent 78%);
-}
-body::after{
-  content:"";position:fixed;left:0;right:0;bottom:0;height:38%;pointer-events:none;z-index:0;
-  background:radial-gradient(70% 90% at 50% 118%, rgba(var(--gold-rgb),.10) 0%, rgba(var(--rose-rgb),.05) 42%, rgba(0,0,0,0) 76%);
+  background:radial-gradient(120% 70% at 50% -20%, #16203a 0%, rgba(10,13,20,0) 60%);
 }
 
 .portal{
@@ -59,478 +43,226 @@ body::after{
   width:100%;max-width:430px;margin:0 auto;
   min-height:100vh;min-height:100dvh;
   display:flex;flex-direction:column;
-  padding:calc(env(safe-area-inset-top,0px) + 18px) 16px calc(env(safe-area-inset-bottom,0px) + 14px);
+  padding:calc(env(safe-area-inset-top,0px) + 22px) 16px calc(env(safe-area-inset-bottom,0px) + 14px);
 }
 
-/* ---------- BRAND ---------- */
-.brand{text-align:center;flex:0 0 auto}
-.crest{
-  width:50px;height:50px;margin:0 auto 7px;border-radius:17px;position:relative;
-  display:flex;align-items:center;justify-content:center;font-size:25px;line-height:1;
-  background:linear-gradient(150deg,rgba(var(--rose-rgb),.34),rgba(var(--gold-rgb),.28));
-  border:1px solid rgba(253,164,175,.58);
-  box-shadow:0 10px 26px rgba(var(--rose-rgb),.28), inset 0 1px 0 rgba(255,255,255,.34);
+/* ---------- 헤더 ---------- */
+.top{display:flex;align-items:center;gap:12px;flex:0 0 auto}
+.mark{
+  flex:0 0 auto;width:46px;height:46px;border-radius:14px;
+  display:flex;align-items:center;justify-content:center;
+  background:var(--panel2);border:1px solid var(--line);
+  color:var(--acc);
 }
-.crest::after{
-  content:"";position:absolute;inset:-5px;border-radius:23px;pointer-events:none;
-  border:1px solid rgba(var(--gold-rgb),.24);
-}.crest::before{
-  content:"";position:absolute;inset:0;border-radius:18px;pointer-events:none;
-  background:linear-gradient(115deg,transparent 35%,rgba(255,255,255,.55) 50%,transparent 65%);
-  background-size:260% 100%;background-position:170% 0;opacity:.5;
-  animation:sheen 6.5s ease-in-out infinite;
+.mark svg{width:26px;height:26px}
+.ttl{flex:1 1 auto;min-width:0}
+.ttl h1{
+  margin:0;font-size:21px;line-height:1.15;font-weight:900;
+  letter-spacing:.06em;color:#fff;
 }
-@keyframes sheen{0%,72%{background-position:170% 0}100%{background-position:-90% 0}}
+.ttl p{margin:3px 0 0;font-size:11.5px;font-weight:700;color:var(--dim);letter-spacing:.01em}
+.stat{
+  flex:0 0 auto;display:inline-flex;align-items:center;gap:5px;
+  height:24px;padding:0 9px;border-radius:999px;
+  font-size:10.5px;font-weight:800;letter-spacing:.02em;color:#cfd9ea;
+  background:var(--panel);border:1px solid var(--line);white-space:nowrap;
+}
+.stat i{width:6px;height:6px;border-radius:50%;background:var(--ok);display:block}
 
-.eyebrow{
-  margin:0 0 5px;font-size:8.5px;font-weight:900;letter-spacing:2.1px;
-  color:#d19bb0;text-transform:uppercase;
-}
-h1{
-  margin:0;font-size:25px;line-height:1.2;letter-spacing:-.8px;font-weight:900;
-  background:linear-gradient(180deg,#fff 0%,#fbe7ef 56%,#eab8cd 100%);
-  -webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent;
-}
-h1 .amp{
-  font-size:19px;font-weight:800;padding:0 1px;position:relative;top:-1px;
-  background:linear-gradient(120deg,var(--rose2),var(--amber));
-  -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
-}
-h1 .l2{
-  font-size:29px;letter-spacing:-1.1px;
-  background:linear-gradient(104deg,#ffeec8 0%,var(--rose2) 46%,var(--rose) 74%,var(--amber) 100%);
-  -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
-}
-.sub{
-  margin:6px 0 0;font-size:10.5px;font-weight:800;color:#b9a6b4;letter-spacing:.1px;
-  display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:5px;
-}
-.sub .live{
-  display:inline-flex;align-items:center;gap:4px;padding:2px 7px;border-radius:20px;
-  border:1px solid rgba(56,211,159,.42);background:rgba(56,211,159,.10);color:#b7f5df;font-size:9px;letter-spacing:.3px;
-}
-.sub .live i{width:5px;height:5px;border-radius:50%;background:var(--ok);box-shadow:0 0 6px var(--ok);display:block;animation:blip 2.2s ease-in-out infinite}
-@keyframes blip{0%,100%{opacity:1}50%{opacity:.35}}
-.sub .dot{opacity:.35}
+/* ---------- 게임 목록 ---------- */
+.stage{flex:1 1 auto;display:flex;flex-direction:column;justify-content:center;gap:8px;padding:14px 0 10px;min-height:0}
+.stage>section{flex:0 0 auto;display:flex;flex-direction:column;min-height:0}
+.shead{display:flex;align-items:baseline;justify-content:space-between;padding:0 2px 2px}
+.shead .lb{font-size:11px;font-weight:800;letter-spacing:.14em;color:var(--dim2);text-transform:uppercase}
+.shead .cnt{font-size:11px;font-weight:800;color:var(--dim2)}
 
-/* ---------- STAGE ---------- */
-/* 헤더 아래 장식 디바이더 */
-.ornament{display:flex;align-items:center;justify-content:center;gap:9px;margin:9px 0 0}
-.ornament i{display:block;height:1px;width:52px;background:linear-gradient(90deg,rgba(var(--gold-rgb),0),rgba(var(--gold-rgb),.55))}
-.ornament i:last-child{background:linear-gradient(90deg,rgba(var(--gold-rgb),.55),rgba(var(--gold-rgb),0))}
-.ornament b{display:block;width:5px;height:5px;transform:rotate(45deg);border:1px solid rgba(var(--gold-rgb),.7);background:rgba(var(--gold-rgb),.25)}
-
-.stage{flex:1 1 auto;display:flex;flex-direction:column;justify-content:center;gap:10px;padding:10px 0 3px;min-height:0}
-
-/* 섹션(게임 / 유틸리티) — 각자 헤더 + 카드 묶음 */
-.group{display:flex;flex-direction:column;gap:5px;min-height:0}
-.group-games{--hac:var(--rose-rgb)}
-.group-tools{--hac:var(--gold-rgb)}
-
-.stage-head{display:flex;align-items:center;justify-content:space-between;padding:0 3px}
-.stage-head .lb{display:flex;align-items:center;gap:6px;font-size:9px;font-weight:900;letter-spacing:1.7px;color:#c79fb2}
-.group-tools .stage-head .lb{color:#e0c48d}
-.stage-head .lb::before{
-  content:"";width:14px;height:1px;
-  background:linear-gradient(90deg,rgba(var(--hac),0),rgba(var(--hac),1));
-}
-.stage-head .cnt{
-  font-size:9px;font-weight:900;letter-spacing:.6px;color:#f6dbe7;
-  padding:2.5px 8px;border-radius:20px;border:1px solid rgba(var(--hac),.34);
-  background:linear-gradient(180deg,rgba(var(--hac),.16),rgba(var(--hac),.05));
-}
-.group-tools .stage-head .cnt{color:#f3e2ba}
-
-.cards{display:grid;grid-template-columns:1fr;gap:7px}
+.cards{flex:0 0 auto;display:flex;flex-direction:column;gap:11px;min-height:0}
 .card{
-  position:relative;display:flex;align-items:center;gap:11px;
-  padding:10px 12px 10px 11px;border-radius:16px;text-decoration:none;color:inherit;
-  background:linear-gradient(180deg,rgba(255,255,255,.062),rgba(255,255,255,.022));
-  border:1px solid var(--line);
-  box-shadow:0 8px 22px rgba(3,7,16,.34), inset 0 1px 0 rgba(255,255,255,.06);
-  overflow:hidden;transition:transform .16s ease, border-color .18s ease, box-shadow .18s ease;
-  animation:rise .5s cubic-bezier(.22,.85,.3,1) both;
+  position:relative;display:flex;align-items:center;gap:13px;
+  flex:0 0 auto;min-height:118px;padding:13px 14px 13px 13px;border-radius:16px;
+  text-decoration:none;color:inherit;
+  background:var(--panel);border:1px solid var(--line);
+  transition:background .15s ease,border-color .15s ease;
 }
-.cards .card:nth-child(1){animation-delay:.03s}
-.cards .card:nth-child(2){animation-delay:.10s}
-.cards .card:nth-child(3){animation-delay:.14s}
-.cards .card:nth-child(4){animation-delay:.18s}
-.group-tools .card{animation-delay:.17s}
-.group-tools .card:nth-child(2){animation-delay:.23s}
-/* 유틸리티는 한 줄짜리 컴팩트 카드 — 다섯 장이 한 화면에 남도록 */
-.cards-tools .card{padding:8px 11px 8px 10px;gap:10px;border-radius:14px}
-.cards-tools .ic{width:40px;height:40px;font-size:19px;border-radius:12px}
-.cards-tools .ic::after{inset:-3px;border-radius:15px}
-.cards-tools .txt{gap:2px}
-.cards-tools .nm{font-size:13px}
-.cards-tools .ds{font-size:10px;line-height:1.35;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.cards-tools .tags{display:none}
-@keyframes rise{from{opacity:0;transform:translateY(9px)}to{opacity:1;transform:none}}
-/* 카드 좌측 액센트 레일 */
-.card::before{
-  content:"";position:absolute;left:0;top:14%;bottom:14%;width:2px;border-radius:2px;
-  background:linear-gradient(180deg,rgba(var(--ac),.05),rgba(var(--ac),.95),rgba(var(--ac),.05));
-  opacity:.75;
-}
-/* 호버 테두리 */
-.card::after{
-  content:"";position:absolute;inset:0;border-radius:16px;pointer-events:none;padding:1.3px;
-  background:linear-gradient(140deg,rgba(253,164,175,.85),rgba(var(--ac),.55) 45%,rgba(var(--gold-rgb),.85));
-  -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
-  -webkit-mask-composite:xor;mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);mask-composite:exclude;
-  opacity:0;transition:opacity .2s ease;
-}
-.card:hover{transform:translateY(-1.5px);border-color:rgba(var(--ac),.3);box-shadow:0 12px 26px rgba(3,7,16,.45)}
-.card:hover::after{opacity:.65}
-.card:active{transform:scale(.988)}
-.card:focus-visible{outline:2px solid rgba(var(--gold-rgb),.8);outline-offset:2px}
-
-.card.c-royal{--ac:var(--rose-rgb)}
-.card.c-ivory{--ac:var(--ivory-rgb)}
-.card.c-ivory .ic{
-  background:linear-gradient(158deg,rgba(245,241,233,.92),rgba(214,206,192,.62));
-  border-color:rgba(255,255,255,.5);
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.75), 0 5px 14px rgba(226,214,196,.16);
-}
-.card.c-ivory .ic::after{border-color:rgba(255,255,255,.16)}
-.card.c-gold{--ac:var(--gold-rgb)}
-
+.card:active{background:var(--panel2);border-color:rgba(255,255,255,.2)}
+.card:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
 .ic{
-  flex:0 0 auto;width:50px;height:50px;border-radius:15px;position:relative;
-  display:flex;align-items:center;justify-content:center;font-size:23px;line-height:1;
-  background:linear-gradient(158deg,rgba(var(--ac),.30),rgba(var(--ac),.09));
-  border:1px solid rgba(var(--ac),.36);
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.22), 0 5px 14px rgba(var(--ac),.14);
+  flex:0 0 auto;width:50px;height:50px;border-radius:14px;
+  display:flex;align-items:center;justify-content:center;
+  background:rgba(var(--ac),.13);border:1px solid rgba(var(--ac),.30);color:rgb(var(--ac));
 }
-.ic::after{content:"";position:absolute;inset:-3px;border-radius:17px;border:1px solid rgba(var(--ac),.13);pointer-events:none}
+.ic svg{width:27px;height:27px}
+.card.c-warm{--ac:232,238,250}
+.card.c-cool{--ac:110,160,255}
+.card.c-mint{--ac:90,214,178}
 
-.txt{flex:1 1 auto;min-width:0;display:flex;flex-direction:column;gap:4px}
-.top{display:flex;align-items:center;gap:8px;min-width:0}
-.nm{
-  font-size:14px;font-weight:900;letter-spacing:-.4px;color:#f4f8ff;
-  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
-}
+.body{flex:1 1 auto;min-width:0;display:flex;flex-direction:column;gap:3px}
+.line1{display:flex;align-items:center;gap:7px;min-width:0}
+.nm{font-size:16.5px;font-weight:900;letter-spacing:-.01em;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .bdg{
-  flex:0 0 auto;margin-left:1px;font-size:8.5px;font-weight:900;letter-spacing:.5px;line-height:1;
-  padding:3.5px 5.5px;border-radius:5px;border:1px solid transparent;
+  flex:0 0 auto;font-size:9.5px;font-weight:900;line-height:1;letter-spacing:.02em;
+  padding:4px 6px;border-radius:5px;
 }
-.bdg.hot{color:#2a1305;background:linear-gradient(120deg,#ffe6b6,var(--amber));border-color:rgba(255,255,255,.35);box-shadow:0 2px 8px rgba(var(--gold-rgb),.3)}
-.bdg.new{color:#2a0a1a;background:linear-gradient(120deg,#ffd0e4,var(--rose));border-color:rgba(255,255,255,.35);box-shadow:0 2px 8px rgba(var(--rose-rgb),.3)}
-.bdg.cnt{color:#d9e5f7;background:rgba(255,255,255,.075);border-color:rgba(255,255,255,.16)}
-.bdg[hidden],.tg[hidden]{display:none}
-.tg.when{color:#93a2ba;border-color:rgba(255,255,255,.075);background:rgba(255,255,255,.028);letter-spacing:.1px}
-.tg.when[data-fresh="0"]{color:#8494ad}
-.ds{
-  font-size:10.2px;line-height:1.42;font-weight:600;color:#9fb0cb;
-  word-break:keep-all;overflow-wrap:break-word;
-}
-.tags{display:flex;flex-wrap:wrap;gap:4px;margin-top:1px}
-.tg{
-  font-size:9px;font-weight:900;letter-spacing:.2px;color:#cbb9c5;
-  padding:2.5px 6px;border-radius:5px;border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.045);
-}
-.tg:first-child{color:#f1d9e2;border-color:rgba(var(--ac),.3);background:rgba(var(--ac),.1)}
-.go{
-  flex:0 0 auto;width:22px;text-align:center;font-size:16px;font-weight:800;
-  color:rgba(255,255,255,.42);transition:transform .18s ease,color .18s ease;
-}
-.card:hover .go{transform:translateX(2px);color:rgba(var(--ac),.95)}
+.bdg.new{color:#1a1205;background:var(--acc)}
+.bdg.hot{color:#04121f;background:#7fc4ff}
+.bdg.cnt{color:#c9d5e8;background:rgba(255,255,255,.09)}
+.bdg[hidden]{display:none}
+.ds{font-size:12.5px;line-height:1.4;font-weight:600;color:var(--dim)}
+.mt{font-size:10.5px;font-weight:700;color:var(--dim2)}
+.mt .when[hidden]{display:none}
+.go{flex:0 0 auto;font-size:19px;font-weight:700;color:var(--dim2);line-height:1}
 
-/* ---------- FOOT ---------- */
-.foot{flex:0 0 auto}
+/* ---------- 하단 ---------- */
+.foot{flex:0 0 auto;margin-top:auto;display:flex;flex-direction:column;align-items:center;gap:8px;padding-top:18px}
 .tip{
-  display:flex;align-items:flex-start;gap:8px;padding:9px 12px;border-radius:13px;
-  background:linear-gradient(180deg,rgba(255,255,255,.045),rgba(255,255,255,.014));
-  border:1px solid rgba(255,255,255,.075);
+  display:flex;align-items:center;gap:7px;padding:9px 12px;border-radius:12px;width:100%;
+  background:rgba(255,255,255,.03);border:1px solid var(--line2);
+  font-size:11px;line-height:1.45;font-weight:600;color:var(--dim);
 }
-.tip .ti{font-size:13px;line-height:1.25;flex:0 0 auto;opacity:.95}
-.tip p{margin:0;font-size:9.5px;line-height:1.5;font-weight:700;color:#a9b8d0}
-.tip b{color:#eef4ff;font-weight:900}
-.tip .kbd{
-  display:inline-block;padding:1px 4.5px;border-radius:4px;font-size:9px;font-weight:900;
-  color:#f7e2c0;background:rgba(var(--gold-rgb),.13);border:1px solid rgba(var(--gold-rgb),.34);
-}
-.note{
-  margin:6px 0 0;text-align:center;font-size:8.5px;font-weight:800;letter-spacing:.15px;color:#7d8ba6;line-height:1.5;
-}
-.foot-tools{display:flex;justify-content:center;margin-top:5px}
+.tip .ti{font-size:13px;flex:0 0 auto}
+.tip b{color:#eaf0fb;font-weight:800}
 .rst{
-  -webkit-appearance:none;appearance:none;margin:0;padding:3px 9px;border-radius:8px;
-  font-family:inherit;font-size:8.5px;font-weight:800;letter-spacing:.2px;line-height:1.5;
-  color:#6d7b93;background:transparent;border:1px solid rgba(255,255,255,.085);
-  cursor:pointer;transition:color .16s ease,border-color .16s ease,background .16s ease;
+  -webkit-appearance:none;appearance:none;margin:0;padding:5px 11px;border-radius:8px;
+  font-family:inherit;font-size:10.5px;font-weight:700;line-height:1.4;
+  color:var(--dim2);background:transparent;border:1px solid var(--line2);
+  cursor:pointer;transition:color .15s ease,border-color .15s ease;
 }
-.rst:hover{color:#c9d6ea;border-color:rgba(255,255,255,.18)}
-.rst:focus-visible{outline:2px solid rgba(var(--gold-rgb),.8);outline-offset:2px}
-.rst.arm{color:#ffd8e6;border-color:rgba(var(--rose-rgb),.5);background:rgba(var(--rose-rgb),.14)}
-.note .hrt{color:var(--rose);font-size:9px}
-.note .sep{opacity:.4;padding:0 3px}
+.rst:active{color:#e6edf9;border-color:var(--line)}
+.rst:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
+.rst.arm{color:#ffd9e2;border-color:rgba(255,120,150,.55);background:rgba(255,120,150,.12)}
 
-/* ---------- DESKTOP ---------- */
+/* ---------- 넓은 화면 ---------- */
 @media (min-width:760px){
-  .portal{max-width:1120px;padding-top:calc(env(safe-area-inset-top,0px) + 44px);padding-bottom:34px}
-  .crest{width:62px;height:62px;font-size:30px;border-radius:21px;margin-bottom:12px}
-  .crest::after{inset:-6px;border-radius:26px}
-  .eyebrow{font-size:9.5px;letter-spacing:3px;margin-bottom:10px}
-  h1{font-size:33px;letter-spacing:-1.3px}
-  h1 .amp{font-size:25px}
-  h1 .l2{font-size:37px;letter-spacing:-1.5px}
-  .sub{font-size:12px;margin-top:12px;gap:7px}
-  .sub .live{font-size:10px;padding:3px 9px}
-  .ornament{margin-top:18px;gap:12px}
-  .ornament i{width:78px}
-  .stage{padding:22px 0 0;gap:18px}
-  .group{gap:11px}
-  .stage-head{padding:0 4px}
-  .stage-head .lb{font-size:10px;letter-spacing:2.2px}
-  .stage-head .cnt{font-size:10px;padding:3.5px 11px}
-
-  /* 게임: 2열 대형 타일 (1000px 이상은 3열) */
-  .cards-games{grid-template-columns:repeat(2,1fr);gap:18px}
-  .cards-games .card{flex-direction:column;align-items:flex-start;gap:13px;padding:22px 22px 20px;border-radius:20px;min-height:212px}
-  .cards-games .card::before{top:10%;bottom:10%}
-  .cards-games .ic{width:60px;height:60px;font-size:28px;border-radius:18px}
-  .cards-games .ic::after{inset:-4px;border-radius:20px}
-  .cards-games .txt{gap:7px;width:100%}
-  .cards-games .nm{font-size:16.5px;letter-spacing:-.5px}
-  .cards-games .bdg{font-size:9.5px;padding:4px 7px}
-  .cards-games .ds{font-size:12px;line-height:1.6;color:#a6b6cf}
-  .cards-games .tags{margin-top:auto;gap:6px;padding-top:2px;padding-right:34px}
-  .tg{font-size:9.5px;padding:3.5px 8px;border-radius:6px}
-  .go{
-    position:absolute;bottom:22px;right:20px;width:28px;height:28px;line-height:26px;text-align:center;
-    font-size:15px;border-radius:50%;border:1px solid rgba(255,255,255,.14);
-    background:rgba(255,255,255,.05);color:rgba(255,255,255,.5);
-    transition:transform .18s ease,color .18s ease,border-color .18s ease,background .18s ease;
-  }
-  .card:hover .go{transform:translateX(2px);color:#fff;border-color:rgba(var(--ac),.7);background:rgba(var(--ac),.16)}
-
-  /* 유틸리티: 1장 전체폭 가로형 카드 */
-  .cards-tools{grid-template-columns:1fr;gap:0}
-  .cards-tools .card{
-    flex-direction:row;align-items:center;gap:18px;
-    padding:18px 26px 18px 22px;border-radius:20px;min-height:0;
-  }
-  .cards-tools .card::before{top:22%;bottom:22%}
-  .cards-tools .ic{width:58px;height:58px;font-size:27px;border-radius:18px}
-  .cards-tools .ic::after{inset:-4px;border-radius:20px}
-  .cards-tools .txt{gap:5px;padding-right:46px}
-  .cards-tools .nm{font-size:16.5px;letter-spacing:-.5px}
-  .cards-tools .bdg{font-size:9.5px;padding:4px 7px}
-  .cards-tools .ds{font-size:12px;line-height:1.55;color:#a6b6cf;white-space:normal;overflow:visible}
-  .cards-tools .tags{display:flex;margin-top:2px;gap:6px}
-  .cards-tools .go{
-    position:absolute;top:50%;bottom:auto;right:22px;margin-top:-14px;
-  }
-
-  .tip{padding:12px 16px;border-radius:15px;align-items:center}
-  .tip .ti{font-size:14px}
-  .tip p{font-size:11px}
-  .tip .kbd{font-size:10px;padding:1.5px 6px}
-  .note{font-size:9.5px;margin-top:11px}
+  .portal{max-width:860px;padding-top:calc(env(safe-area-inset-top,0px) + 48px);padding-bottom:40px}
+  .mark{width:56px;height:56px;border-radius:17px}
+  .mark svg{width:31px;height:31px}
+  .ttl h1{font-size:26px}
+  .ttl p{font-size:13px}
+  .stage{justify-content:flex-start;padding:34px 0 10px;gap:14px}
+  .stage>section{flex:0 0 auto}
+  .cards{flex:0 0 auto;display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  .card{flex:0 0 auto;min-height:152px;padding:22px 24px;gap:18px;border-radius:20px}
+  .card:hover{background:var(--panel2);border-color:rgba(255,255,255,.18)}
+  .ic{width:62px;height:62px;border-radius:17px}
+  .ic svg{width:33px;height:33px}
+  .nm{font-size:18.5px}
+  .ds{font-size:13.5px}
+  .mt{font-size:12px}
+  .go{font-size:22px}
+  .tip{max-width:520px;font-size:12px}
 }
 
-/* 넓은 화면: 게임 3열 한 줄 */
-@media (min-width:1000px){
-  .cards-games{grid-template-columns:repeat(3,1fr);gap:16px}
-  .cards-games .card{min-height:206px;padding:20px 20px 18px;gap:12px}
-  .cards-games .ic{width:56px;height:56px;font-size:26px}
+@media (max-width:360px){
+  .portal{padding-left:13px;padding-right:13px}
+  .nm{font-size:14.5px}
+  .ds{font-size:11.5px}
+  .card{min-height:78px;padding:11px 12px}
+  .ic{width:42px;height:42px}
+  .ic svg{width:23px;height:23px}
 }
-
-/* 4게임 시대 컴팩트 모드 — 아이폰 13 미니(375x812)·프로(390x844) 한 화면 유지 */
-@media (max-height:880px) and (max-width:759px){
-  .portal{padding-top:calc(env(safe-area-inset-top,0px) + 12px);padding-bottom:calc(env(safe-area-inset-bottom,0px) + 8px)}
-  .crest{width:42px;height:42px;font-size:21px;border-radius:14px;margin-bottom:5px}
-  .crest::after{inset:-4px;border-radius:19px}
-  .eyebrow{font-size:8px;letter-spacing:1.8px;margin-bottom:3px}
-  h1{font-size:22px;letter-spacing:-.7px}
-  h1 .amp{font-size:17px}
-  h1 .l2{font-size:26px;letter-spacing:-1px}
-  .sub{margin-top:4px;font-size:10px}
-  .ornament{margin-top:6px}
-  .stage{padding:6px 0 2px;gap:7px}
-  .group{gap:4px}
-  .cards{gap:6px}
-  .card{padding:7px 11px 7px 10px;border-radius:15px;gap:10px}
-  .card::after{border-radius:15px}
-  .ic{width:44px;height:44px;font-size:20px;border-radius:13px}
-  .ic::after{inset:-3px;border-radius:15px}
-  .nm{font-size:13px}
-  .ds{font-size:9.6px;line-height:1.36}
-  .tags{gap:3px;margin-top:0}
-  .tg{font-size:8.5px;padding:2px 5px}
-  .tip{padding:7px 10px;border-radius:12px}
-  .tip p{font-size:9px;line-height:1.45}
-  .note{margin-top:4px;font-size:8px}
-  .foot-tools{margin-top:3px}
-  .rst{font-size:8px;padding:2.5px 8px}
-}
-/* 낮은 화면(iPhone SE 375x667 등) 컴팩트 모드 — 한 화면 유지 */
-@media (max-height:750px) and (max-width:759px){
-  .portal{padding-top:calc(env(safe-area-inset-top,0px) + 11px);padding-bottom:calc(env(safe-area-inset-bottom,0px) + 5px)}
-  .crest{width:40px;height:40px;font-size:19px;border-radius:13px;margin-bottom:5px}
-  .crest::after{inset:-4px;border-radius:16px}
-  .eyebrow{font-size:7.5px;letter-spacing:1.5px;margin-bottom:3px}
-  h1{font-size:21px}
-  h1 .l2{font-size:24px}
-  .sub{margin-top:4px;font-size:9.5px}
-  .ornament{margin-top:8px}
-  .stage{padding:7px 0 2px;gap:7px}
-  .group{gap:5px}
-  .card{padding:8px 11px 8px 10px;border-radius:15px}
-  .ic{width:42px;height:42px;font-size:20px;border-radius:12px}
-  .ic::after{inset:-3px;border-radius:15px}
-  .nm{font-size:12.5px}
-  .ds{font-size:9.5px;line-height:1.38}
-  .tags{margin-top:0}
-  .tg{font-size:8.5px;padding:2px 5.5px}
-  .tip{padding:7px 9px}
-  .tip p{font-size:8.5px}
-  .note{margin-top:3px;font-size:8px}
-  .foot-tools{margin-top:4px}
-  .rst{font-size:8px;padding:2.5px 8px}
-  .cards{gap:6px}
-  .stage-head .cnt{padding:2px 7px}
-}
-/* 아주 낮은 화면(375x667·320x700): 카드 4장을 한 화면에 — 설치 안내는 접기 */
 @media (max-height:700px) and (max-width:759px){
-  .tip{display:none}
-  .note{margin-top:4px}
+  .stage{justify-content:flex-start;padding-top:12px}
+  .card{min-height:84px}
+  .cards{gap:8px}
 }
-/* 가로모드 등 아주 낮은 화면은 자연스럽게 스크롤 */
-@media (max-height:560px) and (max-width:759px){
-  .portal{min-height:0}
-}
-
-@media (prefers-reduced-motion:reduce){
-  *{animation:none !important;transition:none !important}
-}
+@media (prefers-reduced-motion:reduce){*{transition:none !important}}
 </style>
 </head>
 <body>
 <main class="portal">
 
-  <header class="brand">
-    <div class="crest" aria-hidden="true">👑</div>
-    <p class="eyebrow">For Jihye Princess · Playground</p>
-    <h1>지혜공주님 <span class="amp">&amp;</span> 선홍<br><span class="l2">플레이그라운드</span></h1>
-    <p class="sub"><span class="live" id="statPill"><i></i><span id="statPillTxt">READY</span></span><span class="dot">·</span><span>게임 4종 · 유틸리티 2종</span></p>
-    <div class="ornament" aria-hidden="true"><i></i><b></b><i></i></div>
+  <header class="top">
+    <div class="mark" aria-hidden="true">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="2.4" y="7.2" width="19.2" height="9.6" rx="4.8"/>
+        <path d="M7 10.4v2.8M5.6 11.8h2.8"/>
+        <path d="M15.6 11.2h.01M17.6 12.8h.01"/>
+      </svg>
+    </div>
+    <div class="ttl">
+      <h1>DEVIL'S ARCADE</h1>
+      <p>두뇌 서바이벌 아케이드</p>
+    </div>
+    <span class="stat" id="statPill"><i></i><span id="statPillTxt">READY</span></span>
   </header>
 
   <div class="stage">
+    <section aria-label="게임">
+      <div class="shead"><span class="lb">GAMES</span><span class="cnt">4 TITLES</span></div>
+      <div class="cards">
 
-    <section class="group group-games" aria-label="게임">
-      <div class="stage-head">
-        <span class="lb">GAMES</span>
-        <span class="cnt">4 TITLES</span>
-      </div>
-
-      <div class="cards cards-games">
-
-        <a class="card c-royal" href="./wall-baduk2.html" data-app-id="wall-baduk2" data-released="2026-11-21">
-          <span class="ic" aria-hidden="true">👑</span>
-          <span class="txt">
-            <span class="top">
-              <span class="nm">지혜공주님 전용 벽바둑 2</span>
-              <span class="bdg" data-slot="badge" hidden></span>
-            </span>
-            <span class="ds">벽으로 길을 막고 영역을 차지하는 1:1 전략 보드게임 (온라인 · AI · 3인전)</span>
-            <span class="tags"><span class="tg">온라인 1:1</span><span class="tg">전략</span><span class="tg when" data-slot="when" hidden></span></span>
+        <a class="card c-cool" href="./wall-baduk2.html" data-app-id="wall-baduk2" data-released="2026-11-21">
+          <span class="ic" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="3" width="18" height="18" rx="3"/>
+              <path d="M9 3v18M15 3v18M3 9h18M3 15h18"/>
+              <path d="M9.9 9.9h4.2v4.2H9.9z" fill="currentColor" stroke="none"/>
+            </svg>
+          </span>
+          <span class="body">
+            <span class="line1"><span class="nm">벽바둑 2</span><span class="bdg" data-slot="badge" hidden></span></span>
+            <span class="ds">벽으로 영역을 나누는 1:1 보드게임</span>
+            <span class="mt"><span class="when" data-slot="when" hidden></span></span>
           </span>
           <span class="go" aria-hidden="true">›</span>
         </a>
 
-        <a class="card c-ivory" href="./black-white.html" data-app-id="black-white" data-released="2026-11-21">
-          <span class="ic" aria-hidden="true">🖤</span>
-          <span class="txt">
-            <span class="top">
-              <span class="nm">지혜공주님 전용 흑과 백</span>
-              <span class="bdg" data-slot="badge" hidden></span>
-            </span>
-            <span class="ds">0~8 타일의 흑·백만 보고 승부하는 9라운드 1:1 심리전 (온라인 · AI)</span>
-            <span class="tags"><span class="tg">온라인 1:1</span><span class="tg">심리전</span><span class="tg when" data-slot="when" hidden></span></span>
+        <a class="card c-warm" href="./black-white.html" data-app-id="black-white" data-released="2026-11-21">
+          <span class="ic" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="1.7">
+              <circle cx="12" cy="12" r="8.5" stroke="#dbe6f9"/>
+              <path d="M12 3.5a8.5 8.5 0 0 0 0 17z" fill="#6ea0ff"/>
+            </svg>
+          </span>
+          <span class="body">
+            <span class="line1"><span class="nm">흑과 백</span><span class="bdg" data-slot="badge" hidden></span></span>
+            <span class="ds">색만 보고 겨루는 9라운드 심리전</span>
+            <span class="mt"><span class="when" data-slot="when" hidden></span></span>
           </span>
           <span class="go" aria-hidden="true">›</span>
         </a>
 
-        <a class="card c-royal" href="./memory-poker.html" data-app-id="memory-poker" data-released="2026-11-22">
-          <span class="ic" aria-hidden="true">🃏</span>
-          <span class="txt">
-            <span class="top">
-              <span class="nm">지혜공주님 기억포커</span>
-              <span class="bdg" data-slot="badge" hidden></span>
-            </span>
-            <span class="ds">20초 암기 → 60초 선택, 내 2장 + 공용 3장 5장 승부 (온라인 · AI)</span>
-            <span class="tags"><span class="tg">온라인 1:1</span><span class="tg">기억력</span><span class="tg when" data-slot="when" hidden></span></span>
+        <a class="card c-mint" href="./memory-poker.html" data-app-id="memory-poker" data-released="2026-11-22">
+          <span class="ic" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round">
+              <rect x="3.2" y="6" width="10" height="14" rx="2.2" transform="rotate(-9 8.2 13)"/>
+              <rect x="10.6" y="4" width="10" height="14" rx="2.2" transform="rotate(9 15.6 11)"/>
+            </svg>
+          </span>
+          <span class="body">
+            <span class="line1"><span class="nm">기억포커</span><span class="bdg" data-slot="badge" hidden></span></span>
+            <span class="ds">20초 암기 뒤 5장 포커 대결</span>
+            <span class="mt"><span class="when" data-slot="when" hidden></span></span>
           </span>
           <span class="go" aria-hidden="true">›</span>
         </a>
 
-        <a class="card c-royal" href="./world-flags.html" data-app-id="world-flags" data-released="2026-11-25">
-          <span class="ic" aria-hidden="true">🏳️</span>
-          <span class="txt">
-            <span class="top">
-              <span class="nm">유배지 만국기</span>
-              <span class="bdg" data-slot="badge" hidden></span>
-            </span>
-            <span class="ds">30초 암기 → 25개 중 5개 · 전 세계 국기 268종 (온라인 1:1)</span>
-            <span class="tags"><span class="tg">온라인 1:1</span><span class="tg">기억력</span><span class="tg when" data-slot="when" hidden></span></span>
+        <a class="card c-cool" href="./world-flags.html" data-app-id="world-flags" data-released="2026-11-25">
+          <span class="ic" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round">
+              <circle cx="12" cy="12" r="8.8"/>
+              <path d="M3.2 12h17.6"/>
+              <path d="M12 3.2c2.4 2.5 3.7 5.6 3.7 8.8s-1.3 6.3-3.7 8.8c-2.4-2.5-3.7-5.6-3.7-8.8S9.6 5.7 12 3.2z"/>
+            </svg>
           </span>
-          <span class="go" aria-hidden="true">›</span>
-        </a>
-
-      </div>
-    </section>
-
-    <section class="group group-tools" aria-label="유틸리티">
-      <div class="stage-head">
-        <span class="lb">UTILITIES</span>
-        <span class="cnt">2 TOOLS</span>
-      </div>
-
-      <div class="cards cards-tools">
-
-        <a class="card c-gold" href="./reels-frame.html" data-app-id="reels-frame" data-released="2026-11-22">
-          <span class="ic" aria-hidden="true">🎞️</span>
-          <span class="txt">
-            <span class="top">
-              <span class="nm">9:16 릴스 프레임 &amp; 성장 콜라주</span>
-              <span class="bdg" data-slot="badge" hidden></span>
-            </span>
-            <span class="ds">가로 사진도 9:16 그대로 · 생후 N일 스탬프</span>
-            <span class="tags"><span class="tg">릴스 9:16</span><span class="tg">사진 콜라주</span><span class="tg when" data-slot="when" hidden></span></span>
-          </span>
-          <span class="go" aria-hidden="true">›</span>
-        </a>
-
-        <a class="card c-gold" href="./exif-mosaic.html" data-app-id="exif-mosaic" data-released="2026-11-21">
-          <span class="ic" aria-hidden="true">🛡️</span>
-          <span class="txt">
-            <span class="top">
-              <span class="nm">사진 EXIF 삭제 · 모자이크</span>
-              <span class="bdg" data-slot="badge" hidden></span>
-            </span>
-            <span class="ds">GPS·기기정보 삭제 · 손가락 모자이크</span>
-            <span class="tags"><span class="tg">EXIF 삭제</span><span class="tg">오프라인</span><span class="tg when" data-slot="when" hidden></span></span>
+          <span class="body">
+            <span class="line1"><span class="nm">유배지 만국기</span><span class="bdg" data-slot="badge" hidden></span></span>
+            <span class="ds">30초 암기, 25개 중 5개 찾기</span>
+            <span class="mt"><span class="when" data-slot="when" hidden></span></span>
           </span>
           <span class="go" aria-hidden="true">›</span>
         </a>
 
       </div>
     </section>
-
   </div>
 
   <footer class="foot">
     <div class="tip">
       <span class="ti" aria-hidden="true">📲</span>
-      <p>아이폰 <b>Safari</b>에서 <span class="kbd">공유</span> → <b>홈 화면에 추가</b> 하면 앱처럼 전체화면으로 열립니다.</p>
+      <span>Safari에서 <b>공유 → 홈 화면에 추가</b> 하면 앱처럼 열립니다</span>
     </div>
-    <p class="note">새 게임이 완성될 때마다 이 광장에 하나씩 세워집니다 <span class="sep">·</span> made for 지혜공주님 <span class="hrt">♥</span></p>
-    <div class="foot-tools">
-      <button class="rst" type="button" id="resetStats" aria-pressed="false" title="이 기기에 저장된 실행 기록을 지웁니다">기록 초기화</button>
-    </div>
+    <button class="rst" type="button" id="resetStats" aria-pressed="false" title="이 기기에 저장된 실행 기록을 지웁니다">기록 초기화</button>
   </footer>
 
 </main>
@@ -558,7 +290,6 @@ h1 .l2{
   var pillTxt = document.getElementById("statPillTxt");
   var resetBtn = document.getElementById("resetStats");
 
-  /* ---------- 저장소 ---------- */
   function readStats() {
     var out = {};
     var raw = null;
@@ -587,13 +318,11 @@ h1 .l2{
     try { window.localStorage.removeItem(KEY); } catch (e) { /* noop */ }
   }
 
-  /* ---------- 보조 ---------- */
   function releasedOf(card) {
     var t = Date.parse((card.getAttribute("data-released") || "") + "T00:00:00");
     return isFinite(t) ? t : 0;
   }
 
-  /* 최다 실행 1위. 동률이면 최근 실행 → 최신 출시 순으로 한 곳을 최애로 정한다. */
   function favoriteOf(stats) {
     var best = null;
     ids.forEach(function (id) {
@@ -617,7 +346,6 @@ h1 .l2{
       " " + pad2(d.getHours()) + ":" + pad2(d.getMinutes());
   }
 
-  /* 최근 실행 시각을 짧게: 방금 전 / N분 전 / 오늘 / N일 전 / 오래 전 */
   function ago(ts) {
     if (!ts) return "";
     var now = Date.now();
@@ -634,7 +362,6 @@ h1 .l2{
     return "오래 전";
   }
 
-  /* ---------- 렌더 ---------- */
   function render() {
     var stats = readStats();
     var fav = favoriteOf(stats);
@@ -653,7 +380,7 @@ h1 .l2{
         text = "NEW";
       } else if (id === fav) {
         cls = "bdg hot";
-        text = "🔥 최애 · " + s.clicks + "회";
+        text = "최다 · " + s.clicks + "회";
       } else {
         cls = "bdg cnt";
         text = s.clicks + "회";
@@ -665,21 +392,23 @@ h1 .l2{
       }
 
       if (when) {
-        var label = s.clicks > 0 ? (ago(s.lastOpened) || "오늘") : "아직 안 해봄";
-        if (when.textContent !== label) when.textContent = label;
-        when.setAttribute("data-fresh", s.clicks > 0 ? "1" : "0");
-        when.title = s.clicks > 0
-          ? "마지막 실행 " + fullTime(s.lastOpened)
-          : "출시 " + (card.getAttribute("data-released") || "-") + " · 아직 실행 안 함";
-        when.hidden = false;
+        if (s.clicks > 0) {
+          var label = "최근 " + (ago(s.lastOpened) || "오늘");
+          if (when.textContent !== label) when.textContent = label;
+          when.title = "마지막 실행 " + fullTime(s.lastOpened);
+          when.hidden = false;
+        } else {
+          when.hidden = true;
+          when.textContent = "";
+          when.title = "출시 " + (card.getAttribute("data-released") || "-") + " · 아직 실행 안 함";
+        }
       }
       card.setAttribute("data-clicks", String(s.clicks));
     });
 
-    if (pillTxt) pillTxt.textContent = total > 0 ? "총 " + total + "회 실행" : "READY";
+    if (pillTxt) pillTxt.textContent = total > 0 ? "총 " + total + "회" : "READY";
   }
 
-  /* ---------- 클릭 기록 (+1) : 기본 링크 이동은 그대로 둔다 ---------- */
   function bump(id) {
     var all = readStats();
     var s = all[id] || { clicks: 0, lastOpened: 0 };
@@ -696,14 +425,12 @@ h1 .l2{
     card.addEventListener("auxclick", function (ev) { if (ev.button === 1) bump(id); });
   });
 
-  /* ---------- 새로 그리는 시점 : 복귀(bfcache) · 탭 전환 · 다른 탭 변경 ---------- */
   window.addEventListener("pageshow", render);
   window.addEventListener("focus", render);
   document.addEventListener("visibilitychange", function () { if (!document.hidden) render(); });
   window.addEventListener("storage", function (ev) { if (!ev.key || ev.key === KEY) render(); });
   setInterval(function () { if (!document.hidden) render(); }, 30000);
 
-  /* ---------- 기록 초기화 : 두 번 누르면 지움 ---------- */
   var armed = false, armTimer = 0;
   function disarm() {
     armed = false;

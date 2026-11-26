@@ -8,13 +8,13 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="기억포커">
-<meta name="description" content="20초 암기 → 60초 선택, 2장+공용 3장 5장 포커 대결. 지혜공주님과 선홍만의 1:1 기억포커.">
-<title>👑 지혜공주님 기억포커 · Memory Poker</title>
+<meta name="description" content="20초 암기 → 60초 선택, 2장+공용 3장 5장 포커 대결. 기억력만으로 겨루는 1:1 기억포커.">
+<title>기억포커 · Memory Poker</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='88'%3E%F0%9F%91%91%3C/text%3E%3C/svg%3E">
 <style>
   :root{
     --bg:#08070a; --ink:#f4ecdf; --dim:#a99e91; --dim2:#726a61;
-    --rose:#f472b6; --rose2:#fda4af; --gold:#fbbf24; --gold2:#b8860b;
+    --rose:#7aa4ff; --rose2:#b6ccff; --gold:#fbbf24; --gold2:#b8860b;
     --ok:#5ad496; --mint:#6ee7b7;
     --line:rgba(251,191,36,.20); --line2:rgba(255,255,255,.07);
     --panel:rgba(22,18,20,.86);
@@ -71,9 +71,9 @@
   .primary{
     display:flex;align-items:center;justify-content:center;gap:6px;
     width:100%;height:46px;border-radius:14px;font-size:15px;font-weight:800;letter-spacing:.02em;
-    background:linear-gradient(135deg,rgba(244,114,182,.30),rgba(251,191,36,.24));
+    background:linear-gradient(135deg,rgba(122,164,255,.30),rgba(251,191,36,.24));
     border:1px solid rgba(251,191,36,.55);color:#fff3dc;
-    box-shadow:0 6px 18px -8px rgba(244,114,182,.55), inset 0 1px 0 rgba(255,255,255,.14);
+    box-shadow:0 6px 18px -8px rgba(122,164,255,.55), inset 0 1px 0 rgba(255,255,255,.14);
     transition:transform .08s ease,filter .15s}
   .primary:active{transform:scale(.985);filter:brightness(1.1)}
   .primary:disabled{opacity:.38;filter:none;box-shadow:none;border-color:rgba(255,255,255,.14)}
@@ -90,7 +90,7 @@
   .badge.ok:before{background:#48d48b;box-shadow:0 0 8px #48d48b}
   .badge.wait{color:#f6d98a;border-color:rgba(251,191,36,.35);background:rgba(251,191,36,.08)}
   .badge.wait:before{background:var(--gold);animation:pulse 1.2s infinite}
-  .badge.bad{color:#ffb0bd;border-color:rgba(244,114,182,.3)}
+  .badge.bad{color:#ffb0bd;border-color:rgba(122,164,255,.3)}
   .badge.bad:before{background:var(--rose)}
   @keyframes pulse{0%,100%{opacity:1}50%{opacity:.25}}
 
@@ -155,7 +155,7 @@
   .rankline{margin:7px 0 0;font-size:10.5px;line-height:1.65;color:var(--dim2)}
   .rankline b{color:#ffdfae;font-weight:800}
   .tipcard{display:flex;align-items:center;gap:8px;padding:9px 11px;border-radius:13px;
-    border:1px solid rgba(244,114,182,.22);background:rgba(244,114,182,.055);font-size:11px;color:#d9cbb9;line-height:1.5}
+    border:1px solid rgba(122,164,255,.22);background:rgba(122,164,255,.055);font-size:11px;color:#d9cbb9;line-height:1.5}
   .tipcard b{color:#ffd9ea;font-weight:800}
 
   /* ---------- 게임 ---------- */
@@ -185,7 +185,7 @@
   .cell{position:relative;height:78px;border-radius:11px;padding:0;overflow:hidden;
     border:1px solid rgba(251,191,36,.20);
     background:
-      radial-gradient(120% 90% at 50% 0%,rgba(244,114,182,.16),rgba(0,0,0,0) 70%),
+      radial-gradient(120% 90% at 50% 0%,rgba(122,164,255,.16),rgba(0,0,0,0) 70%),
       linear-gradient(160deg,#2b2027,#100d11);
     box-shadow:inset 0 1px 0 rgba(255,255,255,.06),0 4px 10px -6px rgba(0,0,0,.8);
     color:#7c6f64;transition:transform .12s,box-shadow .18s,border-color .18s,background .18s}
@@ -202,13 +202,13 @@
   .cell.up .face{opacity:1}
   .cell.up.red{color:#c2295a}
   .cell.up:not(.red) .lab{color:rgba(36,26,20,.32)}
-  .cell.sel{border-color:rgba(244,114,182,.95);
-    box-shadow:0 0 0 2px rgba(244,114,182,.55),0 0 18px rgba(244,114,182,.45);transform:translateY(-2px)}
+  .cell.sel{border-color:rgba(122,164,255,.95);
+    box-shadow:0 0 0 2px rgba(122,164,255,.55),0 0 18px rgba(122,164,255,.45);transform:translateY(-2px)}
   .cell.sel .seln{display:flex}
   .cell .seln{position:absolute;right:3px;top:3px;width:15px;height:15px;border-radius:50%;
     background:var(--rose);color:#2a0a1a;font-size:9px;font-weight:900;display:none;
     align-items:center;justify-content:center;line-height:1}
-  .cell.mine{box-shadow:inset 0 0 0 2px var(--rose),0 0 14px rgba(244,114,182,.35)}
+  .cell.mine{box-shadow:inset 0 0 0 2px var(--rose),0 0 14px rgba(122,164,255,.35)}
   .cell.opp{box-shadow:inset 0 0 0 2px rgba(251,191,36,.9),0 0 14px rgba(251,191,36,.28)}
   .cell.mine.opp{box-shadow:inset 0 0 0 2px var(--rose),inset 0 0 0 4px rgba(251,191,36,.55)}
   .cell.best{outline:2px dashed var(--mint);outline-offset:-3px}
@@ -219,7 +219,7 @@
   .mk .m-best{background:var(--mint);color:#062a1f;margin-right:auto}
 
   .comm{flex:0 0 auto;display:flex;align-items:center;gap:6px;padding:6px 8px;border-radius:12px;
-    border:1px solid var(--line);background:linear-gradient(100deg,rgba(251,191,36,.07),rgba(244,114,182,.05))}
+    border:1px solid var(--line);background:linear-gradient(100deg,rgba(251,191,36,.07),rgba(122,164,255,.05))}
   .comm .cl{flex:0 0 34px;font-size:9px;font-weight:900;letter-spacing:.06em;color:#e6c88a;line-height:1.25}
   .comm .cn{margin-left:auto;font-size:9px;color:var(--dim2);line-height:1.35;text-align:right;max-width:132px}
   .cc{width:37px;height:50px;border-radius:7px;display:flex;flex-direction:column;align-items:center;
@@ -235,7 +235,7 @@
   .hrow{display:flex;align-items:center;gap:5px;padding:5px 8px;border-radius:11px;
     border:1px solid var(--line2);background:rgba(255,255,255,.025);min-height:46px}
   .hrow.win{border-color:rgba(251,191,36,.5);
-    background:linear-gradient(90deg,rgba(251,191,36,.15),rgba(244,114,182,.06))}
+    background:linear-gradient(90deg,rgba(251,191,36,.15),rgba(122,164,255,.06))}
   .hrow .who{flex:0 0 44px;font-size:10.5px;font-weight:800;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
   .hrow .hs{display:flex;gap:3px}
   .mini{width:25px;height:34px;border-radius:5px;display:flex;flex-direction:column;align-items:center;
@@ -252,7 +252,7 @@
 
   .banner{flex:0 0 auto;min-height:36px;border-radius:11px;display:flex;align-items:center;justify-content:center;
     padding:5px 9px;border:1px solid transparent;font-size:13px;font-weight:900;text-align:center;line-height:1.3}
-  .banner.show{background:linear-gradient(100deg,rgba(251,191,36,.14),rgba(244,114,182,.12));
+  .banner.show{background:linear-gradient(100deg,rgba(251,191,36,.14),rgba(122,164,255,.12));
     border-color:rgba(251,191,36,.34);color:#fff4e2}
   .banner.idle{color:var(--dim2);font-size:11px;font-weight:700}
   .banner b{color:#ffe6a8}
@@ -321,7 +321,7 @@
     padding:15px 14px 13px;text-align:center;scrollbar-width:none;-webkit-overflow-scrolling:touch}
   #endModal .modal.endm::-webkit-scrollbar{display:none}
   .lastround{margin-top:11px;padding:9px 9px 10px;border-radius:14px;
-    border:1px solid var(--line);background:linear-gradient(160deg,rgba(251,191,36,.075),rgba(244,114,182,.04))}
+    border:1px solid var(--line);background:linear-gradient(160deg,rgba(251,191,36,.075),rgba(122,164,255,.04))}
   .lrcap{display:flex;align-items:center;justify-content:space-between;font-size:9px;font-weight:900;
     letter-spacing:.10em;color:#e6c88a}
   .lrcap b{font-size:10px;color:#ffe6a8;letter-spacing:.02em}
@@ -333,7 +333,7 @@
     margin-top:6px;padding:5px 7px 6px;border-radius:10px;border:1px solid var(--line2);
     background:rgba(255,255,255,.025);text-align:left}
   .mh.win{border-color:rgba(251,191,36,.5);
-    background:linear-gradient(90deg,rgba(251,191,36,.16),rgba(244,114,182,.05))}
+    background:linear-gradient(90deg,rgba(251,191,36,.16),rgba(122,164,255,.05))}
   .mh .mwho{font-size:10.5px;font-weight:900;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   .mh .mcat{font-size:9.5px;font-weight:800;color:#e9d6bb;text-align:right;white-space:nowrap}
   .mh.win .mcat{color:#ffd98a}
@@ -344,7 +344,7 @@
   .mini.pk1{box-shadow:0 0 0 1.5px var(--gold)}
   .lrreason{margin-top:9px;padding:7px 9px;border-radius:10px;font-size:11px;font-weight:900;line-height:1.35;
     color:#fff2d8;background:rgba(251,191,36,.12);border:1px solid rgba(251,191,36,.38);word-break:keep-all}
-  .lrreason.draw{color:#ffd9ea;background:rgba(244,114,182,.1);border-color:rgba(244,114,182,.38)}
+  .lrreason.draw{color:#ffd9ea;background:rgba(122,164,255,.1);border-color:rgba(122,164,255,.38)}
   #endModal .again{width:100%;height:46px;margin-top:12px}
   .mrow2{display:flex;gap:8px;margin-top:8px}
   .mrow2 .ghost{flex:1;height:38px}
@@ -378,7 +378,7 @@
     border-bottom:1px solid var(--line2);flex:0 0 auto}
   .rk-head .t{font-size:14.5px;font-weight:900;color:#fff4e2;display:flex;align-items:center;gap:6px}
   .rk-head .t em{font-style:normal;font-size:9.5px;font-weight:800;color:#f9c3dc;border-radius:999px;
-    padding:2px 6px;border:1px solid rgba(244,114,182,.35);background:rgba(244,114,182,.1)}
+    padding:2px 6px;border:1px solid rgba(122,164,255,.35);background:rgba(122,164,255,.1)}
   .rk-x{margin-left:auto;width:28px;height:28px;border-radius:999px;font-size:12px;font-weight:900;
     color:#e7dccb;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.12);line-height:1}
   .rk-x:active{background:rgba(255,255,255,.12)}
@@ -390,14 +390,14 @@
   .rk-row{display:grid;grid-template-columns:14px 1fr;gap:2px 6px;padding:6px 8px;border-radius:11px;
     border:1px solid var(--line2);background:rgba(255,255,255,.026)}
   .rk-row.top{border-color:rgba(251,191,36,.36);
-    background:linear-gradient(100deg,rgba(251,191,36,.11),rgba(244,114,182,.05))}
+    background:linear-gradient(100deg,rgba(251,191,36,.11),rgba(122,164,255,.05))}
   .rk-row .no{grid-column:1;grid-row:1;font-size:11px;font-weight:900;color:var(--gold);
     text-align:center;line-height:1.5}
   .rk-row .nm{grid-column:2;grid-row:1;display:flex;align-items:baseline;gap:5px;min-width:0;
     font-size:11.5px;font-weight:900;color:#ffeacb}
   .rk-row .nm .nmt{min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   .rk-row .nm em{font-style:normal;font-size:8.5px;font-weight:800;color:#f9c3dc;flex:0 0 auto;
-    padding:1px 5px;border-radius:999px;background:rgba(244,114,182,.1);border:1px solid rgba(244,114,182,.28)}
+    padding:1px 5px;border-radius:999px;background:rgba(122,164,255,.1);border:1px solid rgba(122,164,255,.28)}
   .rk-b{grid-column:2;grid-row:2;display:flex;align-items:center;gap:7px;margin-top:2px;min-width:0}
   .rk-b .cond{flex:1;min-width:0;font-size:9px;line-height:1.4;color:var(--dim);word-break:keep-all}
   .rk-c{display:flex;gap:2px;flex:0 0 auto}
@@ -503,6 +503,53 @@
     #game .ghead .aa-btn{width:22px}
     .aa-btn .ai{font-size:10px}
   }
+
+/* ===== 2026-11 디자인 개편: 평면 · 고대비 · 게임 아이콘 ===== */
+body{background:#0a0d14}
+body::before{opacity:.5}
+#app{max-width:430px}
+.brand{padding:2px 0 0}
+.brand .crown{
+  display:flex;align-items:center;justify-content:center;
+  width:52px;height:52px;margin:0 auto 2px;border-radius:15px;
+  background:#151d2b;border:1px solid rgba(255,255,255,.12);
+  color:#8fb4ff;font-size:0;filter:none;
+}
+.brand .crown svg{width:29px;height:29px}
+.brand h1{margin:8px 0 0;font-size:24px;color:#fff;letter-spacing:-.01em}
+.brand h1 span{color:#ffc247;-webkit-text-fill-color:#ffc247;background:none}
+.brand .sub{margin:6px 0 0;font-family:inherit;font-size:11.5px;font-weight:700;
+  letter-spacing:.01em;color:#93a3bd;text-transform:none}
+.card{background:#111723;border-color:rgba(255,255,255,.10)}
+.primary{background:#ffc247;border-color:#ffc247;color:#1a1204;box-shadow:none;font-weight:900}
+.primary:disabled{opacity:1;background:#1a2231;border-color:rgba(255,255,255,.12);color:#93a3bd;box-shadow:none}
+.primary:disabled:active{filter:none}
+.primary:active{filter:brightness(.94)}
+.ghost{color:#e6edf9;border-color:rgba(255,255,255,.15);background:rgba(255,255,255,.04)}
+.seg{background:rgba(255,255,255,.05);border-color:rgba(255,255,255,.09)}
+.seg .mode,.seg .lv,.seg .tm,.seg .rd{color:#b6c3d8;font-weight:800}
+.seg .mode.on,.seg .lv.on,.seg .tm.on,.seg .rd.on{background:#ffc247;color:#1a1204;box-shadow:none}
+.fld{color:#aab7cc;font-size:12.5px;font-weight:700}
+.fld input{background:#0d131e;border-color:rgba(255,255,255,.14);font-size:14px}
+.tiny{color:#8c9ab2}
+details.rules{background:rgba(255,255,255,.03);border-color:rgba(255,255,255,.09)}
+details.rules summary{color:#c4d0e4}
+.tipcard{border-color:rgba(255,255,255,.10);background:rgba(255,255,255,.035);color:#c2cde0}
+.tipcard b{color:#ffe0a8}
+.portal-pill{
+  width:46px;height:30px;font-size:12.5px;
+  color:#e8eefb;background:#141b28;border-color:rgba(255,255,255,.14);box-shadow:none;
+}
+.portal-pill .chev{color:#ffc247;font-size:14px}
+.aa-seg{
+  height:30px;background:#141b28;border-color:rgba(255,255,255,.14);box-shadow:none;
+}
+.aa-btn{width:27px;height:28px;color:#e8eefb}
+.aa-btn .ai{font-size:12.5px}
+.aa-btn + .aa-btn{box-shadow:inset 1px 0 0 rgba(255,255,255,.12)}
+.aa-btn:active{background:rgba(255,255,255,.12)}
+.ghead .gtitle{font-size:14px}
+.ghead .gtitle .mini{width:16px;height:16px}
 </style>
 </head>
 <body>
@@ -520,9 +567,14 @@
     </div>
     <div class="lobby-scroll"><div class="lobby-inner">
       <header class="brand">
-        <div class="crown">👑</div>
-        <h1>지혜공주님 전용<br><span>기억포커</span></h1>
-        <p class="sub">Memory Poker · 20초 암기 · 5장 승부</p>
+        <div class="crown" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round">
+            <rect x="3.2" y="6" width="10" height="14" rx="2.2" transform="rotate(-9 8.2 13)"/>
+            <rect x="10.6" y="4" width="10" height="14" rx="2.2" transform="rotate(9 15.6 11)"/>
+          </svg>
+        </div>
+        <h1>기억포커</h1>
+        <p class="sub">20초 암기 · 5장 포커 승부</p>
       </header>
 
       <div class="strip" aria-hidden="true">
@@ -536,11 +588,11 @@
         <div class="seg" id="modeSeg">
           <button class="mode on" data-val="online">온라인 1:1</button>
           <button class="mode" data-val="local">한 기기 1:1</button>
-          <button class="mode" data-val="ai">vs AI</button>
+          <button class="mode" data-val="ai">혼자 하기</button>
         </div>
 
         <div class="pane" id="paneOnline">
-          <label class="fld"><span>내 닉네임</span><input id="myName" maxlength="10" value="선홍" autocomplete="off"></label>
+          <div class="fld"><span>내 닉네임</span><div class="npick"><select id="myNameSel" class="nsel" aria-label="닉네임 — 데블스 플랜 출연자에서 선택"></select><input id="myName" maxlength="10" value="하석진" autocomplete="off" class="ninput hide"></div></div>
           <div class="roomrow">
             <input id="roomInput" inputmode="numeric" maxlength="4" placeholder="방 코드 4자리" autocomplete="off">
             <button id="makeRoom" class="ghost small">방 만들기</button>
@@ -560,13 +612,13 @@
         </div>
 
         <div class="pane hide" id="paneLocal">
-          <label class="fld"><span>P1 닉네임</span><input id="nameA" maxlength="10" value="선홍" autocomplete="off"></label>
-          <label class="fld"><span>P2 닉네임</span><input id="nameB" maxlength="10" value="지혜" autocomplete="off"></label>
+          <div class="fld"><span>P1 닉네임</span><div class="npick"><select id="nameASel" class="nsel" aria-label="P1 닉네임 — 데블스 플랜 출연자에서 선택"></select><input id="nameA" maxlength="10" value="하석진" autocomplete="off" class="ninput hide"></div></div>
+          <div class="fld"><span>P2 닉네임</span><div class="npick"><select id="nameBSel" class="nsel" aria-label="P2 닉네임 — 데블스 플랜 출연자에서 선택"></select><input id="nameB" maxlength="10" value="궤도" autocomplete="off" class="ninput hide"></div></div>
           <p class="tiny">한 폰으로 번갈아 두고, 선택은 가림막으로 가립니다.</p>
         </div>
 
         <div class="pane hide" id="paneAi">
-          <label class="fld"><span>내 닉네임</span><input id="nameSolo" maxlength="10" value="선홍" autocomplete="off"></label>
+          <div class="fld"><span>내 닉네임</span><div class="npick"><select id="nameSoloSel" class="nsel" aria-label="닉네임 — 데블스 플랜 출연자에서 선택"></select><input id="nameSolo" maxlength="10" value="하석진" autocomplete="off" class="ninput hide"></div></div>
           <div class="fld"><span>AI 난이도</span>
             <div class="seg" id="lvSeg" style="flex:1">
               <button class="lv" data-val="normal">보통</button>
@@ -605,7 +657,7 @@
         <p class="rankline"><b>족보</b> 스트레이트 플러시(로열 포함) &gt; 포카드 &gt; 풀하우스 &gt; 플러시 &gt; 스트레이트(A-2-3-4-5 포함) &gt; 트리플 &gt; 투페어 &gt; 원페어 &gt; 하이 카드<br>무늬 우열은 없고, 같은 족보는 <b>구성 카드 → 키커</b> 순으로 비교합니다. 완전 동점은 무승부.</p>
       </details>
       <div class="tipcard"><span>💡</span><span><b>공용 3장</b>까지 합쳐 5장을 만듭니다. 보드에서 두 장만 외우면 되니, <b>공용 카드와 맞는 무늬·연결 숫자</b>를 먼저 찾으세요.</span></div>
-      <p class="tiny" style="text-align:center;padding:0 0 4px">오직 지혜공주님을 위한 1:1</p>
+      <p class="tiny" style="text-align:center;padding:0 0 4px">같은 폰으로 번갈아, 또는 각자 폰으로 1:1</p>
     </div></div>
   </section>
 
@@ -614,7 +666,7 @@
     <header class="ghead">
       <div class="gleft">
         <a class="portal-pill" href="./index.html" aria-label="아케이드 홈으로"><span class="chev">‹</span>홈</a>
-        <div class="gtitle"><span>👑</span><span>기억포커</span></div>
+        <div class="gtitle"><svg class="mini" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" style="width:15px;height:15px"><rect x="3.2" y="6" width="10" height="14" rx="2.2" transform="rotate(-9 8.2 13)"/><rect x="10.6" y="4" width="10" height="14" rx="2.2" transform="rotate(9 15.6 11)"/></svg><span>기억포커</span></div>
       </div>
       <div class="gmeta">
         <span class="scorebig"><span class="s0" id="scoreA">0</span> : <span class="s1" id="scoreB">0</span></span>
@@ -645,12 +697,12 @@
 
     <div class="hands">
       <div class="hrow" id="handA">
-        <span class="who" id="whoA">선홍</span>
+        <span class="who" id="whoA">하석진</span>
         <span class="hs" id="hsA"></span>
         <span class="cat" id="catA">—</span>
       </div>
       <div class="hrow" id="handB">
-        <span class="who" id="whoB">지혜</span>
+        <span class="who" id="whoB">궤도</span>
         <span class="hs" id="hsB"></span>
         <span class="cat" id="catB">—</span>
       </div>
@@ -673,7 +725,7 @@
   <div id="curtain" class="overlay hide">
     <div class="curtain-inner">
       <div class="ph">📱</div>
-      <h2><em id="curtainName">지혜</em> 님 차례<br>폰을 건네주세요</h2>
+      <h2><em id="curtainName">궤도</em> 님 차례<br>폰을 건네주세요</h2>
       <p>상대가 고른 칸은 보이지 않습니다<br>준비되면 터치해서 시작</p>
       <div class="tap">터치해서 2칸 고르기</div>
     </div>
@@ -682,8 +734,8 @@
   <!-- 종료 모달 -->
   <div id="endModal" class="overlay hide">
     <div class="modal endm">
-      <div class="mcrown" id="endCrown">👑</div>
-      <h2 id="endTitle"><span>선홍 승리</span></h2>
+      <div class="mcrown" id="endCrown">🏆</div>
+      <h2 id="endTitle"><span>승리</span></h2>
       <div class="mscore" id="endScore">1 : 0 · 단판</div>
 
       <div class="lastround" id="lastRound">
@@ -1235,6 +1287,100 @@
 </script>
 <!-- AA-ENGINE:END -->
 
+<!-- ===== 《데블스 플랜》 출연자 닉네임 선택 (아케이드 공용) ===== -->
+<style>
+.npick{display:flex;flex-direction:column;gap:6px;flex:1 1 auto;min-width:0}
+.npick .nsel{
+  width:100%;height:38px;border-radius:10px;padding:0 30px 0 11px;
+  font-family:inherit;font-size:13.5px;font-weight:700;letter-spacing:0;
+  color:#f2f6ff;border:1px solid rgba(255,255,255,.16);outline:none;
+  -webkit-appearance:none;appearance:none;
+  background:#151d2b url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%239aa8c0' stroke-width='2.4' stroke-linecap='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E") no-repeat right 9px center;
+  background-size:14px 14px;
+}
+.npick .nsel:focus{border-color:rgba(255,194,71,.65);box-shadow:0 0 0 3px rgba(255,194,71,.12)}
+.npick .ninput{width:100%}
+.npick .ninput.hide{display:none}
+</style>
+<script>
+(function () {
+  'use strict';
+  var CAST = [
+    ['시즌 1', ['하석진', '궤도', '서동주', '이시원', '김동재', '곽준빈', '기욤', '박경림', '서유민', '승관', '이혜성', '조연우']],
+    ['시즌 2 · 데스룸', ['정현규', '이세돌', '규현', '강지영', '세븐하이', '윤소희', '저스틴민', '최현준', '츄', '티노', '김하린', '박상연', '손은유', '이승현']],
+    ['시즌 3 · 데드 어게인', ['장동민', '홍진호', '오현민', '서출구', '유리사', '신동', '현경렬', '존박', '재재', '넉살', '이도', '스텔라장', '정원영']]
+  ];
+  var ALL = [];
+  for (var i = 0; i < CAST.length; i++) ALL = ALL.concat(CAST[i][1]);
+
+  window.DP = {
+    cast: CAST,
+    all: ALL,
+    has: function (n) { return ALL.indexOf(n) >= 0; },
+    rnd: function (exclude) {
+      var pool = ALL.filter(function (n) { return n !== exclude; });
+      return pool[Math.floor(Math.random() * pool.length)];
+    }
+  };
+
+  function fill(sel, current) {
+    var html = '<option value="">출연자 선택</option>';
+    for (var i = 0; i < CAST.length; i++) {
+      html += '<optgroup label="' + CAST[i][0] + '">';
+      for (var j = 0; j < CAST[i][1].length; j++) {
+        html += '<option value="' + CAST[i][1][j] + '">' + CAST[i][1][j] + '</option>';
+      }
+      html += '</optgroup>';
+    }
+    html += '<option value="__custom">✎ 직접 입력</option>';
+    sel.innerHTML = html;
+    sel.value = ALL.indexOf(current) >= 0 ? current : '__custom';
+  }
+
+  /* input 바로 앞(또는 지정한) select를 출연자 선택 상자로 연결 */
+  window.dpAttach = function (input, sel) {
+    if (!input) return;
+    sel = sel || input.previousElementSibling;
+    if (!sel || sel.tagName !== 'SELECT') return;
+    input._dpSel = sel;
+    fill(sel, input.value);
+    input.classList.add('ninput');
+    var isCast = ALL.indexOf(input.value) >= 0;
+    sel.value = isCast ? input.value : '__custom';
+    input.classList.toggle('hide', isCast);
+
+    sel.addEventListener('change', function () {
+      if (sel.value === '__custom') {
+        input.classList.remove('hide');
+        if (ALL.indexOf(input.value) >= 0) input.value = '';
+        try { input.focus(); } catch (e) {}
+      } else {
+        input.value = sel.value;
+        input.classList.add('hide');
+        input.dispatchEvent(new Event('input', { bubbles: true }));
+      }
+    });
+    input.addEventListener('blur', function () {
+      if (!input.value.trim()) {
+        input.value = '';
+        input.classList.add('hide');
+        sel.value = '';
+      }
+    });
+  };
+
+  /* 코드에서 닉네임을 바꾼 뒤 선택 상자를 맞춰 준다 */
+  window.dpSync = function (input) {
+    var sel = input && input._dpSel;
+    if (!sel) return;
+    var v = String(input.value || '');
+    if (ALL.indexOf(v) >= 0) { sel.value = v; input.classList.add('hide'); }
+    else { sel.value = '__custom'; input.classList.remove('hide'); }
+  };
+})();
+</script>
+
+
 <script>
 (function () {
   'use strict';
@@ -1441,12 +1587,15 @@
      2. 상태
      ========================================================= */
   var PICK_SEC_CFG = 60;
+  /* 기본 닉네임 — 《데블스 플랜》 출연자 중 무작위 배정 */
+  var DEF_A = window.DP ? DP.rnd() : 'P1';
+  var DEF_B = window.DP ? DP.rnd(DEF_A) : 'P2';
   var S = {
     screen: 'lobby',
     mode: 'online',              // online | local | ai
     role: 'host',                // host | guest | solo
     mySeat: 0,
-    names: ['선홍', '지혜'],
+    names: [DEF_A, DEF_B],
     format: 'single',            // single | bo3 | r5
     memSec: 20,                  // 0 = 무제한
     aiLevel: 'hard',
@@ -2121,7 +2270,7 @@
         : (S.mode === 'online' ? (w === S.mySeat ? 'win' : 'lose')
           : (S.mode === 'ai' ? (w === 0 ? 'win' : 'lose') : 'win')));
     }
-    $('#endCrown').textContent = w >= 0 ? '👑' : '🤝';
+    $('#endCrown').textContent = w >= 0 ? '🏆' : '🤝';
     $('#endTitle').innerHTML = w >= 0
       ? '<span>' + esc(S.names[w]) + ' 승리</span>'
       : '<span>무승부</span>';
@@ -2155,7 +2304,7 @@
       cards += '<i class="mdiv"></i>';
       for (var j = 0; j < 3; j++) cards += miniHTML(S.comm[j], '');
       h += '<div class="mh' + (win ? ' win' : '') + '">' +
-        '<span class="mwho">' + (win ? '👑 ' : '') + esc(S.names[seat]) + '</span>' +
+        '<span class="mwho">' + (win ? '🏆 ' : '') + esc(S.names[seat]) + '</span>' +
         '<span class="mcat">' + esc(handTitle(S.result.hands[seat])) + '</span>' +
         '<span class="mcards">' + cards + '</span>' +
         '</div>';
@@ -2408,7 +2557,7 @@
       var rsn = S.result.reason || (w === 1 ? clashReason(hB, hA) : clashReason(hA, hB));
       var head;
       if (w < 0) head = '🤝 <b>무승부</b>';
-      else head = '<span class="crown">👑</span><b>' + esc(S.names[w]) + '</b> 승' +
+      else head = '<span class="crown">🏆</span><b>' + esc(S.names[w]) + '</b> 승' +
         ' <span class="vs">·</span> ' + esc(handTitle(S.result.hands[w])) +
         ' &gt; ' + esc(handTitle(S.result.hands[1 - w]));
       b.innerHTML = '<span class="bp1">' + head + '</span>' +
@@ -2483,7 +2632,7 @@
         if (Net.role !== 'host') return;
         if (Net.peer && Net.peer !== m.from) { Net.send({ t: 'full', to: m.from }); return; }
         Net.peer = m.from;
-        Net.peerName = clampName(m.name, '지혜');
+        Net.peerName = clampName(m.name, DEF_B);
         S.names[1] = Net.peerName;
         badge();
         Net.send({
@@ -2494,9 +2643,9 @@
       }
       case 'welcome': {
         Net.peer = m.from;
-        Net.peerName = clampName(m.hostName, '선홍');
+        Net.peerName = clampName(m.hostName, DEF_A);
         S.names[0] = Net.peerName;
-        S.names[1] = clampName(S.names[1], '지혜');
+        S.names[1] = clampName(S.names[1], DEF_B);
         clearInterval(Net.joinTimer);
         badge();
         $('#waitHint').textContent = '입장 완료 · 호스트의 시작을 기다립니다';
@@ -2598,8 +2747,8 @@
   function makeRoom() {
     var code = (($('#roomInput').value || '').replace(/\D/g, '').slice(0, 4)) || randomCode();
     if (code.length !== 4) { toast('방 코드는 숫자 4자리입니다'); return; }
-    S.names[0] = clampName($('#myName').value, '선홍');
-    S.names[1] = S.names[1] || '지혜';
+    S.names[0] = clampName($('#myName').value, DEF_A);
+    S.names[1] = S.names[1] || DEF_B;
     S.role = 'host'; S.mySeat = 0;
     connectAs('host', code);
     toast('방 ' + code + ' 개설 · 초대 링크를 보내세요');
@@ -2608,7 +2757,7 @@
   function joinRoom() {
     var code = ($('#roomInput').value || '').replace(/\D/g, '').slice(0, 4);
     if (code.length !== 4) { toast('방 코드 4자리를 입력해 주세요'); return; }
-    S.names[1] = clampName($('#myName').value, '지혜');
+    S.names[1] = clampName($('#myName').value, DEF_B);
     S.role = 'guest'; S.mySeat = 1;
     connectAs('guest', code);
     $('#startBtn').classList.add('hide');
@@ -2623,20 +2772,20 @@
         return;
       }
       if (!Net.peer) { toast('아직 상대가 입장하지 않았습니다 · 초대 링크를 보내세요'); return; }
-      S.names[0] = clampName($('#myName').value, '선홍');
+      S.names[0] = clampName($('#myName').value, DEF_A);
       S.mySeat = 0;
       S.role = 'host';
       newMatch();
       return;
     }
     if (S.mode === 'local') {
-      S.names[0] = clampName($('#nameA').value, '선홍');
-      S.names[1] = clampName($('#nameB').value, '지혜');
+      S.names[0] = clampName($('#nameA').value, DEF_A);
+      S.names[1] = clampName($('#nameB').value, DEF_B);
       S.role = 'solo'; S.mySeat = 0;
       newMatch();
       return;
     }
-    S.names[0] = clampName($('#nameSolo').value, '선홍');
+    S.names[0] = clampName($('#nameSolo').value, DEF_A);
     S.names[1] = '🤖 AI';
     S.role = 'solo'; S.mySeat = 0;
     newMatch();
@@ -2742,8 +2891,18 @@
     } catch (e) { toast('링크: ' + txt); }
   }
 
+  function initNickFields() {
+    [['#myName', DEF_A], ['#nameA', DEF_A], ['#nameB', DEF_B], ['#nameSolo', DEF_A]].forEach(function (p) {
+      var el = $(p[0]);
+      if (!el) return;
+      el.value = p[1];
+      if (window.dpAttach) dpAttach(el);
+    });
+  }
+
   function boot() {
     bind();
+    initNickFields();
     setMode('online');
     buildBoard();
     var qp;
@@ -2753,9 +2912,9 @@
     if (rq) {
       $('#roomInput').value = rq;
       setMode('online');
-      if (nm) $('#myName').value = nm;
-      else if (!$('#myName').value || $('#myName').value === '선홍') $('#myName').value = '지혜';
-      S.names[1] = clampName($('#myName').value, '지혜');
+      if (nm) { $('#myName').value = nm; if (window.dpSync) dpSync($('#myName')); }
+      else if (!$('#myName').value || $('#myName').value === DEF_A) { $('#myName').value = DEF_B; if (window.dpSync) dpSync($('#myName')); }
+      S.names[1] = clampName($('#myName').value, DEF_B);
       setTimeout(function () { joinRoom(); }, 60);
     }
     render();

@@ -4,11 +4,11 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#08070a">
-<title>👑 지혜공주님 흑과 백 · Black &amp; White</title>
+<title>흑과 백 · Black &amp; White</title>
 <style>
   :root{
     --bg:#08070a; --ink:#f4ecdf; --dim:#a99e91; --dim2:#726a61;
-    --rose:#f472b6; --gold:#fbbf24; --gold2:#b8860b;
+    --rose:#7aa4ff; --gold:#fbbf24; --gold2:#b8860b;
     --line:rgba(251,191,36,.20); --line2:rgba(255,255,255,.07);
     --panel:rgba(22,18,20,.86);
   }
@@ -57,7 +57,7 @@
   .gold{color:var(--gold)}
   .rose{color:var(--rose)}
   .tiny{font-size:11px;color:var(--dim2);line-height:1.5;margin:0}
-  .hr{height:1px;background:linear-gradient(90deg,transparent,rgba(251,191,36,.5),rgba(244,114,182,.35),transparent);margin:2px 0}
+  .hr{height:1px;background:linear-gradient(90deg,transparent,rgba(251,191,36,.5),rgba(122,164,255,.35),transparent);margin:2px 0}
   .card{background:linear-gradient(165deg,rgba(30,23,26,.92),rgba(11,10,12,.94));
     border:1px solid var(--line);border-radius:18px;padding:12px;position:relative}
   .card:before{content:"";position:absolute;inset:0;border-radius:18px;pointer-events:none;
@@ -66,9 +66,9 @@
   .primary{
     display:flex;align-items:center;justify-content:center;gap:6px;
     width:100%;height:46px;border-radius:14px;font-size:15px;font-weight:800;letter-spacing:.02em;
-    background:linear-gradient(135deg,rgba(244,114,182,.30),rgba(251,191,36,.24));
+    background:linear-gradient(135deg,rgba(122,164,255,.30),rgba(251,191,36,.24));
     border:1px solid rgba(251,191,36,.55);color:#fff3dc;
-    box-shadow:0 6px 18px -8px rgba(244,114,182,.55), inset 0 1px 0 rgba(255,255,255,.14);
+    box-shadow:0 6px 18px -8px rgba(122,164,255,.55), inset 0 1px 0 rgba(255,255,255,.14);
     transition:transform .08s ease,filter .15s}
   .primary:active{transform:scale(.985);filter:brightness(1.1)}
   .primary:disabled{opacity:.38;filter:none;box-shadow:none;border-color:rgba(255,255,255,.14)}
@@ -85,7 +85,7 @@
   .badge.ok:before{background:#48d48b;box-shadow:0 0 8px #48d48b}
   .badge.wait{color:#f6d98a;border-color:rgba(251,191,36,.35);background:rgba(251,191,36,.08)}
   .badge.wait:before{background:var(--gold);animation:pulse 1.2s infinite}
-  .badge.bad{color:#ffb0bd;border-color:rgba(244,114,182,.3)}
+  .badge.bad{color:#ffb0bd;border-color:rgba(122,164,255,.3)}
   .badge.bad:before{background:var(--rose)}
   @keyframes pulse{0%,100%{opacity:1}50%{opacity:.25}}
 
@@ -103,7 +103,7 @@
   .tstrip .t.w{background:linear-gradient(165deg,#ffffff,#eceef2);color:#111318;
     border:1px solid rgba(255,255,255,.6)}
   .tipcard{display:flex;align-items:center;gap:8px;padding:9px 11px;border-radius:13px;
-    border:1px solid rgba(244,114,182,.22);background:rgba(244,114,182,.055);font-size:11px;color:#d9cbb9;line-height:1.5}
+    border:1px solid rgba(122,164,255,.22);background:rgba(122,164,255,.055);font-size:11px;color:#d9cbb9;line-height:1.5}
   .tipcard b{color:#ffd9ea;font-weight:800}
   .brand{text-align:center;padding:6px 0 2px;position:relative}
   .brand .crown{font-size:26px;line-height:1;filter:drop-shadow(0 3px 10px rgba(251,191,36,.35))}
@@ -159,8 +159,8 @@
   .scorebig .s0{color:#ffd7ea}.scorebig .s1{color:#ffe6a8}
 
   .oppcard{flex:0 0 auto;display:flex;flex-direction:column;gap:6px;padding:7px 10px 8px;border-radius:14px;
-    border:1px solid rgba(244,114,182,.26);
-    background:linear-gradient(100deg,rgba(244,114,182,.11),rgba(251,191,36,.045) 60%,rgba(255,255,255,.02))}
+    border:1px solid rgba(122,164,255,.26);
+    background:linear-gradient(100deg,rgba(122,164,255,.11),rgba(251,191,36,.045) 60%,rgba(255,255,255,.02))}
   .opptop{display:flex;align-items:center;gap:7px;font-size:12px}
   .opptop .olbl{font-size:9px;letter-spacing:.1em;color:#e9a8c4;font-weight:800;flex:0 0 auto}
   .opptop .oname{flex:1;min-width:0;font-weight:800;color:#fff0e2;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
@@ -291,10 +291,10 @@
   .gfoot .ghost{height:44px;padding:0 14px;flex:0 0 auto;min-width:max-content;white-space:nowrap}
   .rdots{display:flex;gap:4px;flex:0 0 auto;padding:0 2px}
   .rdot{flex:1;height:5px;border-radius:3px;background:rgba(255,255,255,.14)}
-  .rdot.me{background:linear-gradient(90deg,#f472b6,#fbbf24)}
+  .rdot.me{background:linear-gradient(90deg,#7aa4ff,#fbbf24)}
   .rdot.opp{background:rgba(255,255,255,.22)}
   .rdot.draw{background:rgba(251,191,36,.28)}
-  .rdot.cur{background:rgba(244,114,182,.45)}
+  .rdot.cur{background:rgba(122,164,255,.45)}
   .pcard .cm{position:absolute;font-size:11px;opacity:.45;line-height:1;font-weight:900}
   .pcard .cm.tl{top:7px;left:8px}
   .pcard .cm.br{bottom:7px;right:8px;transform:rotate(180deg)}
@@ -380,6 +380,53 @@
     .aa-btn{width:23px}
     .aa-btn .ai{font-size:10.5px}
   }
+
+/* ===== 2026-11 디자인 개편: 평면 · 고대비 · 게임 아이콘 ===== */
+body{background:#0a0d14}
+body::before{opacity:.5}
+#app{max-width:430px}
+.brand{padding:2px 0 0}
+.brand .crown{
+  display:flex;align-items:center;justify-content:center;
+  width:52px;height:52px;margin:0 auto 2px;border-radius:15px;
+  background:#151d2b;border:1px solid rgba(255,255,255,.12);
+  color:#8fb4ff;font-size:0;filter:none;
+}
+.brand .crown svg{width:29px;height:29px}
+.brand h1{margin:8px 0 0;font-size:24px;color:#fff;letter-spacing:-.01em}
+.brand h1 span{color:#ffc247;-webkit-text-fill-color:#ffc247;background:none}
+.brand .sub{margin:6px 0 0;font-family:inherit;font-size:11.5px;font-weight:700;
+  letter-spacing:.01em;color:#93a3bd;text-transform:none}
+.card{background:#111723;border-color:rgba(255,255,255,.10)}
+.primary{background:#ffc247;border-color:#ffc247;color:#1a1204;box-shadow:none;font-weight:900}
+.primary:disabled{opacity:1;background:#1a2231;border-color:rgba(255,255,255,.12);color:#93a3bd;box-shadow:none}
+.primary:disabled:active{filter:none}
+.primary:active{filter:brightness(.94)}
+.ghost{color:#e6edf9;border-color:rgba(255,255,255,.15);background:rgba(255,255,255,.04)}
+.seg{background:rgba(255,255,255,.05);border-color:rgba(255,255,255,.09)}
+.seg .mode,.seg .lv,.seg .tm,.seg .rd{color:#b6c3d8;font-weight:800}
+.seg .mode.on,.seg .lv.on,.seg .tm.on,.seg .rd.on{background:#ffc247;color:#1a1204;box-shadow:none}
+.fld{color:#aab7cc;font-size:12.5px;font-weight:700}
+.fld input{background:#0d131e;border-color:rgba(255,255,255,.14);font-size:14px}
+.tiny{color:#8c9ab2}
+details.rules{background:rgba(255,255,255,.03);border-color:rgba(255,255,255,.09)}
+details.rules summary{color:#c4d0e4}
+.tipcard{border-color:rgba(255,255,255,.10);background:rgba(255,255,255,.035);color:#c2cde0}
+.tipcard b{color:#ffe0a8}
+.portal-pill{
+  width:46px;height:30px;font-size:12.5px;
+  color:#e8eefb;background:#141b28;border-color:rgba(255,255,255,.14);box-shadow:none;
+}
+.portal-pill .chev{color:#ffc247;font-size:14px}
+.aa-seg{
+  height:30px;background:#141b28;border-color:rgba(255,255,255,.14);box-shadow:none;
+}
+.aa-btn{width:27px;height:28px;color:#e8eefb}
+.aa-btn .ai{font-size:12.5px}
+.aa-btn + .aa-btn{box-shadow:inset 1px 0 0 rgba(255,255,255,.12)}
+.aa-btn:active{background:rgba(255,255,255,.12)}
+.ghead .gtitle{font-size:14px}
+.ghead .gtitle .mini{width:16px;height:16px}
 </style>
 </head>
 <body>
@@ -396,9 +443,14 @@
     </div>
     <div class="lobby-scroll"><div class="lobby-inner">
       <header class="brand">
-        <div class="crown">👑</div>
-        <h1>지혜공주님 전용<br><span>흑과 백</span></h1>
-        <p class="sub">Black &amp; White · 둘만의 1:1 심리전</p>
+        <div class="crown" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="1.7">
+            <circle cx="12" cy="12" r="8.5" stroke="#dbe6f9"/>
+            <path d="M12 3.5a8.5 8.5 0 0 0 0 17z" fill="#7aa4ff"/>
+          </svg>
+        </div>
+        <h1>흑과 백</h1>
+        <p class="sub">색만 보고 겨루는 9라운드 심리전</p>
       </header>
 
       <div class="tstrip" aria-hidden="true">
@@ -413,7 +465,7 @@
         </div>
 
         <div class="pane" id="paneOnline">
-          <label class="fld"><span>내 닉네임</span><input id="myName" maxlength="10" value="선홍" autocomplete="off"></label>
+          <div class="fld"><span>내 닉네임</span><div class="npick"><select id="myNameSel" class="nsel" aria-label="닉네임 — 데블스 플랜 출연자에서 선택"></select><input id="myName" maxlength="10" value="하석진" autocomplete="off" class="ninput hide"></div></div>
           <div class="roomrow">
             <input id="roomInput" inputmode="numeric" maxlength="4" placeholder="방 코드 4자리" autocomplete="off">
             <button id="makeRoom" class="ghost small">방 만들기</button>
@@ -433,13 +485,13 @@
         </div>
 
         <div class="pane hide" id="paneLocal">
-          <label class="fld"><span>P1 닉네임</span><input id="nameA" maxlength="10" value="선홍" autocomplete="off"></label>
-          <label class="fld"><span>P2 닉네임</span><input id="nameB" maxlength="10" value="지혜" autocomplete="off"></label>
+          <div class="fld"><span>P1 닉네임</span><div class="npick"><select id="nameASel" class="nsel" aria-label="P1 닉네임 — 데블스 플랜 출연자에서 선택"></select><input id="nameA" maxlength="10" value="하석진" autocomplete="off" class="ninput hide"></div></div>
+          <div class="fld"><span>P2 닉네임</span><div class="npick"><select id="nameBSel" class="nsel" aria-label="P2 닉네임 — 데블스 플랜 출연자에서 선택"></select><input id="nameB" maxlength="10" value="궤도" autocomplete="off" class="ninput hide"></div></div>
           <p class="tiny">한 폰으로 번갈아 두고, 턴마다 가림막으로 상대 패를 가립니다.</p>
         </div>
 
         <div class="pane hide" id="paneAi">
-          <label class="fld"><span>내 닉네임</span><input id="nameSolo" maxlength="10" value="선홍" autocomplete="off"></label>
+          <div class="fld"><span>내 닉네임</span><div class="npick"><select id="nameSoloSel" class="nsel" aria-label="닉네임 — 데블스 플랜 출연자에서 선택"></select><input id="nameSolo" maxlength="10" value="하석진" autocomplete="off" class="ninput hide"></div></div>
           <div class="fld"><span>AI 난이도</span>
             <div class="seg" id="lvSeg" style="flex:1">
               <button class="lv" data-val="normal">보통</button>
@@ -471,7 +523,6 @@
         </ol>
       </details>
       <div class="tipcard"><span>💡</span><span><b>🖤 흑 = 0·2·4·6·8</b> / <b>🤍 백 = 1·3·5·7</b> — 색만 봐도 상대 숫자의 절반이 추리됩니다.</span></div>
-      <p class="tiny" style="text-align:center;padding:0 0 4px">오직 지혜공주님을 위한 1:1</p>
     </div></div>
   </section>
 
@@ -480,7 +531,7 @@
     <header class="ghead">
       <div class="gleft">
         <a class="portal-pill" href="./index.html" aria-label="아케이드 홈으로"><span class="chev">‹</span>홈</a>
-        <div class="gtitle"><span class="mini">👑</span><span>흑과 백</span></div>
+        <div class="gtitle"><svg class="mini" viewBox="0 0 24 24" fill="none" stroke="#dbe6f9" stroke-width="2"><circle cx="12" cy="12" r="8.5"/><path d="M12 3.5a8.5 8.5 0 0 0 0 17z" fill="#7aa4ff"/></svg><span>흑과 백</span></div>
       </div>
       <div class="gmeta">
         <span class="scorebig"><span class="s0" id="scoreA">0</span> : <span class="s1" id="scoreB">0</span></span>
@@ -496,7 +547,7 @@
     <div class="oppcard">
       <div class="opptop">
         <span class="olbl">상대</span>
-        <span class="oname" id="oppName">지혜</span>
+        <span class="oname" id="oppName">궤도</span>
         <span class="tag" id="oppTag">후</span>
         <span class="cnt"><span><i class="dot b"></i>흑 <b id="ocB">5</b></span><span><i class="dot w"></i>백 <b id="ocW">4</b></span></span>
       </div>
@@ -508,13 +559,13 @@
     <div class="table">
       <div class="side">
         <div class="slabel">선 · 先</div>
-        <div class="sname" id="leadName">선홍</div>
+        <div class="sname" id="leadName">하석진</div>
         <div class="pcard empty" id="cardLead"><div class="face">—</div></div>
       </div>
       <div class="vs">VS</div>
       <div class="side">
         <div class="slabel">후 · 後</div>
-        <div class="sname" id="followName">지혜</div>
+        <div class="sname" id="followName">궤도</div>
         <div class="pcard empty" id="cardFollow"><div class="face">—</div></div>
       </div>
     </div>
@@ -523,7 +574,7 @@
     <div class="banner" id="banner"></div>
 
     <div class="handwrap">
-      <div class="handhead"><span><b id="handWho">선홍</b> · <span id="handInfo"><i class="dot b"></i>5 <i class="dot w"></i>4</span></span><span id="handHint"></span></div>
+      <div class="handhead"><span><b id="handWho">하석진</b> · <span id="handInfo"><i class="dot b"></i>5 <i class="dot w"></i>4</span></span><span id="handHint"></span></div>
       <div class="hand" id="hand"></div>
     </div>
 
@@ -543,7 +594,7 @@
   <div id="curtain" class="overlay hide">
     <div class="curtain-inner">
       <div class="phone">📱</div>
-      <h2><em id="curtainName">지혜</em>에게<br>폰을 넘겨주세요</h2>
+      <h2><em id="curtainName">궤도</em>에게<br>폰을 넘겨주세요</h2>
       <p>상대의 타일은 보이지 않습니다</p>
       <div class="tap">터치해서 타일 보기</div>
     </div>
@@ -552,8 +603,8 @@
   <!-- 종료 모달 -->
   <div id="endModal" class="overlay hide">
     <div class="modal">
-      <div class="mcrown" id="endCrown">👑</div>
-      <h2 id="endTitle"><span>선홍 승리</span></h2>
+      <div class="mcrown" id="endCrown">🏆</div>
+      <h2 id="endTitle"><span>승리</span></h2>
       <div class="mscore" id="endScore">5 : 4 · 9라운드</div>
       <div class="revealbox hide" id="revealBox"></div>
       <button id="revealBtn" class="ghost">전체 숫자 복기</button>
@@ -1087,6 +1138,100 @@
 </script>
 <!-- AA-ENGINE:END -->
 
+<!-- ===== 《데블스 플랜》 출연자 닉네임 선택 (아케이드 공용) ===== -->
+<style>
+.npick{display:flex;flex-direction:column;gap:6px;flex:1 1 auto;min-width:0}
+.npick .nsel{
+  width:100%;height:38px;border-radius:10px;padding:0 30px 0 11px;
+  font-family:inherit;font-size:13.5px;font-weight:700;letter-spacing:0;
+  color:#f2f6ff;border:1px solid rgba(255,255,255,.16);outline:none;
+  -webkit-appearance:none;appearance:none;
+  background:#151d2b url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%239aa8c0' stroke-width='2.4' stroke-linecap='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E") no-repeat right 9px center;
+  background-size:14px 14px;
+}
+.npick .nsel:focus{border-color:rgba(255,194,71,.65);box-shadow:0 0 0 3px rgba(255,194,71,.12)}
+.npick .ninput{width:100%}
+.npick .ninput.hide{display:none}
+</style>
+<script>
+(function () {
+  'use strict';
+  var CAST = [
+    ['시즌 1', ['하석진', '궤도', '서동주', '이시원', '김동재', '곽준빈', '기욤', '박경림', '서유민', '승관', '이혜성', '조연우']],
+    ['시즌 2 · 데스룸', ['정현규', '이세돌', '규현', '강지영', '세븐하이', '윤소희', '저스틴민', '최현준', '츄', '티노', '김하린', '박상연', '손은유', '이승현']],
+    ['시즌 3 · 데드 어게인', ['장동민', '홍진호', '오현민', '서출구', '유리사', '신동', '현경렬', '존박', '재재', '넉살', '이도', '스텔라장', '정원영']]
+  ];
+  var ALL = [];
+  for (var i = 0; i < CAST.length; i++) ALL = ALL.concat(CAST[i][1]);
+
+  window.DP = {
+    cast: CAST,
+    all: ALL,
+    has: function (n) { return ALL.indexOf(n) >= 0; },
+    rnd: function (exclude) {
+      var pool = ALL.filter(function (n) { return n !== exclude; });
+      return pool[Math.floor(Math.random() * pool.length)];
+    }
+  };
+
+  function fill(sel, current) {
+    var html = '<option value="">출연자 선택</option>';
+    for (var i = 0; i < CAST.length; i++) {
+      html += '<optgroup label="' + CAST[i][0] + '">';
+      for (var j = 0; j < CAST[i][1].length; j++) {
+        html += '<option value="' + CAST[i][1][j] + '">' + CAST[i][1][j] + '</option>';
+      }
+      html += '</optgroup>';
+    }
+    html += '<option value="__custom">✎ 직접 입력</option>';
+    sel.innerHTML = html;
+    sel.value = ALL.indexOf(current) >= 0 ? current : '__custom';
+  }
+
+  /* input 바로 앞(또는 지정한) select를 출연자 선택 상자로 연결 */
+  window.dpAttach = function (input, sel) {
+    if (!input) return;
+    sel = sel || input.previousElementSibling;
+    if (!sel || sel.tagName !== 'SELECT') return;
+    input._dpSel = sel;
+    fill(sel, input.value);
+    input.classList.add('ninput');
+    var isCast = ALL.indexOf(input.value) >= 0;
+    sel.value = isCast ? input.value : '__custom';
+    input.classList.toggle('hide', isCast);
+
+    sel.addEventListener('change', function () {
+      if (sel.value === '__custom') {
+        input.classList.remove('hide');
+        if (ALL.indexOf(input.value) >= 0) input.value = '';
+        try { input.focus(); } catch (e) {}
+      } else {
+        input.value = sel.value;
+        input.classList.add('hide');
+        input.dispatchEvent(new Event('input', { bubbles: true }));
+      }
+    });
+    input.addEventListener('blur', function () {
+      if (!input.value.trim()) {
+        input.value = '';
+        input.classList.add('hide');
+        sel.value = '';
+      }
+    });
+  };
+
+  /* 코드에서 닉네임을 바꾼 뒤 선택 상자를 맞춰 준다 */
+  window.dpSync = function (input) {
+    var sel = input && input._dpSel;
+    if (!sel) return;
+    var v = String(input.value || '');
+    if (ALL.indexOf(v) >= 0) { sel.value = v; input.classList.add('hide'); }
+    else { sel.value = '__custom'; input.classList.remove('hide'); }
+  };
+})();
+</script>
+
+
 <script>
 (function () {
   'use strict';
@@ -1124,6 +1269,10 @@
   /* =========================================================
      1. 상태
      ========================================================= */
+  /* 기본 닉네임 — 《데블스 플랜》 출연자 중 무작위 배정 */
+  var DEF_A = window.DP ? DP.rnd() : 'P1';
+  var DEF_B = window.DP ? DP.rnd(DEF_A) : 'P2';
+
   var S = {
     screen: 'lobby',
     active: false,
@@ -1131,7 +1280,7 @@
     role: 'host',              // host | guest | solo
     mySeat: 0,
     viewSeat: 0,
-    names: ['선홍', '지혜'],
+    names: [DEF_A, DEF_B],
     hands: [TILES.slice(), TILES.slice()],
     counts: [{ b: 5, w: 4 }, { b: 5, w: 4 }],
     scores: [0, 0],
@@ -2202,7 +2351,7 @@
     }
     var modal = $('#endModal');
     var won = w >= 0;
-    $('#endCrown').textContent = won ? '👑' : '🤝';
+    $('#endCrown').textContent = won ? '🏆' : '🤝';
     var title = won ? (seatName(w) + ' 승리') : '무승부';
     $('#endTitle').innerHTML = '<span>' + esc(title) + '</span>';
     var names = seatName(0) + ' ' + e.scores[0] + ' : ' + e.scores[1] + ' ' + seatName(1);
@@ -2278,8 +2427,8 @@
   function makeRoom() {
     var code = (($('#roomInput').value || '').replace(/\D/g, '').slice(0, 4)) || randomCode();
     if (code.length !== 4) { toast('방 코드는 숫자 4자리입니다'); return; }
-    S.names[0] = clampName($('#myName').value, '선홍');
-    S.names[1] = S.names[1] || '지혜';
+    S.names[0] = clampName($('#myName').value, DEF_A);
+    S.names[1] = S.names[1] || DEF_B;
     connectAs('host', code);
     toast('방 ' + code + ' 개설 · 초대 링크를 보내세요');
   }
@@ -2287,7 +2436,7 @@
   function joinRoom() {
     var code = ($('#roomInput').value || '').replace(/\D/g, '').slice(0, 4);
     if (code.length !== 4) { toast('방 코드 4자리를 입력해 주세요'); return; }
-    S.names[1] = clampName($('#myName').value, '지혜');
+    S.names[1] = clampName($('#myName').value, DEF_B);
     S.role = 'guest';
     S.mySeat = 1;
     connectAs('guest', code);
@@ -2308,7 +2457,7 @@
         return;
       }
       if (!Net.peer) { toast('아직 상대가 입장하지 않았습니다 · 초대 링크를 보내세요'); return; }
-      S.names[0] = clampName($('#myName').value, '선홍');
+      S.names[0] = clampName($('#myName').value, DEF_A);
       S.mySeat = 0;
       S.role = 'host';
       newGame();
@@ -2316,13 +2465,13 @@
       return;
     }
     if (S.mode === 'local') {
-      S.names[0] = clampName($('#nameA').value, '선홍');
-      S.names[1] = clampName($('#nameB').value, '지혜');
+      S.names[0] = clampName($('#nameA').value, DEF_A);
+      S.names[1] = clampName($('#nameB').value, DEF_B);
       S.role = 'solo'; S.mySeat = 0;
       newGame();
       return;
     }
-    S.names[0] = clampName($('#nameSolo').value, '선홍');
+    S.names[0] = clampName($('#nameSolo').value, DEF_A);
     S.names[1] = '🤖 AI';
     S.role = 'solo'; S.mySeat = 0;
     newGame();
@@ -2349,7 +2498,7 @@
         if (Net.role !== 'host') return;
         if (Net.peer && Net.peer !== m.from) { Net.send({ t: 'full', to: m.from }); return; }
         Net.peer = m.from;
-        Net.peerName = clampName(m.name, '지혜');
+        Net.peerName = clampName(m.name, DEF_B);
         S.names[1] = Net.peerName;
         badge();
         Net.send({
@@ -2361,9 +2510,9 @@
       }
       case 'welcome': {
         Net.peer = m.from;
-        Net.peerName = clampName(m.hostName, '선홍');
+        Net.peerName = clampName(m.hostName, DEF_A);
         S.names[0] = Net.peerName;
-        S.names[1] = clampName(S.names[1], '지혜');
+        S.names[1] = clampName(S.names[1], DEF_B);
         clearInterval(Net.joinTimer);
         badge();
         $('#waitHint').textContent = '입장 완료 · 호스트의 시작을 기다립니다';
@@ -2508,8 +2657,18 @@
     } catch (e) { toast('링크: ' + txt); }
   }
 
+  function initNickFields() {
+    [['#myName', DEF_A], ['#nameA', DEF_A], ['#nameB', DEF_B], ['#nameSolo', DEF_A]].forEach(function (p) {
+      var el = $(p[0]);
+      if (!el) return;
+      el.value = p[1];
+      if (window.dpAttach) dpAttach(el);
+    });
+  }
+
   function boot() {
     bind();
+    initNickFields();
     setMode('online');
     var qp;
     try { qp = new URLSearchParams(location.search); } catch (e) { qp = null; }
@@ -2518,9 +2677,9 @@
     if (rq) {
       $('#roomInput').value = rq;
       setMode('online');
-      if (nm) { $('#myName').value = nm; }
-      else if (!$('#myName').value || $('#myName').value === '선홍') $('#myName').value = '지혜';
-      S.names[1] = clampName($('#myName').value, '지혜');
+      if (nm) { $('#myName').value = nm; if (window.dpSync) dpSync($('#myName')); }
+      else if (!$('#myName').value || $('#myName').value === DEF_A) { $('#myName').value = DEF_B; if (window.dpSync) dpSync($('#myName')); }
+      S.names[1] = clampName($('#myName').value, DEF_B);
       setTimeout(function () { joinRoom(); }, 60);
     }
     badge();

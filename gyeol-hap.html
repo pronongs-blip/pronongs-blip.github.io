@@ -1399,6 +1399,7 @@ window.ARC = window.ARC || {
       try { arr = JSON.parse(localStorage.getItem(this.HKEY) || '[]') || []; } catch (e) { arr = []; }
       if (!Array.isArray(arr)) arr = [];
       var r = o.result;
+      if (r === 'lose') r = 'loss';   /* 게임들이 넘기는 'lose' 표기를 히스토리 규격 'loss'로 정규화 */
       if (r !== 'win' && r !== 'loss' && r !== 'draw') r = 'draw';
       var mode = String(o.mode || '');
       arr.unshift({

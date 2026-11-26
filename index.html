@@ -113,14 +113,7 @@ body::before{
 .go{flex:0 0 auto;font-size:19px;font-weight:700;color:var(--dim2);line-height:1}
 
 /* ---------- 하단 ---------- */
-.foot{flex:0 0 auto;margin-top:auto;display:flex;flex-direction:column;align-items:center;gap:8px;padding-top:18px}
-.tip{
-  display:flex;align-items:center;gap:7px;padding:9px 12px;border-radius:12px;width:100%;
-  background:rgba(255,255,255,.03);border:1px solid var(--line2);
-  font-size:11px;line-height:1.45;font-weight:600;color:var(--dim);
-}
-.tip .ti{font-size:13px;flex:0 0 auto}
-.tip b{color:#eaf0fb;font-weight:800}
+.foot{flex:0 0 auto;margin-top:auto;display:flex;flex-direction:column;align-items:center;gap:8px;padding-top:14px}
 .rst{
   -webkit-appearance:none;appearance:none;margin:0;padding:5px 11px;border-radius:8px;
   font-family:inherit;font-size:10.5px;font-weight:700;line-height:1.4;
@@ -149,7 +142,6 @@ body::before{
   .ds{font-size:13.5px}
   .mt{font-size:12px}
   .go{font-size:22px}
-  .tip{max-width:520px;font-size:12px}
 }
 
 @media (max-width:360px){
@@ -258,10 +250,6 @@ body::before{
   </div>
 
   <footer class="foot">
-    <div class="tip">
-      <span class="ti" aria-hidden="true">📲</span>
-      <span>Safari에서 <b>공유 → 홈 화면에 추가</b> 하면 앱처럼 열립니다</span>
-    </div>
     <button class="rst" type="button" id="resetStats" aria-pressed="false" title="이 기기에 저장된 실행 기록을 지웁니다">기록 초기화</button>
   </footer>
 
@@ -305,7 +293,12 @@ body::before{
       var last = Number(s.lastOpened);
       if (!isFinite(clicks) || clicks < 0) clicks = 0;
       if (!isFinite(last) || last <= 0) last = 0;
-      if (clicks > 0 || last > 0) out[id] = { clicks: clicks, lastOpened: last };
+      if (clicks > 0 || last > 0) {
+        out[id] = { clicks: clicks, lastOpened: last,
+          wins: Math.max(0, Math.floor(Number(s.wins) || 0)),
+          losses: Math.max(0, Math.floor(Number(s.losses) || 0)),
+          draws: Math.max(0, Math.floor(Number(s.draws) || 0)) };
+      }
     });
     return out;
   }
@@ -393,7 +386,12 @@ body::before{
 
       if (when) {
         if (s.clicks > 0) {
-          var label = "최근 " + (ago(s.lastOpened) || "오늘");
+          var rec = "";
+          var w = Math.max(0, Math.floor(Number(s.wins) || 0));
+          var l = Math.max(0, Math.floor(Number(s.losses) || 0));
+          var d = Math.max(0, Math.floor(Number(s.draws) || 0));
+          if (w + l + d > 0) rec = w + "승 " + l + "패" + (d ? " " + d + "무" : "") + " · ";
+          var label = rec + "최근 " + (ago(s.lastOpened) || "오늘");
           if (when.textContent !== label) when.textContent = label;
           when.title = "마지막 실행 " + fullTime(s.lastOpened);
           when.hidden = false;
@@ -411,7 +409,12 @@ body::before{
 
   function bump(id) {
     var all = readStats();
-    var s = all[id] || { clicks: 0, lastOpened: 0 };
+    var raw = {};
+    try { raw = JSON.parse(window.localStorage.getItem(KEY) || "{}") || {}; } catch (e) { raw = {}; }
+    var s = all[id] || raw[id] || { clicks: 0, lastOpened: 0 };
+    s.wins = Math.max(0, Math.floor(Number(s.wins) || 0));
+    s.losses = Math.max(0, Math.floor(Number(s.losses) || 0));
+    s.draws = Math.max(0, Math.floor(Number(s.draws) || 0));
     s.clicks += 1;
     s.lastOpened = Date.now();
     all[id] = s;

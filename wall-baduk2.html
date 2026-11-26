@@ -488,14 +488,14 @@ input{font-family:inherit}
 body{background:#0a0d14}
 .brand{margin-bottom:6px}
 .brand .logo-badge{
-  width:54px;height:54px;border-radius:15px;font-size:0;
+  width:52px;height:52px;border-radius:15px;font-size:0;
   background:#151d2b;border:1px solid rgba(255,255,255,.12);
   box-shadow:none;color:#8fb4ff;
 }
 .brand .logo-badge::after{display:none}
 .brand .logo-badge svg{width:30px;height:30px}
 .brand h1{
-  font-size:25px;color:#fff;background:none;
+  font-size:24px;color:#fff;background:none;
   -webkit-background-clip:border-box;background-clip:border-box;
   -webkit-text-fill-color:#fff;
 }
@@ -538,9 +538,101 @@ body{background:#0a0d14}
 .aa-btn:active{background:rgba(255,255,255,.12)}
 .aa-btn.off::after{background:#ffc247}
 @media (max-width:390px){
-  .portal-pill{width:44px;height:29px;font-size:12px}
   .aa-btn{width:25px}
 }
+
+/* ===== 아케이드 공통 로비·규칙 규격 (2026-11) ===== */
+.brand{padding:2px 0 0}
+.brand .crown{}
+.brand h1{margin:8px 0 0;font-size:24px;line-height:1.2;font-weight:900;letter-spacing:-.01em;color:#fff;-webkit-text-fill-color:#fff;background:none}
+.brand .sub{margin:7px 0 0;font-size:11.5px;font-weight:700;letter-spacing:.01em;color:#93a3bd;font-family:inherit;text-transform:none}
+.card{background:#111723;border:1px solid rgba(255,255,255,.10);border-radius:18px;padding:13px}
+.seg button,.seg .mode,.seg .lv,.seg .tm,.seg .rd{height:36px;border-radius:9px;font-size:12.5px;font-weight:800;color:#b6c3d8;background:none;border:0;box-shadow:none;transition:background .15s,color .15s;letter-spacing:-.01em}
+.seg button.on,.seg .mode.on,.seg .lv.on,.seg .tm.on,.seg .rd.on{background:#ffc247;color:#1a1204;box-shadow:none}
+.seg{display:grid;grid-auto-flow:column;grid-auto-columns:1fr;gap:4px;padding:4px;border-radius:12px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.09)}
+.fld{display:flex;align-items:center;gap:9px;margin-top:10px;font-size:12.5px;font-weight:700;color:#aab7cc}
+.fld>span{flex:0 0 68px}
+.fld .seg{flex:1 1 auto;min-width:0}
+.tiny{margin:6px 0 0;font-size:11px;line-height:1.5;color:#8c9ab2;font-weight:600}
+.npick{display:flex;flex-direction:column;gap:6px;flex:1 1 auto;min-width:0}
+.npick .nsel{width:100%;height:40px;border-radius:10px;padding:0 30px 0 11px;font-family:inherit;font-size:14px;font-weight:700;color:#f2f6ff;border:1px solid rgba(255,255,255,.16);outline:none;-webkit-appearance:none;appearance:none;background:#151d2b url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%239aa8c0' stroke-width='2.4' stroke-linecap='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E") no-repeat right 9px center;background-size:14px 14px}
+.npick .nsel:focus{border-color:rgba(255,194,71,.65);box-shadow:0 0 0 3px rgba(255,194,71,.12)}
+.npick .ninput{width:100%;height:40px;border-radius:10px;padding:0 11px;font-family:inherit;font-size:14px;font-weight:700;color:#f2f6ff;background:#0d131e;border:1px solid rgba(255,255,255,.16);outline:none}
+.npick .ninput.hide{display:none}
+.primary{width:100%;height:50px;margin-top:12px;border-radius:14px;background:#ffc247;border:1px solid #ffc247;color:#1a1204;font-size:16.5px;font-weight:900;letter-spacing:-.01em;box-shadow:none;display:flex;align-items:center;justify-content:center}
+.primary:active{filter:brightness(.95)}
+.primary:disabled{background:#1a2231;border-color:rgba(255,255,255,.12);color:#93a3bd;filter:none}
+.quick{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;width:100%;height:56px;margin-top:12px;border-radius:14px;background:#ffc247;border:1px solid #ffc247;color:#1a1204;font-size:17px;font-weight:900;line-height:1.12;letter-spacing:-.01em}
+.quick em{font-style:normal;font-size:10.5px;font-weight:800;color:#5c4308;letter-spacing:.01em}
+.quick:active{filter:brightness(.95)}
+.quick:disabled{background:#1a2231;border-color:rgba(255,255,255,.12);color:#93a3bd}
+.quick:disabled em{color:#7c8aa3}
+.qmsg{margin:8px 0 0;text-align:center;font-size:11.5px;font-weight:700;line-height:1.45;color:#8c9ab2}
+.qmsg.on{color:#ffd88a}
+details.more{margin-top:12px;border-top:1px solid rgba(255,255,255,.08);padding-top:10px}
+details.more summary{list-style:none;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:5px;font-size:12px;font-weight:800;color:#9fb0cb}
+details.more summary::-webkit-details-marker{display:none}
+details.more summary::after{content:"›";font-size:14px;transform:rotate(90deg);transition:transform .2s}
+details.more[open] summary::after{transform:rotate(-90deg)}
+.roomrow{display:flex;gap:6px;margin-top:10px}
+.roomrow input{flex:1;min-width:0;height:40px;border-radius:10px;padding:0 11px;font-family:inherit;font-size:14px;font-weight:800;letter-spacing:.18em;text-align:center;color:#f2f6ff;background:#0d131e;border:1px solid rgba(255,255,255,.14);outline:none}
+.invite{margin-top:10px;padding:10px;border-radius:12px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.09);display:flex;flex-direction:column;gap:8px}
+.coderow{display:flex;align-items:center;gap:8px;font-size:11.5px;font-weight:700;color:#9fb0cb}
+.coderow b{font-size:17px;letter-spacing:.18em;color:#ffd88a;font-weight:900}
+.invite .link{width:100%;height:32px;border-radius:8px;padding:0 9px;font-family:inherit;font-size:10.5px;color:#9fb0cb;background:#0a0f18;border:1px solid rgba(255,255,255,.1);outline:none}
+.ghost{display:inline-flex;align-items:center;justify-content:center;height:44px;border-radius:12px;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.04);color:#e6edf9;font-size:13px;font-weight:800}
+.ghost.small{height:40px;padding:0 12px;font-size:12.5px;border-radius:10px}
+.ghost:active{background:rgba(255,255,255,.1)}
+.rls-open{width:100%;margin-top:8px}
+
+.portal-dock{justify-content:space-between}
+.lg-name{position:absolute;left:50%;transform:translateX(-50%);font-size:13px;font-weight:900;letter-spacing:-.01em;color:#e9effb;pointer-events:none;white-space:nowrap}
+
+.lobby-inner{width:100%;margin:0;padding:4px 2px 0;display:flex;flex-direction:column;gap:10px}
+.home-wrap{width:100%;max-width:420px;margin:0;align-self:center;padding:4px 2px 0;display:flex;flex-direction:column;gap:10px}
+#home{justify-content:flex-start}
+#home .home-wrap{padding-top:2px}
+.brand{margin:0;padding:0}
+.lobby-scroll{display:flex;flex-direction:column;padding:2px 0 6px}
+
+.seg .mode,.seg .lv,.seg .tm,.seg .rd,.seg button{min-height:0;height:36px;padding:0;background:none;border:0;border-radius:9px;box-shadow:none;display:flex;align-items:center;justify-content:center}
+.screen{padding-left:14px;padding-right:14px}
+.portal-pill{width:46px;height:30px}
+.rls-overlay{position:fixed;inset:0;z-index:80;display:flex;align-items:center;justify-content:center;padding:18px;background:rgba(5,8,14,.84);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
+.rls-overlay.hide{display:none}
+.rls-box{width:100%;max-width:352px;max-height:84vh;overflow-y:auto;-webkit-overflow-scrolling:touch;border-radius:20px;padding:20px 18px 16px;background:#121823;border:1px solid rgba(255,255,255,.12);box-shadow:0 24px 60px rgba(0,0,0,.6);text-align:left}
+.rls-box h2{margin:0;font-size:20px;font-weight:900;letter-spacing:-.01em;color:#fff}
+.rls-sub{margin:7px 0 16px;font-size:12.5px;font-weight:700;color:#93a3bd}
+.rls-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:14px}
+.rls-list li{display:flex;gap:11px;font-size:14.5px;line-height:1.62;font-weight:600;color:#dde5f3}
+.rls-list .n{flex:0 0 24px;height:24px;margin-top:1px;border-radius:8px;background:rgba(255,194,71,.16);color:#ffc247;font-size:12.5px;font-weight:900;display:flex;align-items:center;justify-content:center}
+.rls-list b{color:#fff;font-weight:900}
+.rls-more{margin:16px 0 0;padding-top:14px;border-top:1px solid rgba(255,255,255,.09);font-size:12.5px;line-height:1.65;font-weight:600;color:#a9b7cc}
+.rls-more b{color:#e8effb}
+.rls-btn{width:100%;height:50px;margin-top:18px;border-radius:14px;background:#ffc247;border:0;color:#1a1204;font-size:16.5px;font-weight:900}
+
+/* ===== 결과 화면: 종료 모달을 한 화면 가득 분석 시트로 ===== */
+#endModal,#overModal{align-items:stretch!important;justify-content:flex-start!important;padding:0!important;background:#0a0d14!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
+#endModal .modal,#overModal .card{
+  width:100%!important;max-width:none!important;max-height:none!important;height:100%!important;
+  border:0!important;border-radius:0!important;background:#0a0d14!important;
+  padding:calc(env(safe-area-inset-top,0px) + 26px) 18px calc(env(safe-area-inset-bottom,0px) + 18px)!important;
+  overflow-y:auto!important;-webkit-overflow-scrolling:touch;
+  display:flex!important;flex-direction:column;gap:10px;text-align:left;
+}
+#endModal .modal>*,#overModal .card>*{flex:0 0 auto}
+#endModal .mcrown,#overModal .mcrown{font-size:30px;line-height:1;margin:6px 0 0;text-align:center}
+#endModal h2,#overModal h2{margin:6px 0 0;font-size:27px;line-height:1.2;font-weight:900;letter-spacing:-.02em;text-align:center;color:#fff}
+#endModal .mscore,#overModal .mscore{margin:6px 0 2px;font-size:14.5px;font-weight:800;color:#93a3bd;text-align:center}
+#endModal .mrow,#overModal .mrow,#endModal .endact,#overModal .endact{
+  margin-top:auto;position:sticky;bottom:0;background:#0a0d14;padding-top:12px;
+  display:flex;gap:8px;border-top:1px solid rgba(255,255,255,.08);
+}
+#endModal .mrow .primary,#overModal .mrow .primary{margin-top:0;flex:1}
+#endModal .mrow .ghost,#overModal .mrow .ghost{flex:0 0 36%;height:50px}
+.res-stat{margin:10px 0 0;padding:10px 12px;border-radius:12px;background:#111723;border:1px solid rgba(255,255,255,.10);
+  display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:12.5px;font-weight:800;color:#93a3bd}
+.res-stat b{color:#ffc247;font-size:14.5px;font-weight:900}
 </style>
 </head>
 <body>
@@ -550,13 +642,14 @@ body{background:#0a0d14}
   <section class="screen on" id="home">
     <div class="portal-dock">
       <a class="portal-pill" href="./index.html" aria-label="아케이드 홈으로"><span class="chev">‹</span>홈</a>
+      <span class="lg-name">벽바둑 2</span>
       <div class="aa-seg" role="group" aria-label="사운드 설정">
         <button class="aa-btn" type="button" data-aa="bgm" aria-pressed="true" title="배경음악 끄기"><span class="ai">♪</span></button>
         <button class="aa-btn" type="button" data-aa="sfx" aria-pressed="true" title="효과음 끄기"><span class="ai">🔊</span></button>
       </div>
     </div>
     <div class="home-wrap">
-      <div class="brand">
+      <header class="brand">
         <div class="logo-badge" aria-hidden="true">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
             <rect x="3" y="3" width="18" height="18" rx="3"/>
@@ -564,65 +657,94 @@ body{background:#0a0d14}
             <path d="M9.9 9.9h4.2v4.2H9.9z" fill="currentColor" stroke="none"/>
           </svg>
         </div>
-        <h1><span class="no">벽바둑 2</span></h1>
+        <h1>벽바둑 2</h1>
         <p class="sub">벽으로 영역을 나누는 1:1 전략 보드게임</p>
-      </div>
+      </header>
 
-      <div class="modes" id="modeSeg">
-        <button class="mode on" data-val="online">
-          <span class="mi">🤝</span><span class="mt">온라인 1:1</span><span class="md">각자 폰으로 실시간</span>
-        </button>
-        <button class="mode" data-val="local1">
-          <span class="mi">📱</span><span class="mt">한 기기 1:1</span><span class="md">번갈아 두기</span>
-        </button>
-        <button class="mode" data-val="ai">
-          <span class="mi">🤖</span><span class="mt">혼자 하기</span><span class="md">vs AI</span>
-        </button>
-        <button class="mode" data-val="three">
-          <span class="mi">🎲</span><span class="mt">3인전</span><span class="md">벽 부수기 1회</span>
-        </button>
-      </div>
+      <div class="card">
+        <div class="seg" id="modeSeg">
+          <button class="mode" data-val="ai">혼자</button>
+          <button class="mode" data-val="local1">한 기기</button>
+          <button class="mode on" data-val="online">온라인</button>
+        </div>
 
-      <div class="field" id="nickField">
-        <div class="field-label">닉네임 <span class="hint" id="nickHint">상대 폰에 이 이름으로 표시됩니다</span></div>
-        <div class="nick-row">
-          <span class="npick">
-            <select id="nickSel" class="nsel" aria-label="닉네임 — 데블스 플랜 출연자에서 선택"></select>
+        <div class="fld" id="nickField">
+          <span>닉네임</span>
+          <div class="npick">
+            <select id="nickSel" class="nsel" aria-label="닉네임 — 데블스 플랜 시즌 3 출연자에서 선택"></select>
             <input id="nickInput" maxlength="10" placeholder="닉네임" value="하석진" class="ninput hide">
-          </span>
-          <span class="vs">VS</span>
-          <span class="fixed" id="oppName">궤도</span>
+          </div>
         </div>
-      </div>
 
-      <div class="field hide" id="threeField">
-        <div class="field-label">3인전 상대</div>
-        <div class="seg" data-group="threeOpp">
-          <button data-val="local" class="on">3명 같이</button>
-          <button data-val="ai">나 + AI 2</button>
+        <div id="paneOnline">
+          <button class="quick" id="quickBtn" type="button">⚡ 바로 입장<em>방 코드 없이 1:1</em></button>
+          <p class="qmsg" id="quickMsg">두 사람이 각자 누르면 자동으로 연결됩니다</p>
+
+          <details class="more" id="moreBox">
+            <summary>초대 링크 · 코드로 들어가기</summary>
+
+            <div id="lobbyChoose">
+              <div class="roomrow">
+                <input id="codeInput" inputmode="numeric" maxlength="4" placeholder="방 코드 4자리" autocomplete="off">
+                <button class="ghost small" id="mkRoomBtn">방 만들기</button>
+                <button class="ghost small" id="joinBtn">참가</button>
+              </div>
+            </div>
+
+            <div id="lobbyHost" class="hide">
+              <div class="invite">
+                <div class="coderow"><span>방 코드</span><b id="roomCode">0000</b></div>
+                <input class="link" id="inviteLink" readonly>
+                <div class="waitline">
+                  <button class="ghost small" id="copyBtn">링크 복사</button>
+                  <span class="tiny" id="hostStatus">상대를 기다리는 중…</span>
+                </div>
+                <button class="primary" id="hostStartBtn" disabled>시작</button>
+              </div>
+            </div>
+
+            <div id="lobbyGuest" class="hide">
+              <p class="tiny" id="guestStatus" style="text-align:center">방에 접속하는 중…</p>
+            </div>
+
+            <button class="ghost small" id="lobbyLeave" style="width:100%;margin-top:8px">나가기</button>
+          </details>
         </div>
-      </div>
 
-      <div class="field" id="diffField">
-        <div class="field-label">AI 난이도</div>
-        <div class="seg" data-group="diff">
-          <button data-val="normal" class="on">보통<em>탐욕 1수</em></button>
-          <button data-val="hard">어려움<em>2수 읽기</em></button>
+        <div class="fld hide" id="threeField">
+          <span>인원</span>
+          <div class="seg" data-group="players">
+            <button data-val="2" class="on">2인</button>
+            <button data-val="3">3인전</button>
+          </div>
         </div>
-      </div>
-
-      <div class="field">
-        <div class="field-label">제한시간 <span class="hint">턴당 · 초과 시 자동 랜덤 수</span></div>
-        <div class="seg" data-group="time">
-          <button data-val="60">60초</button>
-          <button data-val="90" class="on">90초</button>
-          <button data-val="0">무제한</button>
+        <div class="fld hide" id="threeField2">
+          <span>3인전 상대</span>
+          <div class="seg" data-group="threeOpp">
+            <button data-val="local" class="on">3명 같이</button>
+            <button data-val="ai">나 + AI 2</button>
+          </div>
         </div>
-      </div>
 
-      <button class="cta" id="startBtn">방 만들기 / 참가하기</button>
-      <div class="home-foot">
-        <button class="ghost" id="rulesBtnHome">? 게임 규칙</button>
+        <div class="fld" id="diffField">
+          <span>AI 난이도</span>
+          <div class="seg" data-group="diff">
+            <button data-val="normal" class="on">보통</button>
+            <button data-val="hard">어려움</button>
+          </div>
+        </div>
+
+        <div class="fld">
+          <span>제한시간</span>
+          <div class="seg" data-group="time">
+            <button data-val="60">60초</button>
+            <button data-val="90" class="on">90초</button>
+            <button data-val="0">무제한</button>
+          </div>
+        </div>
+
+        <button class="primary" id="startBtn">게임 시작</button>
+        <button class="ghost rls-open" id="rulesBtnHome" type="button">게임 규칙</button>
       </div>
     </div>
   </section>
@@ -708,85 +830,20 @@ body{background:#0a0d14}
 
   <div id="toast"></div>
 
-  <!-- ============ LOBBY (온라인 1:1) ============ -->
-  <div class="overlay" id="lobbyModal">
-    <div class="card">
-      <h2>🤝 온라인 1:1</h2>
-      <div class="lobby-net" id="lobbyNet"><span class="nd"></span><span id="lobbyStatus">연결 중…</span></div>
+  <div class="overlay" id="lobbyModal"></div>
 
-      <div id="lobbyChoose">
-        <p class="lobby-lead">방을 만들고 링크를 보내면, 상대가 누르기만 하면 됩니다.</p>
-        <button class="cta" id="mkRoomBtn" style="width:100%">방 만들기</button>
-        <div class="or">— 또는 —</div>
-        <div class="join-row">
-          <input id="codeInput" inputmode="numeric" maxlength="4" placeholder="0000" autocomplete="off">
-          <button class="ghost" id="joinBtn">참가</button>
-        </div>
-        <div class="rules-close"><button class="ghost" id="lobbyCancel">닫기</button></div>
-      </div>
-
-      <div id="lobbyHost" class="hide">
-        <div class="code-box">
-          <div class="code-lbl">방 코드</div>
-          <div class="code" id="roomCode">0000</div>
-        </div>
-        <input class="link-box" id="inviteLink" readonly>
-        <div class="row2">
-          <button class="cta" id="hostStartBtn" disabled>시작</button>
-          <button class="ghost" id="copyBtn">링크 복사</button>
-        </div>
-        <div class="big-status" id="hostStatus">상대를 기다리는 중…<span class="sm">초대 링크만 보내면 바로 연결됩니다</span></div>
-        <button class="ghost" id="lobbyLeave" style="width:100%">나가기</button>
-      </div>
-
-      <div id="lobbyGuest" class="hide">
-        <div class="big-status" id="guestStatus">방에 접속하는 중…<span class="sm" id="guestSub">잠시만 기다려 주세요</span></div>
-        <button class="ghost" id="lobbyLeave2" style="width:100%">나가기</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- ============ RULES ============ -->
-  <div class="overlay" id="rulesModal">
-    <div class="card">
-      <h2>벽바둑 2 규칙</h2>
-      <p>7×7 격자에서 말을 옮기고, <b>이동한 칸에 붙은 벽 한 면</b>을 세웁니다. 모두의 말이 서로 다른 구역으로 완전히 갈라지면 끝나고, <b>내 말만 있는 구역의 칸 수</b>가 점수입니다.</p>
-
-      <h3>말 두 종류</h3>
-      <div class="kv"><span class="k">■ 사각</span><span><b>직진 전용</b> — 상하좌우 한 방향으로 1칸 또는 2칸. 90도 꺾기 불가, 제자리 불가.</span></div>
-      <div class="kv"><span class="k">● 원형</span><span><b>꺾기 전용</b> — 1칸 이동, 또는 1칸 간 뒤 좌·우로 90도 꺾어 1칸 더(ㄱ자). 직진 2칸 불가.</span></div>
-      <p style="margin-top:5px">경로에 벽이나 다른 말이 있으면 지나갈 수 없습니다.</p>
-
-      <h3>한 턴</h3>
-      <ul>
-        <li>내 말 탭 → 이동 가능한 칸 확인 → 칸 탭</li>
-        <li>도착 칸의 <b>벽 없는 4면</b>이 반짝입니다 → 놓을 면 탭 (턴 종료)</li>
-        <li>벽을 놓기 전에는 <b>되돌리기</b>로 이동을 취소할 수 있습니다.</li>
-        <li>움직일 수 있는 말이 없으면 자동으로 턴이 넘어갑니다.</li>
-      </ul>
-
-      <h3>모드</h3>
-      <ul>
-        <li><b>1:1 (2인)</b> — 각 사각 2 + 원형 2 = 4말. 고정 2말(대칭) + 나머지 2말 교대 배치.</li>
-        <li><b>3인전</b> — 각 사각 1 + 원형 1 = 2말. 스네이크 순서(1→2→3→3→2→1) 배치. 각자 <b>🔨 벽 부수기 1회</b>: 토글 후 이동하면 경로의 벽 1개를 부수고 지나갑니다(주황 표시).</li>
-        <li><b>온라인 1:1</b> — 방을 만들면 4자리 코드와 초대 링크가 생깁니다. 링크를 열면 바로 같은 판에 연결되고, 배치·이동·벽 설치·차례가 실시간으로 동기화됩니다. 인터넷이 막혀도 한 기기 대전과 AI 대전은 그대로 동작합니다. <span style="color:#8ea0c0">(공개 중계 서버를 쓰므로 방 코드를 아는 사람이면 접속할 수 있습니다. 개인정보는 넣지 마세요.)</span></li>
-      </ul>
-
-      <h3>점수와 종료</h3>
-      <ul>
-        <li>어느 구역에도 <b>2명 이상의 말이 함께 있지 않으면</b> 즉시 종료.</li>
-        <li>점수 = 내 말만 있는 구역들의 칸 수 합(말 칸 포함).</li>
-        <li>동점이면 <b>가장 넓은 단일 구역</b>이 큰 쪽 승리, 그것도 같으면 무승부.</li>
-        <li>상단 진행바는 이미 한 사람만의 구역이 된 비율(분리 진행도)입니다.</li>
-      </ul>
-
-      <h3>기타</h3>
-      <ul>
-        <li>제한시간은 턴당이며, 초과하면 합법 수 중 무작위로 둡니다.</li>
-        <li>외곽 테두리는 처음부터 벽입니다.</li>
-      </ul>
-
-      <div class="rules-close"><button class="cta" id="rulesClose" style="flex:1">알겠습니다</button></div>
+  <!-- 게임 규칙 -->
+  <div class="rls-overlay hide" id="rulesModal" role="dialog" aria-modal="true" aria-labelledby="rulesTitle">
+    <div class="rls-box">
+      <h2 id="rulesTitle">벽바둑 2 규칙</h2>
+      <p class="rls-sub">7×7 보드, 벽으로 영역을 나누는 1:1 전략</p>
+      <ol class="rls-list">
+        <li><span class="n">1</span><span>내 말을 옮긴 뒤, <b>도착한 칸에 붙은 벽 한 면</b>을 세웁니다. 사각형은 직진 전용, 원형은 꺾기 전용입니다.</span></li>
+        <li><span class="n">2</span><span>모든 말이 서로 다른 구역으로 <b>완전히 갈라지면</b> 게임이 끝납니다.</span></li>
+        <li><span class="n">3</span><span><b>내 말만 있는 구역의 칸 수</b>가 점수. 넓은 쪽이 이기고, 같으면 가장 넓은 단일 구역이 큰 쪽이 승리합니다.</span></li>
+      </ol>
+      <p class="rls-more">3인전은 각자 <b>벽 부수기 1회</b>가 있고, 제한시간을 넘기면 합법 수 중 무작위로 둡니다. 외곽 테두리는 처음부터 벽입니다.</p>
+      <button class="rls-btn" type="button" data-close>알겠습니다</button>
     </div>
   </div>
 
@@ -823,7 +880,7 @@ body{background:#0a0d14}
         <button class="ghost ov-see" id="seeBoardBtn">🖼 최종 판 보기</button>
       </div>
       <div class="rules-close">
-        <button class="cta" id="againBtn" style="flex:1">다시 하기</button>
+        <button class="cta" id="againBtn" style="flex:1">🔄 바로 재대결</button>
         <button class="ghost" id="toHomeBtn" style="flex:0 0 96px">처음으로</button>
       </div>
     </div>
@@ -1365,9 +1422,7 @@ body{background:#0a0d14}
 (function () {
   'use strict';
   var CAST = [
-    ['시즌 1', ['하석진', '궤도', '서동주', '이시원', '김동재', '곽준빈', '기욤', '박경림', '서유민', '승관', '이혜성', '조연우']],
-    ['시즌 2 · 데스룸', ['정현규', '이세돌', '규현', '강지영', '세븐하이', '윤소희', '저스틴민', '최현준', '츄', '티노', '김하린', '박상연', '손은유', '이승현']],
-    ['시즌 3 · 데드 어게인', ['장동민', '홍진호', '오현민', '서출구', '유리사', '신동', '현경렬', '존박', '재재', '넉살', '이도', '스텔라장', '정원영']]
+    ['시즌 3 · 데드 어게인', ['장동민', '홍진호', '오현민', '하석진', '김동재', '정현규', '서출구', '유리사', '신동', '현경렬', '존박', '재재', '넉살', '이도', '스텔라장', '정원영']]
   ];
   var ALL = [];
   for (var i = 0; i < CAST.length; i++) ALL = ALL.concat(CAST[i][1]);
@@ -1383,7 +1438,7 @@ body{background:#0a0d14}
   };
 
   function fill(sel, current) {
-    var html = '<option value="">출연자 선택</option>';
+    var html = '<option value="">시즌 3 출연자 선택</option>';
     for (var i = 0; i < CAST.length; i++) {
       html += '<optgroup label="' + CAST[i][0] + '">';
       for (var j = 0; j < CAST[i][1].length; j++) {
@@ -1438,6 +1493,51 @@ body{background:#0a0d14}
   };
 })();
 </script>
+
+<!-- 아케이드 전적 기록 (yg_arcade_stats_v1 확장) -->
+<script>
+window.ARC = window.ARC || {
+  KEY: 'yg_arcade_stats_v1',
+  read: function () { try { return JSON.parse(localStorage.getItem(this.KEY) || '{}') || {}; } catch (e) { return {}; } },
+  record: function (id, res) {
+    try {
+      var all = this.read(), s = all[id] || {};
+      s.wins = Math.max(0, +s.wins || 0);
+      s.losses = Math.max(0, +s.losses || 0);
+      s.draws = Math.max(0, +s.draws || 0);
+      if (res === 'win') s.wins++; else if (res === 'lose') s.losses++; else s.draws++;
+      s.played = s.wins + s.losses + s.draws;
+      s.lastResult = res;
+      s.lastPlayed = Date.now();
+      all[id] = s;
+      localStorage.setItem(this.KEY, JSON.stringify(all));
+    } catch (e) {}
+  },
+  line: function (id) {
+    var s = this.read()[id] || {};
+    var w = +s.wins || 0, l = +s.losses || 0, d = +s.draws || 0;
+    if (!w && !l && !d) return '';
+    return '통산 ' + w + '승 ' + l + '패' + (d ? ' ' + d + '무' : '');
+  },
+  show: function (id, modal) {
+    var root = typeof modal === 'string' ? document.querySelector(modal) : modal;
+    if (!root) return;
+    var box = root.querySelector('.modal') || root.querySelector('.card') || root;
+    var txt = this.line(id);
+    var el = box.querySelector('.res-stat');
+    if (!txt) { if (el) el.remove(); return; }
+    if (!el) {
+      el = document.createElement('div');
+      el.className = 'res-stat';
+      el.innerHTML = '<span>내 전적</span><b></b>';
+      var foot = box.querySelector('.mrow, .endact, .rules-close');
+      if (foot && foot.parentNode === box) box.insertBefore(el, foot); else box.appendChild(el);
+    }
+    el.querySelector('b').textContent = txt;
+  }
+};
+</script>
+
 
 
 <script>
@@ -2501,6 +2601,10 @@ function onNet(m) {
   switch (m.t) {
     case 'join': {
       if (!Net.role) return;
+      if (quickOn && Net.role === 'guest') {
+        if (String(Net.pid) > String(m.from)) return;
+        Net.role = 'host';
+      }
       if (Net.peer && Net.peer !== m.from) { Net.send({ t: 'full', to: m.from }); return; }
       Net.peer = m.from;
       Net.peerName = clampStr(m.name || DEF_GUEST, 10);
@@ -2621,7 +2725,7 @@ function lobbyStatus(txt, cls) {
   const el = document.getElementById('lobbyStatus');
   if (!el) return;
   el.textContent = txt;
-  const box = document.getElementById('lobbyNet');
+  const box = null;
   box.classList.remove('ok', 'wait', 'bad');
   if (cls) box.classList.add(cls);
 }
@@ -2652,7 +2756,8 @@ function showLobbyChoose() {
   document.getElementById('lobbyGuest').classList.add('hide');
 }
 function openLobby() {
-  showModal('#lobbyModal');
+  const box = document.getElementById('moreBox');
+  if (box) box.open = true;
   showLobbyChoose();
   lobbyStatus('연결 중…', 'wait');
 }
@@ -3176,7 +3281,7 @@ function onEdge(key) {
 /* =========================================================
    화면 전환 / 모달
    ========================================================= */
-let cfgSel = { mode: 'online', diff: 'normal', time: 90, threeOpp: 'local' };
+let cfgSel = { mode: 'online', diff: 'normal', time: 90, threeOpp: 'local', players: 2 };
 let nickTouched = false;      /* 닉네임을 직접 고쳤는지 (안 고쳤으면 참가 시 기본 손님 이름) */
 
 function showScreen(id) {
@@ -3232,6 +3337,12 @@ function startGame(cfg) {
 function showOver() {
   const A = st.analysis;
   const w = st.winner;
+  if (!st._arcDone && window.ARC) {
+    st._arcDone = true;
+    const seat = (st.net === 'online') ? (st.seat || 0) : 0;
+    ARC.record('wall-baduk2', (w < 0) ? 'draw' : (w === seat ? 'win' : 'lose'));
+    ARC.show('wall-baduk2', '#overModal');
+  }
   $('#ovEmoji').textContent = w > -1 ? '🏆' : '🤝';
   $('#ovTitle').textContent = w > -1 ? dispName(w) + ' 승리' : '무승부';
   $('#ovTitle').style.color = w > -1 ? COLORS[w] : '#e9effb';
@@ -3341,17 +3452,80 @@ function setNick(v) {
 function syncHomeFields() {
   const m = cfgSel.mode;
   document.querySelectorAll('#modeSeg .mode').forEach(b => b.classList.toggle('on', b.getAttribute('data-val') === m));
-  document.getElementById('diffField').classList.toggle('hide', !(m === 'ai' || (m === 'three' && cfgSel.threeOpp === 'ai')));
-  document.getElementById('threeField').classList.toggle('hide', m !== 'three');
-  document.getElementById('nickField').classList.toggle('hide', m === 'ai');
-  document.getElementById('nickHint').textContent = (m === 'online')
-    ? '상대 폰에 이 표시됩니다'
-    : (m === 'three' ? 'P1 이름으로 표시됩니다' : 'P2는 ' + DEF_GUEST + '로 표시');
-  const opp = (m === 'ai') ? 'AI'
-    : (m === 'three' ? (DEF_GUEST + ' · P3')
-      : ((m === 'online' && Net.peerName && !isRoomLink()) ? Net.peerName : (isRoomLink() ? DEF_HOST : DEF_GUEST)));
-  document.getElementById('oppName').textContent = opp;
-  document.getElementById('startBtn').textContent = (m === 'online') ? '방 만들기 / 참가하기' : '게임 시작';
+  const df = document.getElementById('diffField');
+  if (df) df.classList.toggle('hide', !(m === 'ai' || (m === 'local1' && cfgSel.players === 3 && cfgSel.threeOpp === 'ai')));
+  const tf = document.getElementById('threeField');
+  if (tf) tf.classList.toggle('hide', m !== 'local1');
+  const tf2 = document.getElementById('threeField2');
+  if (tf2) tf2.classList.toggle('hide', !(m === 'local1' && cfgSel.players === 3));
+  const nf = document.getElementById('nickField');
+  if (nf) nf.classList.toggle('hide', m === 'ai');
+  const po = document.getElementById('paneOnline');
+  if (po) po.classList.toggle('hide', m !== 'online');
+  const sb = document.getElementById('startBtn');
+  if (sb) { sb.classList.toggle('hide', m === 'online'); sb.textContent = '게임 시작'; }
+  if (m !== 'online' && quickOn) quickStop(true);
+}
+
+/* ===== ⚡ 바로 입장 (방 코드 없이 자동 매칭) ===== */
+let quickOn = false, quickPoll = 0;
+const QUICK_CODE = '0000';
+function quickMsg(t, on) {
+  const el = document.getElementById('quickMsg');
+  if (!el) return;
+  el.textContent = t;
+  el.classList.toggle('on', !!on);
+}
+function quickSetBtn(b) {
+  const el = document.getElementById('quickBtn');
+  if (el) el.disabled = !!b;
+}
+function quickStop(withReset) {
+  clearInterval(quickPoll); quickPoll = 0; quickOn = false;
+  quickSetBtn(false);
+  quickMsg('두 사람이 각자 누르면 자동으로 연결됩니다', false);
+  if (withReset && Net.room) Net.reset();
+}
+function quickConnect(role) {
+  Net.reset();
+  Net.room = QUICK_CODE; Net.role = role;
+  const ch = document.getElementById('lobbyChoose');
+  const ho = document.getElementById('lobbyHost');
+  const gu = document.getElementById('lobbyGuest');
+  if (ch) ch.classList.add('hide');
+  if (ho) ho.classList.toggle('hide', role !== 'host');
+  if (gu) gu.classList.toggle('hide', role !== 'guest');
+  const rc = document.getElementById('roomCode');
+  if (rc) rc.textContent = QUICK_CODE;
+  const il = document.getElementById('inviteLink');
+  if (il) il.value = location.href.split('?')[0].split('#')[0] + '?room=' + QUICK_CODE;
+  const hs = document.getElementById('hostStatus');
+  if (hs) hs.innerHTML = '상대를 기다리는 중…<span class="sm">상대가 ⚡ 바로 입장을 누르면 시작됩니다</span>';
+  setNick(role === 'host' ? DEF_HOST : DEF_GUEST);
+  Net.open();
+}
+function quickStart() {
+  if (quickOn) { quickStop(true); return; }
+  quickOn = true; quickSetBtn(true);
+  cfgSel.mode = 'online';
+  syncHomeFields();
+  quickConnect('guest');
+  quickMsg('상대를 찾는 중…', true);
+  const t0 = Date.now();
+  clearInterval(quickPoll);
+  quickPoll = setInterval(() => {
+    if (Net.peer) {
+      clearInterval(quickPoll); quickPoll = 0;
+      quickMsg(Net.role === 'host' ? '상대 입장 완료 · 곧 시작합니다' : '입장 완료 · 곧 시작합니다', true);
+      if (Net.role === 'host' && !st) setTimeout(() => { if (quickOn && Net.peer) startOnlineHost(cfgSel.time || 90); }, 600);
+      return;
+    }
+    if (Net.role === 'guest' && Date.now() - t0 > 1800) {
+      quickConnect('host');
+      quickMsg('방을 열었습니다 · 상대가 ⚡ 바로 입장을 누르면 시작됩니다', true);
+    }
+    if (Date.now() - t0 > 45000) quickStop(true);
+  }, 300);
 }
 
 function bindUI() {
@@ -3370,13 +3544,25 @@ function bindUI() {
       if (g === 'diff') cfgSel.diff = v;
       else if (g === 'time') cfgSel.time = +v;
       else if (g === 'threeOpp') { cfgSel.threeOpp = v; syncHomeFields(); }
+      else if (g === 'players') { cfgSel.players = +v; syncHomeFields(); }
     });
   });
-  $('#startBtn').addEventListener('click', () => startGame(cfgSel));
+  $('#startBtn').addEventListener('click', () => {
+    const c = Object.assign({}, cfgSel);
+    if (c.mode === 'local1' && c.players === 3) c.mode = 'three';
+    startGame(c);
+  });
   $('#nickInput').addEventListener('input', () => { nickTouched = true; });
-  $('#rulesBtnHome').addEventListener('click', () => showModal('#rulesModal'));
-  $('#helpBtn').addEventListener('click', () => { if (st) st.paused = true; showModal('#rulesModal'); });
-  $('#rulesClose').addEventListener('click', () => hideModal('#rulesModal'));
+  const openRules = () => { const m = document.getElementById('rulesModal'); if (m) { m.classList.remove('hide'); } if (st) st.paused = true; };
+  const closeRules = () => { const m = document.getElementById('rulesModal'); if (m) m.classList.add('hide'); if (st && !document.querySelector('.overlay.on')) st.paused = false; };
+  document.querySelectorAll('[data-open="rules"], #rulesBtnHome').forEach(b => b.addEventListener('click', openRules));
+  document.querySelectorAll('#rulesModal [data-close]').forEach(b => b.addEventListener('click', closeRules));
+  const rm = document.getElementById('rulesModal');
+  if (rm) rm.addEventListener('click', e => { if (e.target === rm) closeRules(); });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeRules(); });
+  $('#helpBtn').addEventListener('click', openRules);
+  const qb = document.getElementById('quickBtn');
+  if (qb) qb.addEventListener('click', quickStart);
   $('#homeBtn').addEventListener('click', () => { if (confirm('게임을 나가시겠습니까?')) goHome(); });
   $('#newBtn').addEventListener('click', () => {
     if (st && st.net === 'online') {
@@ -3423,9 +3609,9 @@ function bindUI() {
   $('#mkRoomBtn').addEventListener('click', createRoom);
   $('#joinBtn').addEventListener('click', () => joinRoom(document.getElementById('codeInput').value));
   $('#codeInput').addEventListener('keydown', e => { if (e.key === 'Enter') joinRoom(e.target.value); });
-  $('#lobbyCancel').addEventListener('click', () => { Net.reset(); hideModal('#lobbyModal'); });
+  const _lc = $('#lobbyCancel'); if (_lc) _lc.addEventListener('click', () => { Net.reset(); hideModal('#lobbyModal'); });
   $('#lobbyLeave').addEventListener('click', () => { if (Net.peer) Net.send({ t: 'bye' }); Net.reset(); hideModal('#lobbyModal'); st = null; showScreen('home'); });
-  $('#lobbyLeave2').addEventListener('click', () => { if (Net.peer) Net.send({ t: 'bye' }); Net.reset(); hideModal('#lobbyModal'); });
+  const _ll2 = $('#lobbyLeave2'); if (_ll2) _ll2.addEventListener('click', () => { if (Net.peer) Net.send({ t: 'bye' }); Net.reset(); hideModal('#lobbyModal'); });
   $('#copyBtn').addEventListener('click', copyInvite);
   $('#hostStartBtn').addEventListener('click', () => {
     if (!Net.peer) return;

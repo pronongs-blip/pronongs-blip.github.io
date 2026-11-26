@@ -705,6 +705,7 @@ details.more[open] summary::after{transform:rotate(-90deg)}
                   <span class="tiny" id="hostStatus">상대를 기다리는 중…</span>
                 </div>
                 <button class="primary" id="hostStartBtn" disabled>시작</button>
+                <button class="ghost small" id="cancelWait" style="width:100%;margin-top:6px">✕ 대기 취소</button>
               </div>
             </div>
 
@@ -1443,7 +1444,7 @@ details.more[open] summary::after{transform:rotate(-90deg)}
   };
 
   function fill(sel, current) {
-    var html = '<option value="">시즌 3 출연자 선택</option>';
+    var html = '<option value="" disabled>시즌 3 출연자 선택</option>';
     for (var i = 0; i < CAST.length; i++) {
       html += '<optgroup label="' + CAST[i][0] + '">';
       for (var j = 0; j < CAST[i][1].length; j++) {
@@ -1469,6 +1470,7 @@ details.more[open] summary::after{transform:rotate(-90deg)}
     input.classList.toggle('hide', isCast);
 
     sel.addEventListener('change', function () {
+      if (!sel.value) return;              /* 안내 항목(placeholder)은 선택 불가 */
       if (sel.value === '__custom') {
         input.classList.remove('hide');
         if (ALL.indexOf(input.value) >= 0) input.value = '';
@@ -1482,8 +1484,8 @@ details.more[open] summary::after{transform:rotate(-90deg)}
     input.addEventListener('blur', function () {
       if (!input.value.trim()) {
         input.value = '';
-        input.classList.add('hide');
-        sel.value = '';
+        sel.value = '__custom';            /* 빈 닉네임은 안내 항목 대신 직접 입력 유지 */
+        input.classList.remove('hide');
       }
     });
   };
@@ -3551,7 +3553,20 @@ function quickSetBtn(b) {
   const el = document.getElementById('quickBtn');
   if (el) el.disabled = !!b;
 }
+function quickLabel(waiting) {
+  var b = document.getElementById('quickBtn');
+  if (!b) return;
+  if (waiting) {
+    if (!b.getAttribute('data-orig')) b.setAttribute('data-orig', b.innerHTML);
+    b.textContent = '✕ 대기 취소';
+    b.disabled = false;
+  } else if (b.getAttribute('data-orig')) {
+    b.innerHTML = b.getAttribute('data-orig');
+    b.removeAttribute('data-orig');
+  }
+}
 function quickStop(withReset) {
+  quickLabel(false);
   clearInterval(quickPoll); quickPoll = 0; quickOn = false;
   quickSetBtn(false);
   quickMsg('두 사람이 각자 누르면 자동으로 연결됩니다', false);
@@ -3577,7 +3592,8 @@ function quickConnect(role) {
 }
 function quickStart() {
   if (quickOn) { quickStop(true); return; }
-  quickOn = true; quickSetBtn(true);
+  quickLabel(true);
+  quickOn = true; quickSetBtn(false);   /* 대기 중에도 눌러서 취소 가능 */
   cfgSel.mode = 'online';
   syncHomeFields();
   quickConnect('guest');
@@ -3681,6 +3697,13 @@ function bindUI() {
   $('#joinBtn').addEventListener('click', () => joinRoom(document.getElementById('codeInput').value));
   $('#codeInput').addEventListener('keydown', e => { if (e.key === 'Enter') joinRoom(e.target.value); });
   const _lc = $('#lobbyCancel'); if (_lc) _lc.addEventListener('click', () => { Net.reset(); hideModal('#lobbyModal'); });
+  $('#cancelWait') && $('#cancelWait').addEventListener('click', () => {
+    if (Net.peer) Net.send({ t: 'bye' });
+    quickStop(true);
+    showLobbyChoose();
+    lobbyStatus('대기 취소', 'bad');
+    toast('대기 취소');
+  });
   $('#lobbyLeave').addEventListener('click', () => { if (Net.peer) Net.send({ t: 'bye' }); Net.reset(); hideModal('#lobbyModal'); st = null; showScreen('home'); });
   const _ll2 = $('#lobbyLeave2'); if (_ll2) _ll2.addEventListener('click', () => { if (Net.peer) Net.send({ t: 'bye' }); Net.reset(); hideModal('#lobbyModal'); });
   $('#copyBtn').addEventListener('click', copyInvite);

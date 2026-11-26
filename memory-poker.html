@@ -700,6 +700,7 @@ details.more[open] summary::after{transform:rotate(-90deg)}
                 <button id="copyLink" class="ghost small">초대 링크 복사</button>
                 <span class="tiny" id="waitHint">상대를 기다리는 중…</span>
               </div>
+              <button class="ghost small" id="cancelWait" type="button" style="width:100%">✕ 대기 취소</button>
             </div>
           </details>
         </div>
@@ -1419,7 +1420,7 @@ details.more[open] summary::after{transform:rotate(-90deg)}
   };
 
   function fill(sel, current) {
-    var html = '<option value="">시즌 3 출연자 선택</option>';
+    var html = '<option value="" disabled>시즌 3 출연자 선택</option>';
     for (var i = 0; i < CAST.length; i++) {
       html += '<optgroup label="' + CAST[i][0] + '">';
       for (var j = 0; j < CAST[i][1].length; j++) {
@@ -1445,6 +1446,7 @@ details.more[open] summary::after{transform:rotate(-90deg)}
     input.classList.toggle('hide', isCast);
 
     sel.addEventListener('change', function () {
+      if (!sel.value) return;              /* 안내 항목(placeholder)은 선택 불가 */
       if (sel.value === '__custom') {
         input.classList.remove('hide');
         if (ALL.indexOf(input.value) >= 0) input.value = '';
@@ -1458,8 +1460,8 @@ details.more[open] summary::after{transform:rotate(-90deg)}
     input.addEventListener('blur', function () {
       if (!input.value.trim()) {
         input.value = '';
-        input.classList.add('hide');
-        sel.value = '';
+        sel.value = '__custom';            /* 빈 닉네임은 안내 항목 대신 직접 입력 유지 */
+        input.classList.remove('hide');
       }
     });
   };
@@ -2924,16 +2926,38 @@ window.ARC = window.ARC || {
     el.classList.toggle('on', !!on);
   }
   function quickSetBtn(busy) { var b = $('#quickBtn'); if (b) b.disabled = !!busy; }
+  function quickLabel(waiting) {
+    var b = document.getElementById('quickBtn');
+    if (!b) return;
+    if (waiting) {
+      if (!b.getAttribute('data-orig')) b.setAttribute('data-orig', b.innerHTML);
+      b.textContent = '✕ 대기 취소';
+    b.disabled = false;
+    } else if (b.getAttribute('data-orig')) {
+      b.innerHTML = b.getAttribute('data-orig');
+      b.removeAttribute('data-orig');
+    }
+  }
   function quickStop(withReset) {
+    quickLabel(false);
     clearInterval(quickPoll); quickPoll = 0; quickOn = false;
     quickSetBtn(false);
     quickMsg('두 사람이 각자 누르면 자동으로 연결됩니다', false);
     if (withReset && Net.room) { Net.reset(); S.role = 'host'; paintInvite(); }
   }
+  var _cwBtn = document.getElementById('cancelWait');
+  if (_cwBtn) _cwBtn.addEventListener('click', function () {
+    quickStop(true);
+    var _sb = document.getElementById('startBtn');
+    if (_sb) _sb.classList.remove('hide');
+    if (typeof toast === 'function') toast('대기 취소');
+  });
+
   function quickStart() {
     if (quickOn) { quickStop(true); return; }
+    quickLabel(true);
     quickOn = true;
-    quickSetBtn(true);
+    quickSetBtn(false);
     setMode('online');
     S.mode = 'online';
     S.names[0] = clampName($('#myName').value, DEF_A);

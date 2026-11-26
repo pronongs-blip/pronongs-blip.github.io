@@ -7,13 +7,13 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="만국기">
-<title>👑 지혜공주님 만국기 · World Flags</title>
+<meta name="apple-mobile-web-app-title" content="유배지 만국기">
+<title>유배지 만국기 · World Flags</title>
 <style>
   :root{
     --bg:#080b12; --panel:#0d1420; --panel2:#111b2b;
     --ink:#eef3fb; --dim:#95a5c0; --dim2:#6b7c96;
-    --gold:#fbbf24; --rose:#f472b6;
+    --gold:#fbbf24; --rose:#7aa4ff;
     --ok:#34d399; --bad:#f87171; --miss:#fbbf24;
     --line:rgba(251,191,36,.20); --line2:rgba(255,255,255,.08);
   }
@@ -109,7 +109,7 @@
   .badge.ok:before{background:#48d48b;box-shadow:0 0 8px #48d48b}
   .badge.wait{color:#f6d98a;border-color:rgba(251,191,36,.35);background:rgba(251,191,36,.08)}
   .badge.wait:before{background:var(--gold);animation:pulse 1.2s infinite}
-  .badge.bad{color:#ffb0bd;border-color:rgba(244,114,182,.3)}
+  .badge.bad{color:#ffb0bd;border-color:rgba(122,164,255,.3)}
   .badge.bad:before{background:var(--rose)}
   @keyframes pulse{0%,100%{opacity:1}50%{opacity:.25}}
 
@@ -160,7 +160,7 @@
   details.rules ol{margin:8px 0 0;padding-left:16px;font-size:11.5px;line-height:1.72;color:var(--dim)}
   details.rules b{color:#f0d9a8}
   .tipcard{display:flex;align-items:center;gap:8px;padding:9px 11px;border-radius:13px;
-    border:1px solid rgba(244,114,182,.22);background:rgba(244,114,182,.055);font-size:11px;color:#d9cbb9;line-height:1.5}
+    border:1px solid rgba(122,164,255,.22);background:rgba(122,164,255,.055);font-size:11px;color:#d9cbb9;line-height:1.5}
   .tipcard b{color:#ffd9ea;font-weight:800}
 
   /* ---------- 게임 헤더 ---------- */
@@ -247,7 +247,7 @@
   .ptime.warn b{background:none;-webkit-text-fill-color:#ff9d9d;color:#ff9d9d}
   .ptime.warn span{color:#ff9d9d}
   .pbar{flex:0 0 auto;height:4px;border-radius:3px;background:rgba(255,255,255,.10);overflow:hidden;margin:0 2px}
-  .pbar i{display:block;height:100%;width:100%;border-radius:3px;background:linear-gradient(90deg,#f472b6,#fbbf24)}
+  .pbar i{display:block;height:100%;width:100%;border-radius:3px;background:linear-gradient(90deg,#7aa4ff,#fbbf24)}
   .pbar i.low{background:linear-gradient(90deg,#ef4444,#f97316)}
   .gfoot2{flex:0 0 auto;display:flex;align-items:center;gap:7px;padding-top:1px}
   .gfoot2 .primary{flex:1 1 auto;height:44px}
@@ -288,7 +288,7 @@
   .vsres{font-size:11.5px;font-weight:900;text-align:center;color:#ffe6a8;letter-spacing:.01em;
     padding:3px 6px;border-radius:7px;background:rgba(251,191,36,.10)}
   .vsres small{display:block;font-size:9px;font-weight:700;color:inherit;opacity:.82;margin-top:1px}
-  .vsres.lose{color:#ffb0c8;background:rgba(244,114,182,.10)}
+  .vsres.lose{color:#ffb0c8;background:rgba(122,164,255,.10)}
   .vsres.draw{color:#cfd8e6;background:rgba(148,163,184,.12)}
   .vsres.wait{color:#9fb0c8;background:rgba(148,163,184,.10);font-size:11px}
   .vsres.wait .d{display:inline-block;animation:vsPulse 1.1s ease-in-out infinite}
@@ -386,7 +386,7 @@
   .ecwin{font-size:11.5px;font-weight:900;text-align:center;padding:5px 6px;border-radius:8px;
     background:rgba(251,191,36,.10);color:#ffe6a8}
   .ecwin small{display:block;font-weight:700;font-size:9.5px;opacity:.85;margin-top:1px}
-  .ecwin.lose{background:rgba(244,114,182,.10);color:#ffb0c8}
+  .ecwin.lose{background:rgba(122,164,255,.10);color:#ffb0c8}
   .ecwin.draw{background:rgba(148,163,184,.12);color:#cfd8e6}
   .ecwin.wait{background:rgba(148,163,184,.10);color:#9fb0c8;font-weight:800}
   .ecwin.wait .d{display:inline-block;animation:vsPulse 1.1s ease-in-out infinite}
@@ -402,6 +402,53 @@
     .flagbig{max-width:300px}
     .vnum b{font-size:38px}
   }
+
+/* ===== 2026-11 디자인 개편: 평면 · 고대비 · 게임 아이콘 ===== */
+body{background:#0a0d14}
+body::before{opacity:.5}
+#app{max-width:430px}
+.brand{padding:2px 0 0}
+.brand .crown{
+  display:flex;align-items:center;justify-content:center;
+  width:52px;height:52px;margin:0 auto 2px;border-radius:15px;
+  background:#151d2b;border:1px solid rgba(255,255,255,.12);
+  color:#8fb4ff;font-size:0;filter:none;
+}
+.brand .crown svg{width:29px;height:29px}
+.brand h1{margin:8px 0 0;font-size:24px;color:#fff;letter-spacing:-.01em}
+.brand h1 span{color:#ffc247;-webkit-text-fill-color:#ffc247;background:none}
+.brand .sub{margin:6px 0 0;font-family:inherit;font-size:11.5px;font-weight:700;
+  letter-spacing:.01em;color:#93a3bd;text-transform:none}
+.card{background:#111723;border-color:rgba(255,255,255,.10)}
+.primary{background:#ffc247;border-color:#ffc247;color:#1a1204;box-shadow:none;font-weight:900}
+.primary:disabled{opacity:1;background:#1a2231;border-color:rgba(255,255,255,.12);color:#93a3bd;box-shadow:none}
+.primary:disabled:active{filter:none}
+.primary:active{filter:brightness(.94)}
+.ghost{color:#e6edf9;border-color:rgba(255,255,255,.15);background:rgba(255,255,255,.04)}
+.seg{background:rgba(255,255,255,.05);border-color:rgba(255,255,255,.09)}
+.seg .mode,.seg .lv,.seg .tm,.seg .rd{color:#b6c3d8;font-weight:800}
+.seg .mode.on,.seg .lv.on,.seg .tm.on,.seg .rd.on{background:#ffc247;color:#1a1204;box-shadow:none}
+.fld{color:#aab7cc;font-size:12.5px;font-weight:700}
+.fld input{background:#0d131e;border-color:rgba(255,255,255,.14);font-size:14px}
+.tiny{color:#8c9ab2}
+details.rules{background:rgba(255,255,255,.03);border-color:rgba(255,255,255,.09)}
+details.rules summary{color:#c4d0e4}
+.tipcard{border-color:rgba(255,255,255,.10);background:rgba(255,255,255,.035);color:#c2cde0}
+.tipcard b{color:#ffe0a8}
+.portal-pill{
+  width:46px;height:30px;font-size:12.5px;
+  color:#e8eefb;background:#141b28;border-color:rgba(255,255,255,.14);box-shadow:none;
+}
+.portal-pill .chev{color:#ffc247;font-size:14px}
+.aa-seg{
+  height:30px;background:#141b28;border-color:rgba(255,255,255,.14);box-shadow:none;
+}
+.aa-btn{width:27px;height:28px;color:#e8eefb}
+.aa-btn .ai{font-size:12.5px}
+.aa-btn + .aa-btn{box-shadow:inset 1px 0 0 rgba(255,255,255,.12)}
+.aa-btn:active{background:rgba(255,255,255,.12)}
+.ghead .gtitle{font-size:14px}
+.ghead .gtitle .mini{width:16px;height:16px}
 </style>
 </head>
 <body>
@@ -418,9 +465,15 @@
     </div>
     <div class="lobby-scroll"><div class="lobby-inner">
       <header class="brand">
-        <div class="crown">👑</div>
-        <h1>지혜공주님<br><span>만국기</span></h1>
-        <p class="sub">World Flags · 30s Memory</p>
+        <div class="crown" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round">
+            <circle cx="12" cy="12" r="8.8"/>
+            <path d="M3.2 12h17.6"/>
+            <path d="M12 3.2c2.4 2.5 3.7 5.6 3.7 8.8s-1.3 6.3-3.7 8.8c-2.4-2.5-3.7-5.6-3.7-8.8S9.6 5.7 12 3.2z"/>
+          </svg>
+        </div>
+        <h1>유배지 만국기</h1>
+        <p class="sub">30초 암기 · 25개 중 5개</p>
       </header>
 
       <div class="fstrip" id="fstrip" aria-hidden="true"></div>
@@ -432,7 +485,7 @@
         </div>
 
         <div class="pane" id="paneSolo">
-          <label class="fld"><span>내 닉네임</span><input id="nameSolo" maxlength="10" value="선홍" autocomplete="off"></label>
+          <div class="fld"><span>내 닉네임</span><div class="npick"><select id="nameSoloSel" class="nsel" aria-label="닉네임 — 데블스 플랜 출연자에서 선택"></select><input id="nameSolo" maxlength="10" value="하석진" autocomplete="off" class="ninput hide"></div></div>
           <div class="fld"><span>라운드</span>
             <div class="seg" id="rdSeg" style="flex:1">
               <button class="rd on" data-val="1">단판</button>
@@ -448,7 +501,7 @@
         </div>
 
         <div class="pane hide" id="paneOnline">
-          <label class="fld"><span>내 닉네임</span><input id="myName" maxlength="10" value="선홍" autocomplete="off"></label>
+          <div class="fld"><span>내 닉네임</span><div class="npick"><select id="myNameSel" class="nsel" aria-label="닉네임 — 데블스 플랜 출연자에서 선택"></select><input id="myName" maxlength="10" value="하석진" autocomplete="off" class="ninput hide"></div></div>
           <div class="roomrow">
             <input id="roomInput" inputmode="numeric" maxlength="4" placeholder="방 코드 4자리" autocomplete="off">
             <button id="makeRoom" class="ghost small">방 만들기</button>
@@ -502,7 +555,6 @@
         </ol>
       </details>
       <div class="tipcard"><span>🏳️</span><span>전 세계 국기 <b id="poolCnt">268</b>종 수록 — 실제 국기 SVG 그대로, 이모지가 아닙니다.</span></div>
-      <p class="tiny" style="text-align:center;padding:0 0 4px">오직 지혜공주님을 위한 1:1</p>
     </div></div>
   </section>
 
@@ -562,7 +614,7 @@
   <!-- 최종 결과 -->
   <div id="endModal" class="overlay hide">
     <div class="modal">
-      <div class="mcrown" id="endCrown">👑</div>
+      <div class="mcrown" id="endCrown">🏆</div>
       <h2 id="endTitle"><span>결과</span></h2>
       <div class="msub" id="endSub"></div>
       <div class="mscore" id="endScore"></div>
@@ -1006,6 +1058,100 @@ window.WF_META_RAW = {"pool":[["ad","안도라"],["ae","아랍에미리트"],["a
 </script>
 <!-- AA-ENGINE:END -->
 
+<!-- ===== 《데블스 플랜》 출연자 닉네임 선택 (아케이드 공용) ===== -->
+<style>
+.npick{display:flex;flex-direction:column;gap:6px;flex:1 1 auto;min-width:0}
+.npick .nsel{
+  width:100%;height:38px;border-radius:10px;padding:0 30px 0 11px;
+  font-family:inherit;font-size:13.5px;font-weight:700;letter-spacing:0;
+  color:#f2f6ff;border:1px solid rgba(255,255,255,.16);outline:none;
+  -webkit-appearance:none;appearance:none;
+  background:#151d2b url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%239aa8c0' stroke-width='2.4' stroke-linecap='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E") no-repeat right 9px center;
+  background-size:14px 14px;
+}
+.npick .nsel:focus{border-color:rgba(255,194,71,.65);box-shadow:0 0 0 3px rgba(255,194,71,.12)}
+.npick .ninput{width:100%}
+.npick .ninput.hide{display:none}
+</style>
+<script>
+(function () {
+  'use strict';
+  var CAST = [
+    ['시즌 1', ['하석진', '궤도', '서동주', '이시원', '김동재', '곽준빈', '기욤', '박경림', '서유민', '승관', '이혜성', '조연우']],
+    ['시즌 2 · 데스룸', ['정현규', '이세돌', '규현', '강지영', '세븐하이', '윤소희', '저스틴민', '최현준', '츄', '티노', '김하린', '박상연', '손은유', '이승현']],
+    ['시즌 3 · 데드 어게인', ['장동민', '홍진호', '오현민', '서출구', '유리사', '신동', '현경렬', '존박', '재재', '넉살', '이도', '스텔라장', '정원영']]
+  ];
+  var ALL = [];
+  for (var i = 0; i < CAST.length; i++) ALL = ALL.concat(CAST[i][1]);
+
+  window.DP = {
+    cast: CAST,
+    all: ALL,
+    has: function (n) { return ALL.indexOf(n) >= 0; },
+    rnd: function (exclude) {
+      var pool = ALL.filter(function (n) { return n !== exclude; });
+      return pool[Math.floor(Math.random() * pool.length)];
+    }
+  };
+
+  function fill(sel, current) {
+    var html = '<option value="">출연자 선택</option>';
+    for (var i = 0; i < CAST.length; i++) {
+      html += '<optgroup label="' + CAST[i][0] + '">';
+      for (var j = 0; j < CAST[i][1].length; j++) {
+        html += '<option value="' + CAST[i][1][j] + '">' + CAST[i][1][j] + '</option>';
+      }
+      html += '</optgroup>';
+    }
+    html += '<option value="__custom">✎ 직접 입력</option>';
+    sel.innerHTML = html;
+    sel.value = ALL.indexOf(current) >= 0 ? current : '__custom';
+  }
+
+  /* input 바로 앞(또는 지정한) select를 출연자 선택 상자로 연결 */
+  window.dpAttach = function (input, sel) {
+    if (!input) return;
+    sel = sel || input.previousElementSibling;
+    if (!sel || sel.tagName !== 'SELECT') return;
+    input._dpSel = sel;
+    fill(sel, input.value);
+    input.classList.add('ninput');
+    var isCast = ALL.indexOf(input.value) >= 0;
+    sel.value = isCast ? input.value : '__custom';
+    input.classList.toggle('hide', isCast);
+
+    sel.addEventListener('change', function () {
+      if (sel.value === '__custom') {
+        input.classList.remove('hide');
+        if (ALL.indexOf(input.value) >= 0) input.value = '';
+        try { input.focus(); } catch (e) {}
+      } else {
+        input.value = sel.value;
+        input.classList.add('hide');
+        input.dispatchEvent(new Event('input', { bubbles: true }));
+      }
+    });
+    input.addEventListener('blur', function () {
+      if (!input.value.trim()) {
+        input.value = '';
+        input.classList.add('hide');
+        sel.value = '';
+      }
+    });
+  };
+
+  /* 코드에서 닉네임을 바꾼 뒤 선택 상자를 맞춰 준다 */
+  window.dpSync = function (input) {
+    var sel = input && input._dpSel;
+    if (!sel) return;
+    var v = String(input.value || '');
+    if (ALL.indexOf(v) >= 0) { sel.value = v; input.classList.add('hide'); }
+    else { sel.value = '__custom'; input.classList.remove('hide'); }
+  };
+})();
+</script>
+
+
 <script>
 (function () {
   'use strict';
@@ -1180,13 +1326,16 @@ window.WF_META_RAW = {"pool":[["ad","안도라"],["ae","아랍에미리트"],["a
   /* =========================================================
      2. 상태
      ========================================================= */
+  /* 기본 닉네임 — 《데블스 플랜》 출연자 중 무작위 배정 */
+  var DEF_A = window.DP ? DP.rnd() : '플레이어 1';
+  var DEF_B = window.DP ? DP.rnd(DEF_A) : '플레이어 2';
   var S = {
     mode: 'solo', diff: 'normal', rounds: 1, limit: 45,
-    names: ['선홍', '지혜'], seat: 0,
+    names: [DEF_A, DEF_B], seat: 0,
     round: 0, seed: 0, seq: [], answers: [], grid: [], sel: [],
     phase: 'lobby', scores: [], results: [],
     memStart: 0, pickStart: 0, lastStep: -1, lastWarn: 0,
-    result: null, opp: null, oppSub: false, oppName: '지혜', rivalPending: false,
+    result: null, opp: null, oppSub: false, oppName: DEF_B, rivalPending: false,
     recentSeq: loadRecent(), oppFinal: null, finalShown: false, oppLeft: false,
     onlineReady: false, host: false
   };
@@ -1633,12 +1782,12 @@ window.WF_META_RAW = {"pool":[["ad","안도라"],["ae","아랍에미리트"],["a
 
     $('#endTitle').innerHTML = '<span>최종 결과</span>';
     if (online) {
-      $('#endCrown').textContent = res === 'win' ? '👑' : (res === 'lose' ? '💤' : (res === 'draw' ? '🏳️' :
-        (mine.total >= max * 0.8 ? '👑' : (mine.total >= max * 0.5 ? '🏳️' : '💤'))));
+      $('#endCrown').textContent = res === 'win' ? '🏆' : (res === 'lose' ? '💤' : (res === 'draw' ? '🏳️' :
+        (mine.total >= max * 0.8 ? '🏆' : (mine.total >= max * 0.5 ? '🏳️' : '💤'))));
       $('#endSub').innerHTML = '<i>나</i> ' + escHtml(who) + ' <b>vs</b> ' + escHtml(oppName);
       $('#endScore').innerHTML = '합계 <b>' + mine.total + '</b> / ' + max + ' · 총 ' + fmtSec(mine.ms);
     } else {
-      $('#endCrown').textContent = mine.total >= max * 0.8 ? '👑' : (mine.total >= max * 0.5 ? '🏳️' : '💤');
+      $('#endCrown').textContent = mine.total >= max * 0.8 ? '🏆' : (mine.total >= max * 0.5 ? '🏳️' : '💤');
       $('#endSub').textContent = '';
       $('#endScore').innerHTML = '합계 <b>' + mine.total + '</b> / ' + max;
     }
@@ -2089,8 +2238,8 @@ window.WF_META_RAW = {"pool":[["ad","안도라"],["ae","아랍에미리트"],["a
 
     $('#makeRoom').addEventListener('click', function () {
       window.AA && window.AA.kick && window.AA.kick();
-      var name = ($('#myName').value || '선홍').trim().slice(0, 10);
-      S.names = [name, '지혜']; S.seat = 0; S.mode = 'online'; S.host = true;
+      var name = ($('#myName').value || DEF_A).trim().slice(0, 10);
+      S.names = [name, DEF_B]; S.seat = 0; S.mode = 'online'; S.host = true;
       Net.reset();
       Net.role = 'host';
       Net.room = makeRoomCode();
@@ -2103,8 +2252,8 @@ window.WF_META_RAW = {"pool":[["ad","안도라"],["ae","아랍에미리트"],["a
       window.AA && window.AA.kick && window.AA.kick();
       var code = ($('#roomInput').value || '').replace(/\D/g, '').slice(0, 4);
       if (code.length !== 4) { toast('방 코드 4자리를 입력해 주세요'); return; }
-      var name = ($('#myName').value || '지혜').trim().slice(0, 10);
-      S.names = ['선홍', name]; S.seat = 1; S.mode = 'online'; S.host = false;
+      var name = ($('#myName').value || DEF_B).trim().slice(0, 10);
+      S.names = [DEF_A, name]; S.seat = 1; S.mode = 'online'; S.host = false;
       Net.reset();
       Net.role = 'guest';
       Net.room = code;
@@ -2133,8 +2282,8 @@ window.WF_META_RAW = {"pool":[["ad","안도라"],["ae","아랍에미리트"],["a
         startFromHost(seed, 1);
         return;
       }
-      var name = ($('#nameSolo').value || '선홍').trim().slice(0, 10);
-      S.names = [name, '지혜']; S.seat = 0;
+      var name = ($('#nameSolo').value || DEF_A).trim().slice(0, 10);
+      S.names = [name, DEF_B]; S.seat = 0;
       S.round = 0; S.scores = []; S.results = [];
       S.oppFinal = null; S.finalShown = false; S.oppLeft = false;
       beginRound(newSeed(), 1);
@@ -2176,7 +2325,8 @@ window.WF_META_RAW = {"pool":[["ad","안도라"],["ae","아랍에미리트"],["a
       $('#paneSolo').classList.add('hide');
       $('#paneOnline').classList.remove('hide');
       $('#roomInput').value = code;
-      $('#myName').value = '지혜';
+      $('#myName').value = DEF_B;
+      if (window.dpSync) dpSync($('#myName'));
       setTimeout(function () { $('#joinRoom').click(); }, 250);
     } catch (e) {}
   }
@@ -2187,6 +2337,15 @@ window.WF_META_RAW = {"pool":[["ad","안도라"],["ae","아랍에미리트"],["a
   function aaSfx(n) { try { window.AA && window.AA.sfx(n); } catch (e) {} }
 
   window.AA && window.AA.init('wf');
+  function initNickFields() {
+    [['#myName', DEF_A], ['#nameSolo', DEF_A]].forEach(function (p) {
+      var el = document.querySelector(p[0]);
+      if (!el) return;
+      el.value = p[1];
+      if (window.dpAttach) dpAttach(el);
+    });
+  }
+  initNickFields();
   paintStrip();
   paintLobbyCfg();
   bindLobby();

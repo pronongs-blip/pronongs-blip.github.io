@@ -68,11 +68,16 @@ body::before{
   white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .brand p b{color:#e2c98c;font-weight:900}
 .tools{flex:0 0 auto;display:flex;align-items:center;gap:5px}
-.nav{display:flex;align-items:center;gap:3px;height:29px;padding:0 5px;border-radius:9px;text-decoration:none;
-  font-size:9px;font-weight:900;color:#dfe6f4;background:var(--panel3);border:1px solid var(--line);
-  white-space:nowrap;transition:transform .18s,background .18s}
-.nav:active{transform:scale(.95);background:#26334d}
-.nav em{font-style:normal;font-size:11px}
+.nbtn{flex:0 0 auto;display:inline-flex;align-items:center;gap:3px;height:30px;padding:0 8px;border-radius:9px;cursor:pointer;
+  font:inherit;font-size:9.5px;font-weight:900;color:#ffe1a0;background:rgba(255,194,71,.10);
+  border:1px solid rgba(255,194,71,.30);white-space:nowrap;
+  transition:transform .18s,background .18s}
+.nbtn:active{transform:scale(.95);background:rgba(255,194,71,.19)}
+.nbtn em{font-style:normal;font-size:12px;line-height:1}
+.nbtn .cnt{font-style:normal;display:inline-flex;align-items:center;justify-content:center;min-width:14px;height:14px;
+  padding:0 3px;border-radius:99px;font-size:8.4px;font-weight:900;color:#1c1503;
+  background:linear-gradient(180deg,#ffd77a,#ffb928);font-variant-numeric:tabular-nums}
+.nbtn .cnt[hidden]{display:none}
 .rbtn{flex:0 0 auto;width:30px;height:30px;border-radius:9px;cursor:pointer;display:flex;align-items:center;justify-content:center;
   font:inherit;font-size:14px;color:var(--txt);background:var(--panel3);border:1px solid var(--line);
   transition:transform .18s,background .18s;padding:0}
@@ -166,6 +171,10 @@ body::before{
 .np li{position:relative;padding-left:11px;font-size:10.8px;line-height:1.5;color:#c6d2e6}
 .np li::before{content:"";position:absolute;left:2px;top:6.5px;width:4px;height:4px;border-radius:50%;
   background:var(--gold);opacity:.8}
+#nBody .notice{margin-bottom:7px}
+#nBody .notice:last-child{margin-bottom:0}
+#nBody .notice .nh b{font-size:12.6px}
+#nBody .notice .np li{font-size:11.4px}
 
 /* ---------- 상세 시트 ---------- */
 .sheet-wrap{position:fixed;inset:0;z-index:20;display:flex;align-items:flex-end;justify-content:center}
@@ -191,8 +200,8 @@ body::before{
 .stat{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
 .st{background:rgba(255,255,255,.035);border:1px solid var(--line2);border-radius:10px;padding:7px 8px;min-width:0}
 .st b{display:block;font-size:8.4px;font-weight:900;letter-spacing:.04em;color:var(--dim2)}
-.st span{display:block;margin-top:2px;font-size:11px;font-weight:900;color:#e8effb;
-  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.st span{display:block;margin-top:2px;font-size:10.8px;line-height:1.35;font-weight:900;color:#e8effb;
+  white-space:normal;word-break:keep-all;overflow-wrap:break-word;overflow:visible;text-overflow:clip}
 .st span.dim{color:#7f8ea6}
 .sect{margin-top:13px}
 .sect h3{margin:0 0 6px;display:flex;align-items:center;gap:5px;font-size:10.4px;font-weight:900;
@@ -204,6 +213,30 @@ body::before{
 .meal li em{flex:0 0 auto;font-style:normal;font-size:9px;font-weight:900;color:#8ea2bf;
   width:26px;text-align:right;padding-top:1px}
 .note{margin:6px 0 0;font-size:9.6px;line-height:1.45;color:#8b9ab3}
+
+/* 식판 사진 (지연 로딩) */
+.traybtn{display:block;position:relative;width:100%;padding:0;margin:0;border:1px solid var(--line);
+  border-radius:12px;overflow:hidden;background:#0b1322;cursor:zoom-in;font:inherit;line-height:0;
+  transition:transform .16s,border-color .18s}
+.traybtn:active{transform:scale(.99);border-color:rgba(255,194,71,.42)}
+.traybtn img{display:block;width:100%;height:auto}
+.traybtn .zt{position:absolute;right:7px;bottom:7px;font-size:8.6px;font-weight:900;line-height:1.4;
+  color:#1c1503;background:rgba(255,215,122,.94);border-radius:6px;padding:2px 6px}
+.traybtn .tl{position:absolute;left:7px;top:7px;font-size:8.6px;font-weight:900;line-height:1.4;
+  color:#0d1526;background:rgba(243,246,252,.92);border-radius:6px;padding:2px 6px}
+
+/* 라이트박스 */
+.lb{position:fixed;inset:0;z-index:50;display:flex;align-items:center;justify-content:center;
+  padding:calc(env(safe-area-inset-top,0px) + 46px) 8px calc(env(safe-area-inset-bottom,0px) + 10px);
+  background:rgba(2,5,11,.985);opacity:0;transition:opacity .18s;
+  backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
+.lb[hidden]{display:none}
+.lb.on{opacity:1}
+.lb img{display:block;max-width:100%;max-height:100%;width:auto;height:auto;object-fit:contain;border-radius:8px}
+.lb-x{position:absolute;top:calc(env(safe-area-inset-top,0px) + 8px);right:10px;width:34px;height:34px;
+  border-radius:50%;cursor:pointer;font:inherit;font-size:14px;font-weight:900;color:#fff;
+  background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.24);padding:0}
+.lb-x:active{transform:scale(.94)}
 .brief{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:4px}
 .brief li{position:relative;padding-left:11px;font-size:11.4px;line-height:1.55;color:#d3dded}
 .brief li::before{content:"";position:absolute;left:2px;top:7px;width:4px;height:4px;border-radius:50%;background:var(--mint)}
@@ -246,7 +279,7 @@ body::before{
 }
 @media (max-width:359px){
   .brand p{display:none}
-  .nav span{display:none}
+  .nbtn span{display:none}
   .hl{font-size:11.2px}
 }
 @media (prefers-reduced-motion:reduce){
@@ -324,8 +357,9 @@ body:not(.locked) .lock{display:none}
       <p id="brandSub"><b>EUNU</b> · 가족 전용 공간</p>
     </div>
     <div class="tools">
-      <a class="nav" href="./office.html" aria-label="비서실로 이동"><em>🏢</em><span>비서실</span></a>
-      <a class="nav" href="./index.html" aria-label="오락실로 이동"><em>🕹️</em><span>오락실</span></a>
+      <button class="nbtn" id="noticeBtn" type="button" aria-label="공지·일정 보기" aria-haspopup="dialog">
+        <em aria-hidden="true">📢</em><span>공지</span><i class="cnt" id="noticeCnt" hidden>0</i>
+      </button>
       <button class="rbtn" id="refresh" type="button" aria-label="새로고침" title="새로고침">↻</button>
     </div>
   </header>
@@ -362,11 +396,6 @@ body:not(.locked) .lock{display:none}
     <div id="list"></div>
   </section>
 
-  <section class="sec">
-    <div class="sec-h"><h2>공지 · 일정</h2><span class="k">NOTICE</span><span class="sp"></span></div>
-    <div id="notices"></div>
-  </section>
-
   <div class="foot">
     <span class="sync">최근 동기화 <b id="syncAt">-</b></span>
     <span class="dot"></span>
@@ -390,15 +419,34 @@ body:not(.locked) .lock{display:none}
   </div>
 </div>
 
+<div class="sheet-wrap" id="nWrap" hidden>
+  <div class="sheet-bg" id="nBg"></div>
+  <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="nTitle">
+    <div class="grab" aria-hidden="true"></div>
+    <div class="sh-head">
+      <div class="hd"><b id="nTitle">📢 공지 · 일정</b><span id="nSub">NOTICE</span></div>
+      <button class="xbtn" id="nClose" type="button" aria-label="닫기">✕</button>
+    </div>
+    <div class="sh-body" id="nBody"></div>
+  </div>
+</div>
+
+<div class="lb" id="lb" hidden>
+  <img id="lbImg" alt="점심 식판 사진 확대">
+  <button class="lb-x" id="lbClose" type="button" aria-label="닫기">✕</button>
+</div>
+
 <script>
 (function(){
   "use strict";
   var FB_URL = "https://seonongs-hq-default-rtdb.firebaseio.com/eunu_vault/eunu_0919_sec/notes.json";
+  var PHOTO_BASE = "https://seonongs-hq-default-rtdb.firebaseio.com/eunu_vault/eunu_0919_sec/photos/";
   var PIN_HASH = "b278d52bfa3225e70001ea4bd9a9070f933b42a5f8153c17890320372210d4aa";  /* SHA-256("0919") */
   var AUTH_KEY = "eunu_auth_v1";
   var BIRTH = new Date(2025, 8, 19);        /* 2025-09-19 */
 
   var state = { data: { days: [], notices: [], meta: {} }, range: "all", sortDesc: true, live: false, openIdx: -1, sheetOrder: [], unlocked: false, es: null, timer: null };
+  var photoCache = {};   /* date -> dataURL | null(사진 없음) */
   var $ = function(id){ return document.getElementById(id); };
 
   /* ---------- 날짜 helpers ---------- */
@@ -516,8 +564,16 @@ body:not(.locked) .lock{display:none}
   }
 
   function renderNotices(){
-    var box = $("notices");
     var ns = (state.data.notices || []).slice().sort(function(a,b){ return a.d < b.d ? 1 : -1; });
+    var cnt = $("noticeCnt");
+    if(cnt){
+      if(ns.length){ cnt.textContent = ns.length; cnt.hidden = false; }
+      else { cnt.hidden = true; }
+    }
+    var sub = $("nSub");
+    if(sub) sub.textContent = ns.length ? "NOTICE " + ns.length + "건" : "NOTICE";
+    var box = $("nBody");
+    if(!box) return;
     if(!ns.length){ box.innerHTML = '<div class="empty">공지가 없습니다.</div>'; return; }
     box.innerHTML = ns.map(function(n){
       return '<article class="notice"><div class="nh"><b>' + esc(n.title) + '</b>' +
@@ -563,6 +619,12 @@ body:not(.locked) .lock{display:none}
       }).join("") + '</ul>' +
       (day.lunchNote ? '<p class="note">' + esc(day.lunchNote) + '</p>' : '') + '</div>';
 
+    /* 식판 사진 — 탭할 때만 Firebase에서 지연 로딩 */
+    html += '<div class="sect" id="traySect" hidden><h3><em>🍱</em>오늘의 식판<i>탭하면 크게</i></h3>' +
+      '<button class="traybtn" id="trayBtn" type="button" aria-label="식판 사진 크게 보기">' +
+      '<img id="trayImg" alt="' + esc(md(day.d)) + ' 점심 식판 사진"><span class="tl">' + esc(md(day.d)) + '</span>' +
+      '<span class="zt">🔍 확대</span></button></div>';
+
     /* 간식 */
     html += '<div class="sect"><h3><em>🥣</em>간식</h3>' +
       '<ul class="meal">' +
@@ -602,6 +664,9 @@ body:not(.locked) .lock{display:none}
     $("prevDay").disabled = i <= 0;
     $("nextDay").disabled = i < 0 || i >= order.length - 1;
 
+    $("trayBtn").addEventListener("click", openPhoto);
+    loadTray(day.d);
+
     var w = $("sheetWrap"); w.hidden = false;
     requestAnimationFrame(function(){ w.classList.add("on"); });
     document.body.style.overflow = "hidden";
@@ -614,6 +679,72 @@ body:not(.locked) .lock{display:none}
     document.body.style.overflow = "";
     setTimeout(function(){ w.hidden = true; }, 180);
     state.openIdx = -1;
+  }
+
+  function openNotices(){
+    renderNotices();
+    var w = $("nWrap"); w.hidden = false;
+    requestAnimationFrame(function(){ w.classList.add("on"); });
+    document.body.style.overflow = "hidden";
+    $("nBody").scrollTop = 0;
+  }
+
+  function closeNotices(){
+    var w = $("nWrap");
+    if(w.hidden) return;
+    w.classList.remove("on");
+    if($("sheetWrap").hidden) document.body.style.overflow = "";
+    setTimeout(function(){ w.hidden = true; }, 180);
+  }
+
+  /* ---------- 식판 사진 지연 로딩 ---------- */
+  function showTray(url){
+    var sect = $("traySect"), img = $("trayImg");
+    if(!sect || !img || !url) return;
+    img.onerror = function(){ sect.hidden = true; };
+    img.src = url;
+    sect.hidden = false;
+  }
+
+  function loadTray(date){
+    var sect = $("traySect");
+    if(!sect) return;
+    sect.hidden = true;
+    var img = $("trayImg"); if(img) img.removeAttribute("src");
+    if(Object.prototype.hasOwnProperty.call(photoCache, date)){
+      showTray(photoCache[date]);
+      return;
+    }
+    var want = date;
+    fetch(PHOTO_BASE + date + ".json", { cache: "no-store" })
+      .then(function(r){
+        if(r.status === 404) return null;
+        if(!r.ok) throw new Error("http " + r.status);
+        return r.json();
+      })
+      .then(function(j){
+        var u = (j && typeof j.img === "string" && j.img.indexOf("data:image/jpeg;base64,") === 0) ? j.img : null;
+        photoCache[want] = u;
+        if(u && state.openIdx === want) showTray(u);
+      })
+      .catch(function(){});
+  }
+
+  function openPhoto(){
+    var t = $("trayImg");
+    if(!t || !t.getAttribute("src")) return;
+    $("lbImg").src = t.getAttribute("src");
+    var w = $("lb"); w.hidden = false;
+    requestAnimationFrame(function(){ w.classList.add("on"); });
+    document.body.style.overflow = "hidden";
+  }
+
+  function closePhoto(){
+    var w = $("lb");
+    if(w.hidden) return;
+    w.classList.remove("on");
+    setTimeout(function(){ w.hidden = true; $("lbImg").removeAttribute("src"); }, 175);
+    if($("sheetWrap").hidden && $("nWrap").hidden) document.body.style.overflow = "";
   }
 
   function step(dir){
@@ -733,8 +864,17 @@ body:not(.locked) .lock{display:none}
   $("sheetBg").addEventListener("click", closeSheet);
   $("prevDay").addEventListener("click", function(){ step(-1); });
   $("nextDay").addEventListener("click", function(){ step(1); });
+  $("noticeBtn").addEventListener("click", openNotices);
+  $("nClose").addEventListener("click", closeNotices);
+  $("nBg").addEventListener("click", closeNotices);
+  $("lbClose").addEventListener("click", closePhoto);
+  $("lb").addEventListener("click", function(e){ if(e.target.id === "lb") closePhoto(); });
   document.addEventListener("keydown", function(e){
-    if(e.key === "Escape" && !$("sheetWrap").hidden) closeSheet();
+    if(e.key === "Escape"){
+      if(!$("lb").hidden){ closePhoto(); return; }
+      if(!$("nWrap").hidden){ closeNotices(); return; }
+      if(!$("sheetWrap").hidden){ closeSheet(); return; }
+    }
     if($("sheetWrap").hidden) return;
     if(e.key === "ArrowLeft") step(-1);
     if(e.key === "ArrowRight") step(1);
@@ -780,7 +920,11 @@ body:not(.locked) .lock{display:none}
     closeSheet();
     state.data = { days: [], notices: [], meta: {} };
     $("list").innerHTML = "";
-    $("notices").innerHTML = "";
+    $("nBody").innerHTML = "";
+    $("noticeCnt").hidden = true;
+    closePhoto();
+    photoCache = {};
+    closeNotices();
     $("hgLatest").textContent = "-"; $("hgTray").textContent = "-";
     $("hgTopic").textContent = "-"; $("hgNext").textContent = "-";
     try{ localStorage.removeItem(AUTH_KEY); }catch(e){}

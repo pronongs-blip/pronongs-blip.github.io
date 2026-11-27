@@ -3704,6 +3704,7 @@ let nickTouched = false;      /* 닉네임을 직접 고쳤는지 (안 고쳤으
 function showScreen(id) {
   document.querySelectorAll('.screen').forEach(s => s.classList.toggle('on', s.id === id));
   if (id === 'home') syncHomeFields();
+  try { if (typeof roomWatch === 'function') roomWatch(); } catch (e) {}
   requestAnimationFrame(fitBoard);
 }
 function goHome() {
@@ -3947,6 +3948,7 @@ function quickConnect(role) {
   var QUICK_CODE = '0000';
   var quickOn = false, quickPoll = 0;
   var roomIn = false;
+  var roomJoinTimer = 0;
   var DEF_A = DEF_HOST, DEF_B = DEF_GUEST;
   function clampName(v, d) { var t = String(v == null ? '' : v).trim().slice(0, 10); return t || d; }                  /* 내가 방을 열고 상대를 기다리는 중 */
 
@@ -4049,6 +4051,18 @@ function quickConnect(role) {
     quickMsg(rEsc((room && room.hostName) || '상대') + ' 님 방에 들어가는 중…', true);
     if (Net.peer) { try { Net.send({ t: 'bye' }); } catch (e) {} }
     joinRoom(QUICK_CODE);
+
+    clearTimeout(roomJoinTimer);
+    roomJoinTimer = setTimeout(function () {
+      if (Net.peer) return;
+      if (Net.role === 'guest' && !Net.peer) {
+        try { Net.reset(); } catch (e) {}
+        roomIn = false;
+        roomIdle();
+        roomWatch();
+        quickMsg('방에 연결하지 못했습니다 · 잠시 후 다시 시도해 주세요', false);
+      }
+    }, 12000);
   }
   function roomBegin() {
     roomIn = false;

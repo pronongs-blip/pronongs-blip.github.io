@@ -2889,6 +2889,7 @@ window.ARC = window.ARC || {
   var QUICK_CODE = '0000';
   var quickOn = false, quickPoll = 0;
   var roomIn = false;
+  var roomJoinTimer = 0;
   function clampName(v, d) { var t = String(v == null ? '' : v).trim().slice(0, 10); return t || d; }                  /* 내가 방을 열고 상대를 기다리는 중 */
 
   function rEsc(t) {
@@ -2990,6 +2991,18 @@ window.ARC = window.ARC || {
     S.mode = 'online';
     showInvite(QUICK_CODE);
     Net.open();
+
+    clearTimeout(roomJoinTimer);
+    roomJoinTimer = setTimeout(function () {
+      if (Net.peer) return;
+      if (Net.role === 'guest' && !Net.peer) {
+        try { Net.reset(); } catch (e) {}
+        roomIn = false;
+        roomIdle();
+        roomWatch();
+        quickMsg('방에 연결하지 못했습니다 · 잠시 후 다시 시도해 주세요', false);
+      }
+    }, 12000);
   }
   function roomBegin() {
     roomIn = false;

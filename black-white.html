@@ -3012,6 +3012,7 @@ window.ARC = window.ARC || {
   var QUICK_CODE = '0000';
   var quickOn = false, quickPoll = 0;
   var roomIn = false;                  /* 내가 방을 열고 상대를 기다리는 중 */
+  var roomJoinTimer = 0;
 
   function rEsc(t) {
     return String(t == null ? '' : t).replace(/[&<>"']/g, function (c) {
@@ -3103,6 +3104,17 @@ window.ARC = window.ARC || {
     quickSetBtn(true);
     quickMsg(rEsc((room && room.hostName) || '상대') + ' 님 방에 들어가는 중…', true);
     connectAs('guest', QUICK_CODE);
+    clearTimeout(roomJoinTimer);
+    roomJoinTimer = setTimeout(function () {
+      if (Net.peer || S.mode !== 'online') return;
+      if (Net.role === 'guest' && !Net.peer) {
+        try { Net.reset(); } catch (e) {}
+        roomIn = false;
+        roomIdle();
+        roomWatch();
+        quickMsg('방에 연결하지 못했습니다 · 잠시 후 다시 시도해 주세요', false);
+      }
+    }, 12000);
   }
   function roomBegin() {
     roomIn = false;

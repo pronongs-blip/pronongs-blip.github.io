@@ -24,8 +24,8 @@
 | ◐ | **흑과 백** <br><sub>Black & White</sub> | 0~8 타일의 흑·백만 보고 승부하는 9라운드 1:1 심리전 (온라인 · AI · 추리 메모) | [▶ 열기](https://pronongs-blip.github.io/black-white.html) |
 | 🃏 | **기억포커** <br><sub>Memory Poker</sub> | 20초 암기 → 60초 선택, 내 2장 + 공용 3장으로 겨루는 9단계 족보 승부 (온라인 · AI) | [▶ 열기](https://pronongs-blip.github.io/memory-poker.html) |
 | 🌐 | **유배지 만국기** <br><sub>World Flags</sub> | 30초 동안 10개 국기 3회 반복 암기 → 25개 보기 중 **5개** 찾기. 전 세계 **268종** 실제 국기 SVG, 온라인 1:1, **지옥 난이도**(유사 국기 낚시) | [▶ 열기](https://pronongs-blip.github.io/world-flags.html) |
-| 🀄 | **결! 합!** <sub>`NEW`</sub> <br><sub>Gyeol Hap</sub> | 9장의 그림에서 모양·도형색·바탕색이 **모두 같거나 모두 다른** 3장(합)을 찾고, 합이 없으면 **결!** 을 외치는 1:1 두뇌 서바이벌 (온라인 · AI · 한 기기) | [▶ 열기](https://pronongs-blip.github.io/gyeol-hap.html) |
 | 🂠 | **인디언 포커** <sub>`NEW`</sub> <br><sub>Indian Poker</sub> | 내 카드는 모르고 **상대 카드만** 보이는 1~10 카드·칩 베팅 심리전. **10을 들고 폴드하면 −10칩** 페널티 (온라인 · AI · 한 기기) | [▶ 열기](https://pronongs-blip.github.io/indian-poker.html) |
+| 🔍 | **틀린 그림 찾기** <br><sub>Spot the Difference</sub> | 12가지 그림에서 다른 곳 **5곳** 찾기. 60초 제한·힌트·오답 페널티, 한 기기 교대 대결과 온라인 1:1 | [▶ 열기](https://pronongs-blip.github.io/spot-diff.html) |
 
 > 🌐 **유배지 만국기** 는 《데블스 플랜: 데드 어게인》 5일차 유배지 매치 규칙을 그대로 옮겼습니다.
 > 아일랜드 ↔ 코트디부아르 ↔ 이탈리아, 차드 ↔ 루마니아 ↔ 몰도바처럼 **색 배열만 다른 국기**가 오답으로 깔립니다.
@@ -41,8 +41,8 @@
 - **Web Audio 사운드 엔진** — 외부 음원 파일 없이 합성한 게임별 BGM과 효과음, 헤더의 `♪ | 🔊` 토글로 개별 온·오프(설정 공유).
 - **MQTT 온라인 1:1** — 공개 브로커(`wss://broker.emqx.io:8084/mqtt`) 위의 미니 MQTT 클라이언트와 `?room=XXXX` 초대 링크. 같은 기기에서는 BroadcastChannel로 자동 폴백.
 - **국기 268종 인라인 SVG** — 이모지가 아니라 실제 벡터 국기. 유엔 회원국 193개국 + 지역·자치령·기구기 전체를 4:3 규격으로 통일했습니다.
-- **기록 배지** — 포털이 `localStorage`(`yg_arcade_stats_v1`)와 Firebase `/arcade_stats` 를 함께 읽어 실행 횟수를 세어 `NEW` · `최다` · `N회` 배지를 답니다.
-- **📜 경기 기록** — 판이 끝날 때마다 승/패·상대·점수·시각을 `yg_arcade_history_v1` 와 Firebase `/arcade_history` 에 함께 저장합니다. 두 사람이 각자 폰으로 둘러도 하나의 **부부 통합 전적**으로 쌓이고, 포털 하단 `📜 기록`에서 ​**전체 / 사람 / AI** 로 걸러 볼 수 있으며 전적도 `사람 N승 M패 · AI N승 M패` 와 연승으로 나눠 셉니다(최신 200경기 유지).
+- **기록 배지** — 포털이 `localStorage`(`yg_arcade_stats_v1`)와 Firebase `/arcade_stats` 를 함께 읽어, 아직 안 해본 게임은 `NEW`, 두 사람 승부가 쌓인 게임은 `N승 M패` 배지를 답니다.
+- **📜 경기 기록** — 판이 끝날 때마다 승/패·상대·점수·시각을 `yg_arcade_history_v1` 와 Firebase `/arcade_history` 에 함께 저장합니다. 기록은 **두 사람(한 기기 · 온라인 1:1) 승부만** 남기고 AI 대전은 저장하지 않으며, 두 사람이 각자 폰으로 둘러도 하나의 **부부 통합 전적**으로 쌓입니다. 포털 하단 `📜 기록`에서 **전체 / 한 기기 / 온라인** 으로 걸러 보고 `선홍 vs 지혜` 승패와 연승을 확인합니다(최신 200경기 유지).
 - **iOS 홈 화면** — Safari 공유 → 홈 화면에 추가. 전용 아이콘(`apple-touch-icon.png`)과 전체화면 메타 태그가 들어 있습니다.
 
 ---
@@ -57,8 +57,8 @@ pronongs-blip.github.io/
 ├── black-white.html      # 흑과 백
 ├── memory-poker.html     # 기억포커
 ├── world-flags.html      # 유배지 만국기 (국기 268종 인라인 SVG)
-├── gyeol-hap.html        # 결! 합!
 ├── indian-poker.html     # 인디언 포커
+├── spot-diff.html        # 틀린 그림 찾기
 └── apple-touch-icon.png  # 홈 화면 아이콘
 ```
 

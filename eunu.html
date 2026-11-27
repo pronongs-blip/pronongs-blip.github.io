@@ -140,12 +140,15 @@ body::before{
 .chip.mon.on{color:#0c1727;background:linear-gradient(180deg,#b6d7ff,#7fb6ff);
   border-color:rgba(127,182,255,.62);box-shadow:0 6px 14px -8px rgba(127,182,255,.85)}
 
-/* 보기 전환 (일기 · 식판 앨범) */
-.vtog{flex:0 0 auto;display:flex;align-items:center;gap:2px;padding:2px;border-radius:999px;
-  background:rgba(255,255,255,.05);border:1px solid var(--line2)}
-.vbtn{flex:0 0 auto;height:23px;padding:0 9px;border-radius:999px;cursor:pointer;font:inherit;
-  font-size:9.7px;font-weight:900;letter-spacing:-.01em;color:#aebbcf;background:transparent;border:0;
-  white-space:nowrap;transition:background .18s,color .18s;line-height:1}
+/* 보기 전환 (일기 · 식판 · 활동 · 통계) — 전체 폭 4등분 세그먼트 */
+.vtog{display:grid;grid-template-columns:repeat(4,1fr);gap:3px;width:100%;margin:0 0 9px;padding:3px;
+  border-radius:12px;background:rgba(255,255,255,.05);border:1px solid var(--line2)}
+.vbtn{min-width:0;height:31px;padding:0 2px;border-radius:9px;cursor:pointer;font:inherit;
+  font-size:10.6px;font-weight:900;letter-spacing:-.02em;color:#aebbcf;background:transparent;border:0;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  transition:background .18s,color .18s;line-height:1;
+  display:flex;align-items:center;justify-content:center;gap:3px}
+.vbtn .vi{font-size:11px;line-height:1;flex:0 0 auto}
 .vbtn.on{color:#1c1503;background:linear-gradient(180deg,#ffd77a,#ffb928);
   box-shadow:0 6px 14px -9px rgba(255,194,71,.95)}
 .vbtn:active{transform:scale(.96)}
@@ -202,6 +205,73 @@ body::before{
 .afd span{font-size:8.7px;font-weight:900;color:#8e9bb3;white-space:nowrap;line-height:1.2}
 .al{display:block;margin-top:3px;font-size:9.3px;line-height:1.35;font-weight:700;color:#a9b8d0;
   white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+/* 활동 앨범 (식판 앨범 규격 공유 + 장수 배지) */
+#act[hidden],#stats[hidden],#srow[hidden]{display:none}
+.acnt{position:absolute;right:7px;bottom:7px;font-size:9px;font-weight:900;line-height:1.45;
+  color:#1c1503;background:rgba(255,215,122,.95);border-radius:6px;padding:2px 6px;
+  font-variant-numeric:tabular-nums}
+.acnt[hidden]{display:none}
+
+/* 상세 시트 안 활동 사진 스트립 */
+.astrip{display:flex;gap:6px;overflow-x:auto;padding-bottom:3px;scrollbar-width:none;
+  -webkit-overflow-scrolling:touch}
+.astrip::-webkit-scrollbar{display:none}
+.athumb{flex:0 0 auto;width:88px;height:88px;padding:0;margin:0;border-radius:11px;overflow:hidden;
+  cursor:zoom-in;background:#0b1322;border:1px solid var(--line);line-height:0}
+.athumb img{display:block;width:100%;height:100%;object-fit:cover}
+.athumb:active{transform:scale(.97);border-color:rgba(255,194,71,.42)}
+
+/* ---------- 통계 ---------- */
+.sc{margin:0 0 9px;padding:14px 15px 15px;border-radius:15px;
+  background:linear-gradient(180deg,#141d31,#10182a);border:1px solid var(--line)}
+.sc-h{display:flex;align-items:baseline;gap:7px;margin:0 0 12px;min-width:0}
+.sc-h b{font-size:12.4px;font-weight:900;letter-spacing:-.01em;white-space:nowrap}
+.sc-h span{margin-left:auto;font-size:9.9px;font-weight:800;color:#8b9ab2;white-space:nowrap;
+  font-variant-numeric:tabular-nums}
+.sc-h.tight{margin-bottom:9px}
+.kpi{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.k{background:rgba(255,255,255,.035);border:1px solid var(--line2);border-radius:12px;
+  padding:10px 12px 11px;min-width:0}
+.k b{display:block;font-size:9px;font-weight:900;letter-spacing:.02em;color:#93a1b8}
+.k strong{display:block;margin-top:4px;font-size:25px;line-height:1;font-weight:900;
+  color:#ffe1a0;letter-spacing:-.035em;font-variant-numeric:tabular-nums}
+.k strong em{font-style:normal;margin-left:2px;font-size:11.5px;font-weight:900;color:#c2cee2;
+  letter-spacing:0}
+.k strong.nil{color:#5f6d85}
+.brow{margin:0 0 11px}
+.brow:last-child{margin-bottom:0}
+.bl{display:flex;align-items:baseline;gap:6px;margin:0 0 5px;min-width:0}
+.bl b{font-size:11.8px;font-weight:900;color:#e2eaf7;white-space:nowrap}
+.bl span{margin-left:auto;font-size:11.4px;font-weight:900;color:#fff;white-space:nowrap;
+  font-variant-numeric:tabular-nums;letter-spacing:-.01em}
+.bl span i{font-style:normal;font-size:10px;font-weight:800;color:#9aa8bf;margin-left:5px}
+.bt{height:10px;border-radius:99px;background:rgba(255,255,255,.07);overflow:hidden}
+.bt i{display:block;height:100%;min-width:0;border-radius:99px;
+  background:linear-gradient(90deg,#ffd77a,#ffb928);transition:width .45s cubic-bezier(.3,.9,.3,1)}
+.bt.sky i{background:linear-gradient(90deg,#b6d7ff,#7fb6ff)}
+.bt.mint i{background:linear-gradient(90deg,#a6f0cd,#4fd4a0)}
+.bt.rose i{background:linear-gradient(90deg,#ffc3b8,#ff9f8a)}
+.bt.flat i{background:linear-gradient(90deg,#5d6c85,#46536a)}
+.big{display:flex;align-items:baseline;gap:6px;margin:-2px 0 10px}
+.big strong{font-size:27px;line-height:1.1;font-weight:900;color:#8fe9c2;letter-spacing:-.035em;
+  font-variant-numeric:tabular-nums}
+.big strong.nil{color:#5f6d85}
+.big span{font-size:10.6px;font-weight:900;color:#a4b2c8;letter-spacing:.02em}
+.pair{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.pair div{background:rgba(255,255,255,.035);border:1px solid var(--line2);border-radius:11px;
+  padding:9px 11px;min-width:0}
+.pair b{display:block;font-size:9px;font-weight:900;letter-spacing:.02em;color:#93a1b8}
+.pair span{display:block;margin-top:3px;font-size:13px;line-height:1.3;font-weight:900;color:#eef3fb;
+  font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.pair span em{font-style:normal;font-size:9.4px;font-weight:800;color:#8e9bb3;margin-left:3px;
+  letter-spacing:0}
+.tw{display:flex;flex-wrap:wrap;gap:5px}
+.tw span{display:inline-flex;align-items:center;gap:5px;padding:5px 9px;border-radius:8px;
+  font-size:10.6px;font-weight:900;letter-spacing:-.01em;color:#cfd9ea;
+  background:rgba(255,255,255,.05);border:1px solid var(--line2)}
+.tw span b{font-size:9.6px;font-weight:900;color:#ffd98a;font-variant-numeric:tabular-nums}
+.sc-note{margin:10px 0 0;font-size:9.6px;font-weight:700;line-height:1.5;color:#7f8ea6}
 
 /* 하루 카드 */
 .day{display:block;width:100%;text-align:left;font:inherit;color:var(--txt);cursor:pointer;
@@ -530,12 +600,14 @@ body:not(.locked) .lock{display:none}
   <section class="sec">
     <div class="sec-h">
       <h2>하루하루</h2><span class="k">EUNU DIARY</span><span class="sp"></span>
-      <div class="vtog" role="tablist" aria-label="보기 전환">
-        <button class="vbtn on" type="button" data-view="diary" role="tab" aria-selected="true">📋 일기</button>
-        <button class="vbtn" type="button" data-view="album" role="tab" aria-selected="false">🍱 식판 앨범</button>
-      </div>
     </div>
-    <div class="srow">
+    <div class="vtog" role="tablist" aria-label="보기 전환">
+      <button class="vbtn on" type="button" data-view="diary" role="tab" aria-selected="true"><span class="vi" aria-hidden="true">📋</span>일기</button>
+      <button class="vbtn" type="button" data-view="album" role="tab" aria-selected="false"><span class="vi" aria-hidden="true">🍱</span>식판</button>
+      <button class="vbtn" type="button" data-view="act" role="tab" aria-selected="false"><span class="vi" aria-hidden="true">📸</span>활동</button>
+      <button class="vbtn" type="button" data-view="stats" role="tab" aria-selected="false"><span class="vi" aria-hidden="true">📊</span>통계</button>
+    </div>
+    <div class="srow" id="srow">
       <div class="sbox">
         <span class="sic" aria-hidden="true">🔍</span>
         <input class="sinp" id="q" type="text" inputmode="search" enterkeyhint="search"
@@ -557,6 +629,11 @@ body:not(.locked) .lock{display:none}
       <div class="albmeta" id="albMeta"></div>
       <div class="agrid" id="agrid"></div>
     </div>
+    <div id="act" hidden>
+      <div class="albmeta" id="actMeta"></div>
+      <div class="agrid" id="agridAct"></div>
+    </div>
+    <div id="stats" hidden></div>
   </section>
 
   <div class="foot">
@@ -622,12 +699,14 @@ body:not(.locked) .lock{display:none}
   "use strict";
   var FB_URL = "https://seonongs-hq-default-rtdb.firebaseio.com/eunu_vault/eunu_0919_sec/notes.json";
   var PHOTO_BASE = "https://seonongs-hq-default-rtdb.firebaseio.com/eunu_vault/eunu_0919_sec/photos/";
+  var ACT_BASE = "https://seonongs-hq-default-rtdb.firebaseio.com/eunu_vault/eunu_0919_sec/activity_photos/";
   var PIN_HASH = "b278d52bfa3225e70001ea4bd9a9070f933b42a5f8153c17890320372210d4aa";  /* SHA-256("0919") */
   var AUTH_KEY = "eunu_auth_v1";
   var BIRTH = new Date(2025, 8, 19);        /* 2025-09-19 */
 
   var state = { data: { days: [], notices: [], meta: {} }, range: "all", month: "", sortDesc: true, live: false, openIdx: -1, sheetOrder: [], unlocked: false, es: null, timer: null,
-                view: "diary", q: "", albumIndex: null, albumPromise: null, lbList: [], lbIdx: -1, lbFrom: "", pastOpen: false };
+                view: "diary", q: "", albumIndex: null, albumPromise: null, actIndex: null, actPromise: null,
+                lbList: [], lbIdx: -1, lbFrom: "", pastOpen: false };
   var monthSig = "";
   var photoCache = {};   /* date -> dataURL | null(사진 없음) */
   var hsCache = (typeof WeakMap === "function") ? new WeakMap() : null;   /* day -> 검색용 정규화 문자열 */
@@ -664,9 +743,12 @@ body:not(.locked) .lock{display:none}
   function monthKey(s){ return String(s || "").slice(0, 7); }
 
   function monthSrc(){
-    /* 식판 앨범 보기에서는 사진이 있는 날짜 기준으로 월 칩·건수를 만든다 */
+    /* 식판·활동 앨범 보기에서는 사진이 있는 날짜 기준으로 월 칩·건수를 만든다 */
     if(state.view === "album" && state.albumIndex){
       return state.albumIndex.map(function(d){ return { d: d }; });
+    }
+    if(state.view === "act" && state.actIndex){
+      return state.actIndex.map(function(d){ return { d: d }; });
     }
     return days();
   }
@@ -724,7 +806,7 @@ body:not(.locked) .lock{display:none}
           });
         }
         renderMonths();
-        renderList();
+        renderView();
       });
     });
   }
@@ -1143,7 +1225,443 @@ body:not(.locked) .lock{display:none}
     albumIndex().then(function(){
       renderMonths();
       if(state.view === "album") renderAlbum();
+      if(state.view === "stats") renderStats();
     }).catch(function(){});
+  }
+
+
+  /* ---------- 활동 사진 · 앨범 ---------- */
+  var actCache = {};        /* date -> items[] | null(사진 없음) */
+  var aqQueue = [], aqActive = 0, aqIO = null;
+  var AQ_MAX = 3;           /* 동시 요청 상한 */
+
+  function fetchActivity(date){
+    if(Object.prototype.hasOwnProperty.call(actCache, date)) return Promise.resolve(actCache[date]);
+    return fetch(ACT_BASE + date + ".json", { cache: "no-store" })
+      .then(function(r){
+        if(!r.ok){
+          if(r.status === 404) actCache[date] = null;
+          return null;
+        }
+        return r.json().then(function(j){
+          var out = null;
+          if(j && j.items && j.items.length){
+            out = [];
+            for(var i = 0; i < j.items.length; i++){
+              var it = j.items[i] || {};
+              if(typeof it.src === "string" && it.src.indexOf("data:image") === 0){
+                out.push({ id: it.id || (date + "-" + i), cap: it.caption || "", src: it.src });
+              }
+            }
+            if(!out.length) out = null;
+          }
+          actCache[date] = out;
+          return out;
+        });
+      })
+      .catch(function(){ return null; });
+  }
+
+  function activityIndex(){
+    if(state.actIndex) return Promise.resolve(state.actIndex);
+    if(state.actPromise) return state.actPromise;
+    /* notes.json의 activityCount(활동 사진 장수)가 1 이상이면 즉시 확정,
+       그 밖의 날짜만 각각 shallow로 가볍게 확인한다.
+       (상위 activity_photos 경로 목록 조회는 보안 규칙상 401) */
+    var known = [], cand = [];
+    days().forEach(function(x){
+      if(typeof x.activityCount === "number" && x.activityCount > 0) known.push(x.d);
+      else cand.push(x.d);
+    });
+    known.sort(); known.reverse();
+    cand.sort(); cand.reverse();
+    if(!known.length && !cand.length){ state.actIndex = []; return Promise.resolve(state.actIndex); }
+
+    state.actPromise = new Promise(function(resolve){
+      var found = known.slice(), i = 0, active = 0, done = false;
+      function finish(){
+        if(done) return;
+        done = true;
+        found.sort(); found.reverse();
+        state.actIndex = found;
+        state.actPromise = null;
+        resolve(state.actIndex);
+      }
+      function next(){
+        if(i >= cand.length && active === 0){ finish(); return; }
+        while(active < 4 && i < cand.length){
+          (function(d){
+            active++;
+            fetch(ACT_BASE + d + ".json?shallow=true", { cache: "no-store" })
+              .then(function(r){ return r.ok ? r.json() : null; })
+              .then(function(j){ if(j && (j === true || typeof j === "object")) found.push(d); })
+              .catch(function(){})
+              .then(function(){ active--; next(); });
+          })(cand[i++]);
+        }
+      }
+      next();
+    });
+    return state.actPromise;
+  }
+
+  function loadAct(){
+    if(state.actIndex) return;
+    var meta = $("actMeta");
+    if(meta && !meta.textContent) meta.textContent = "활동 사진 불러오는 중…";
+    activityIndex().then(function(){
+      if(state.view !== "act" && state.view !== "stats") return;
+      renderMonths();
+      renderView();
+    }).catch(function(){});
+  }
+
+  function actList(){
+    return (state.actIndex || []).filter(function(d){ return matchesMonth({ d: d }); });
+  }
+
+  function renderAct(){
+    var box = $("agridAct"), meta = $("actMeta");
+    if(!box) return;
+    var idx = state.actIndex, list = actList();
+
+    if(meta){
+      if(idx == null){
+        meta.textContent = "활동 사진 불러오는 중…";
+      }else if(!idx.length){
+        meta.textContent = "";
+      }else if(!list.length){
+        meta.innerHTML = '활동 <b>0</b>일 <span class="dot"></span> 전체 ' + idx.length + '일';
+      }else{
+        var nd = byDate(list[0]);
+        meta.innerHTML = '활동 <b>' + list.length + '</b>일 <span class="dot"></span> ' +
+          esc("최근 " + md(list[0]) + (nd && nd.wd ? " " + nd.wd : ""));
+      }
+    }
+
+    if(idx == null){
+      box.innerHTML = '<div class="empty">활동 사진 불러오는 중…</div>';
+      state.sheetOrder = [];
+      return;
+    }
+    if(!idx.length){
+      box.innerHTML = '<div class="empty">활동 사진이 아직 없습니다<span class="esub">사진이 적재되면 여기에서 볼 수 있습니다</span></div>';
+      state.sheetOrder = [];
+      return;
+    }
+    if(!list.length){
+      box.innerHTML = '<div class="empty">이 달에는 활동 사진이 없습니다</div>';
+      state.sheetOrder = [];
+      return;
+    }
+
+    box.innerHTML = list.map(function(d){
+      var day = byDate(d);
+      var wd = (day && day.wd) ? day.wd : "";
+      return '<button class="acard" type="button" data-ad="' + d + '" aria-label="' + md(d) + ' 활동 사진 보기">' +
+        '<span class="aimg" id="aci-' + d + '"><span class="ano" aria-hidden="true">📸</span>' +
+        '<img id="acimg-' + d + '" alt="' + md(d) + ' 활동 사진">' +
+        '<span class="acnt" id="acnt-' + d + '"></span></span>' +
+        '<span class="afoot"><span class="afd"><b>' + md(d) + '</b><span>' + esc(wd) + '</span></span>' +
+        '<span class="al" id="acap-' + d + '">불러오는 중…</span></span></button>';
+    }).join("");
+    state.sheetOrder = list.slice();
+
+    Array.prototype.forEach.call(box.querySelectorAll(".acard"), function(b, i){
+      b.addEventListener("click", function(){ openActLightbox(list[i], 0, "act"); });
+    });
+
+    /* 화면에 들어오는 카드만 순차(동시 3) 로딩 → 메모리 캐시 */
+    if(aqIO){ aqIO.disconnect(); aqIO = null; }
+    if(window.IntersectionObserver){
+      aqIO = new IntersectionObserver(function(es){
+        es.forEach(function(e){
+          if(!e.isIntersecting) return;
+          aqIO.unobserve(e.target);
+          queuedAct(String(e.target.id || "").replace(/^aci-/, ""));
+        });
+      }, { rootMargin: "260px 0px" });
+      Array.prototype.forEach.call(box.querySelectorAll(".aimg"), function(el){ aqIO.observe(el); });
+    }else{
+      list.forEach(queuedAct);
+    }
+  }
+
+  function fillActCard(d, items){
+    var im = $("acimg-" + d), fr = $("aci-" + d), cap = $("acap-" + d), badge = $("acnt-" + d);
+    if(!im || !items || !items.length) return;
+    if(badge) badge.textContent = items.length + "장";
+    if(cap){
+      var t = String(items[0].cap || "").trim();
+      cap.textContent = t ? t : ("활동 사진 " + items.length + "장");
+    }
+    im.onload = function(){ im.classList.add("on"); if(fr) fr.classList.add("loaded"); };
+    im.onerror = function(){ if(fr) fr.classList.remove("loaded"); };
+    im.src = items[0].src;
+  }
+
+  function markNoAct(d){
+    var fr = $("aci-" + d);
+    if(!fr) return;
+    fr.classList.add("loaded", "nod");
+    var an = fr.querySelector(".ano");
+    if(an) an.textContent = "사진 없음";
+  }
+
+  function queuedAct(d){
+    if(Object.prototype.hasOwnProperty.call(actCache, d)){
+      if(actCache[d]) fillActCard(d, actCache[d]); else markNoAct(d);
+      return;
+    }
+    aqQueue.push(d);
+    pumpAct();
+  }
+
+  function pumpAct(){
+    while(aqActive < AQ_MAX && aqQueue.length){
+      (function(dd){
+        aqActive++;
+        fetchActivity(dd)
+          .then(function(u){ if(u) fillActCard(dd, u); else markNoAct(dd); })
+          .catch(function(){})
+          .then(function(){ aqActive--; pumpAct(); });
+      })(aqQueue.shift());
+    }
+  }
+
+  function openActLightbox(date, i, from){
+    fetchActivity(date).then(function(items){
+      if(!items || !items.length) return;
+      var day = byDate(date);
+      var list = items.map(function(it, k){
+        return { d: date, kind: "act", url: it.src, cap: it.cap, idx: k, n: items.length,
+                 wd: (day && day.wd) ? day.wd : "" };
+      });
+      openLightbox(list, i || 0, from || "act");
+    }).catch(function(){});
+  }
+
+  function loadActStrip(date){
+    var sect = $("actSect"), box = $("actStrip");
+    if(!sect || !box) return;
+    sect.hidden = true; box.innerHTML = "";
+    var want = date;
+    fetchActivity(date).then(function(items){
+      if(!items || !items.length || state.openIdx !== want) return;
+      var strip = $("actStrip"), sec = $("actSect");
+      if(!strip || !sec) return;
+      strip.innerHTML = items.map(function(it, i){
+        return '<button class="athumb" type="button" data-i="' + i + '" aria-label="' +
+          md(want) + ' 활동 사진 ' + (i + 1) + ' 크게 보기"><img src="' + esc(it.src) + '" alt=""></button>';
+      }).join("");
+      Array.prototype.forEach.call(strip.querySelectorAll(".athumb"), function(b){
+        b.addEventListener("click", function(){
+          openActLightbox(want, parseInt(b.getAttribute("data-i"), 10) || 0, "day");
+        });
+      });
+      var tag = sec.querySelector("h3 i");
+      if(tag) tag.textContent = items.length + "장 · 탭하면 크게";
+      sec.hidden = false;
+    }).catch(function(){});
+  }
+
+  /* ---------- 통계 ---------- */
+  function statDays(){
+    return days().filter(matchesRange).filter(matchesMonth);
+  }
+
+  function periodLabel(){
+    if(state.month) return state.month.replace("-", "년 ") + "월";
+    if(state.range === "this") return "이번 주";
+    if(state.range === "last") return "지난 주";
+    return "전체 기간";
+  }
+
+  function sleepMin(s){
+    if(!s || s === "-") return null;
+    var t = String(s);
+    if(/안\s*잤|안잤|안\s*잠/.test(t)) return -1;
+    var m = t.match(/(\d+)\s*시간(?:\s*(\d+)\s*분)?/);
+    if(m) return (+m[1]) * 60 + (m[2] ? +m[2] : 0);
+    m = t.match(/(\d+)\s*분/);
+    if(m) return +m[1];
+    return null;
+  }
+
+  function fmtMin(v){
+    if(v == null) return "–";
+    if(v <= 0) return "0분";
+    if(v < 60) return v + "분";
+    var h = Math.floor(v / 60), m = v % 60;
+    return h + "시간" + (m ? " " + m + "분" : "");
+  }
+
+  function statsOf(){
+    var ds = statDays();
+    var o = {
+      total: ds.length, tray: 0, act: 0, talk: 0,
+      food: { "정량": 0, "많이": 0, "적게": 0, "안 함": 0 }, foodKnown: 0,
+      sleep: [], noSleep: 0,
+      mood: { "좋음": 0, "보통": 0, "저조": 0 }, moodKnown: 0,
+      healthAbn: 0, tempAbn: 0, bowelDays: 0, bowelNone: 0, bowelCnt: 0,
+      tags: [], tagTotal: 0
+    };
+    var tc = {}, tk = [];
+    ds.forEach(function(day){
+      if(/식판 사진 확인/.test(day.lunchNote || "")) o.tray++;
+      if((day.comments || []).length) o.talk++;
+
+      var f = String(day.food || "-");
+      if(f !== "-" && f !== ""){
+        o.foodKnown++;
+        if(/정량/.test(f)) o.food["정량"]++;
+        else if(/많이|많음/.test(f)) o.food["많이"]++;
+        else if(/적게/.test(f)) o.food["적게"]++;
+        else if(/안\s*했|먹지/.test(f)) o.food["안 함"]++;
+      }
+
+      var sm = sleepMin(day.sleep);
+      if(sm === -1) o.noSleep++;
+      else if(sm != null) o.sleep.push({ v: sm, d: day.d });
+
+      var mo = String(day.mood || "-");
+      if(mo !== "-" && mo !== ""){
+        o.moodKnown++;
+        if(/좋음|좋아/.test(mo)) o.mood["좋음"]++;
+        else if(/보통/.test(mo)) o.mood["보통"]++;
+        else if(/저조|나쁨|안\s*좋/.test(mo)) o.mood["저조"]++;
+      }
+
+      var he = String(day.health || "-");
+      if(he !== "-" && he !== "" && !/좋음|정상/.test(he)) o.healthAbn++;
+      var tp = String(day.temp || "-");
+      if(tp !== "-" && tp !== "" && !/정상/.test(tp)) o.tempAbn++;
+
+      var bw = String(day.bowel || "-");
+      if(bw !== "-" && bw !== ""){
+        o.bowelDays++;
+        if(/안\s*했|안\s*함/.test(bw)) o.bowelNone++;
+        var cm = bw.match(/(\d+)\s*회/);
+        if(cm) o.bowelCnt += (+cm[1]);
+      }
+
+      (day.tags || []).forEach(function(t){
+        if(!t) return;
+        if(!Object.prototype.hasOwnProperty.call(tc, t)){ tc[t] = 0; tk.push(t); }
+        tc[t]++;
+      });
+    });
+
+    if(state.actIndex && state.actIndex.length){
+      o.act = state.actIndex.filter(function(d){
+        return matchesMonth({ d: d }) && matchesRange({ d: d });
+      }).length;
+    }
+    /* 식판은 실제 사진이 있는 날짜(앨범 인덱스) 기준 — 앨범 탭 건수와 일치시킨다 */
+    if(state.albumIndex && state.albumIndex.length){
+      o.tray = state.albumIndex.filter(function(d){
+        return matchesMonth({ d: d }) && matchesRange({ d: d });
+      }).length;
+    }
+
+    tk.sort(function(a, b){ return tc[b] - tc[a] || (a < b ? -1 : 1); });
+    o.tags = tk.slice(0, 10).map(function(t){ return { t: t, n: tc[t] }; });
+    o.tagTotal = tk.length;
+    return o;
+  }
+
+  function kpi(label, n, unit){
+    var nil = (n == null || n === 0);
+    return '<div class="k"><b>' + esc(label) + '</b><strong' + (nil ? ' class="nil"' : '') + '>' +
+      (n == null ? "–" : n) + '<em>' + (n == null ? "" : unit) + '</em></strong></div>';
+  }
+
+  function barRow(label, n, denom, cls, unit){
+    var pct = denom > 0 ? Math.round(n / denom * 100) : 0;
+    return '<div class="brow"><div class="bl"><b>' + esc(label) + '</b>' +
+      '<span>' + n + (unit || "일") + (denom > 0 ? '<i>' + pct + '%</i>' : '') + '</span></div>' +
+      '<div class="bt' + (cls ? ' ' + cls : '') + '"><i style="width:' + pct + '%"></i></div></div>';
+  }
+
+  function renderStats(){
+    var box = $("stats");
+    if(!box) return;
+    var o = statsOf();
+    if(!o.total){
+      box.innerHTML = '<div class="empty">이 기간에 기록이 없습니다<span class="esub">다른 달이나 기간을 선택해 보세요</span></div>';
+      return;
+    }
+    var h = "";
+
+    /* ① 등원 · 기록 요약 */
+    h += '<div class="sc"><div class="sc-h"><b>📅 등원 · 기록</b><span>' + esc(periodLabel()) + '</span></div>' +
+      '<div class="kpi">' +
+      kpi("등원 일수", o.total, "일") +
+      kpi("식판 사진", o.tray, "일") +
+      kpi("활동 사진", state.actIndex ? o.act : null, "일") +
+      kpi("댓글 소통", o.talk, "일") +
+      '</div></div>';
+
+    /* ② 식사량 분포 */
+    h += '<div class="sc"><div class="sc-h"><b>🍚 식사량 분포</b><span>기록 ' + o.foodKnown + '일</span></div>' +
+      (o.foodKnown
+        ? barRow("정량", o.food["정량"], o.foodKnown) +
+          barRow("많이", o.food["많이"], o.foodKnown) +
+          barRow("적게", o.food["적게"], o.foodKnown) +
+          (o.food["안 함"] ? barRow("식사 안 함", o.food["안 함"], o.foodKnown, "flat") : "")
+        : '<p class="sc-note" style="margin:0">식사량 기록이 있는 날이 없습니다</p>') +
+      '</div>';
+
+    /* ③ 낮잠 */
+    var lo = null, hi = null, sum = 0, b1 = 0, b2 = 0, b3 = 0;
+    o.sleep.forEach(function(x){
+      sum += x.v;
+      if(!hi || x.v > hi.v) hi = x;
+      if(!lo || x.v < lo.v) lo = x;
+      if(x.v < 60) b1++; else if(x.v < 90) b2++; else b3++;
+    });
+    var sn = o.sleep.length;
+    var avg = sn ? Math.round(sum / sn) : null;
+    h += '<div class="sc"><div class="sc-h"><b>😴 낮잠</b><span>기록 ' + sn + '일</span></div>' +
+      '<div class="big"><strong' + (avg == null ? ' class="nil"' : '') + '>' + fmtMin(avg) + '</strong><span>평균 낮잠</span></div>' +
+      '<div class="pair">' +
+      '<div><b>가장 길게 잔 날</b><span>' + (hi ? fmtMin(hi.v) + '<em>' + md(hi.d) + '</em>' : '–') + '</span></div>' +
+      '<div><b>가장 짧게 잔 날</b><span>' + (lo ? fmtMin(lo.v) + '<em>' + md(lo.d) + '</em>' : '–') + '</span></div>' +
+      '</div>' +
+      (sn ? '<div style="margin-top:13px">' +
+        barRow("1시간 미만", b1, sn, "mint") +
+        barRow("1~1.5시간", b2, sn, "mint") +
+        barRow("1.5시간 이상", b3, sn, "mint") + '</div>' : '') +
+      (o.noSleep ? '<p class="sc-note">잠을 안 잔 날 ' + o.noSleep + '일은 평균에서 제외했습니다</p>' : '') +
+      '</div>';
+
+    /* ④ 기분 */
+    h += '<div class="sc"><div class="sc-h"><b>😊 기분</b><span>기록 ' + o.moodKnown + '일</span></div>' +
+      (o.moodKnown
+        ? barRow("좋음", o.mood["좋음"], o.moodKnown, "sky") +
+          barRow("보통", o.mood["보통"], o.moodKnown, "sky") +
+          barRow("컨디션 저조", o.mood["저조"], o.moodKnown, "rose")
+        : '<p class="sc-note" style="margin:0">기분 기록이 있는 날이 없습니다</p>') +
+      '</div>';
+
+    /* ⑤ 건강 · 배변 */
+    h += '<div class="sc"><div class="sc-h"><b>🩺 건강 · 💩 배변</b></div><div class="pair">' +
+      '<div><b>건강 특이</b><span>' + o.healthAbn + '<em>일</em></span></div>' +
+      '<div><b>체온 특이</b><span>' + o.tempAbn + '<em>일</em></span></div>' +
+      '<div><b>배변 기록</b><span>' + o.bowelDays + '<em>일</em></span></div>' +
+      '<div><b>배변 안 한 날</b><span>' + o.bowelNone + '<em>일</em></span></div>' +
+      '</div>' +
+      (o.bowelCnt ? '<p class="sc-note">배변 횟수 합계 ' + o.bowelCnt + '회</p>' : '') +
+      '</div>';
+
+    /* ⑥ 활동 태그 */
+    if(o.tags.length){
+      h += '<div class="sc"><div class="sc-h"><b>🏷️ 활동 태그</b><span>' + o.tagTotal + '종</span></div><div class="tw">' +
+        o.tags.map(function(t){ return '<span>' + esc(t.t) + '<b>' + t.n + '</b></span>'; }).join("") +
+        '</div></div>';
+    }
+
+    box.innerHTML = h;
   }
 
   /* ---------- 상세 ---------- */
@@ -1185,6 +1703,10 @@ body:not(.locked) .lock{display:none}
       '<img id="trayImg" alt="' + esc(md(day.d)) + ' 점심 식판 사진"><span class="tl">' + esc(md(day.d)) + '</span>' +
       '<span class="zt">🔍 확대</span></button></div>';
 
+    /* 활동 사진 — 식판 사진 아래 가로 스트립 (탭하면 라이트박스) */
+    html += '<div class="sect" id="actSect" hidden><h3><em>📸</em>활동 사진<i>탭하면 크게</i></h3>' +
+      '<div class="astrip" id="actStrip"></div></div>';
+
     /* 간식 */
     html += '<div class="sect"><h3><em>🥣</em>간식</h3>' +
       '<ul class="meal">' +
@@ -1222,6 +1744,7 @@ body:not(.locked) .lock{display:none}
 
     $("trayBtn").addEventListener("click", openPhoto);
     loadTray(day.d);
+    loadActStrip(day.d);
 
     var w = $("sheetWrap"); w.hidden = false;
     requestAnimationFrame(function(){ w.classList.add("on"); });
@@ -1329,13 +1852,19 @@ body:not(.locked) .lock{display:none}
     var img = $("lbImg");
     $("lbBar").hidden = false;
     $("lbDate").textContent = fmtK(parseD(it.d)) + (it.wd ? " (" + it.wd + ")" : "");
-    $("lbMeal").textContent = it.meal || "점심 식판 사진";
+    if(it.kind === "act"){
+      var acap = String(it.cap || "");
+      var apre = (it.n > 1 && !/\d+\s*\/\s*\d+/.test(acap)) ? (it.idx + 1) + " / " + it.n + " · " : "";
+      $("lbMeal").textContent = apre + (acap || "활동 사진");
+    }else{
+      $("lbMeal").textContent = it.meal || "점심 식판 사진";
+    }
     $("lbPrev").hidden = state.lbIdx <= 0;
     $("lbNext").hidden = state.lbIdx >= state.lbList.length - 1;
     var go = $("lbGo");
-    go.hidden = !(state.lbFrom === "album" && byDate(it.d));
+    go.hidden = !((state.lbFrom === "album" || state.lbFrom === "act") && byDate(it.d));
     go.setAttribute("data-d", it.d);
-    img.alt = md(it.d) + " 점심 식판 사진 확대";
+    img.alt = md(it.d) + (it.kind === "act" ? " 활동 사진 확대" : " 점심 식판 사진 확대");
 
     var url = it.url || (Object.prototype.hasOwnProperty.call(photoCache, it.d) ? photoCache[it.d] : null);
     if(url){ it.url = url; img.src = url; return; }
@@ -1464,16 +1993,23 @@ body:not(.locked) .lock{display:none}
     location.replace(targetUrl());
   }
 
+  function renderView(){
+    if(state.view === "album") renderAlbum();
+    else if(state.view === "act") renderAct();
+    else if(state.view === "stats") renderStats();
+    else renderList();
+  }
+
   function render(){
     renderHero(); renderMonths();
-    if(state.view === "album") renderAlbum(); else renderList();
+    renderView();
     renderNotices();
   }
 
   /* ---------- 보기 전환 · 검색 ---------- */
   function refreshList(){
     renderMonths();
-    if(state.view === "album") renderAlbum(); else renderList();
+    renderView();
   }
 
   function setView(v){
@@ -1484,12 +2020,19 @@ body:not(.locked) .lock{display:none}
       b.classList.toggle("on", on);
       b.setAttribute("aria-selected", on ? "true" : "false");
     });
-    var alb = v === "album";
-    $("filters").hidden = alb;
-    $("list").hidden = alb;
+    var diary = v === "diary", alb = v === "album", act = v === "act", st = v === "stats";
+    $("filters").hidden = !diary;
+    $("list").hidden = !diary;
     $("album").hidden = !alb;
-    if(alb){ renderMonths(); renderAlbum(); loadAlbum(); }
-    else { renderMonths(); renderList(); }
+    $("act").hidden = !act;
+    $("stats").hidden = !st;
+    var sr = $("srow");
+    if(sr) sr.hidden = act || st;
+    renderMonths();
+    renderView();
+    if(alb) loadAlbum();
+    if(act) loadAct();
+    if(st){ loadAct(); loadAlbum(); renderStats(); }
   }
 
   /* ---------- 이벤트 ---------- */
@@ -1532,13 +2075,13 @@ body:not(.locked) .lock{display:none}
         x.classList.toggle("on", x === c);
       });
       renderMonths();
-      renderList();
+      renderView();
     });
   });
   $("sortBtn").addEventListener("click", function(){
     state.sortDesc = !state.sortDesc;
     $("sortBtn").textContent = "최신순 " + (state.sortDesc ? "↓" : "↑");
-    renderList();
+    renderView();
   });
   $("sheetClose").addEventListener("click", closeSheet);
   $("sheetBg").addEventListener("click", closeSheet);

@@ -994,6 +994,7 @@ body::before{
     normal: { label: "일반 5단계", rateLabel: "하루 5개", perDay: 5 }
   };
   var dpBusy = false;
+  var dpLastDay = "";
 
   function dpPad(n){ return (n < 10 ? "0" : "") + n; }
 
@@ -1069,6 +1070,7 @@ body::before{
       return;
     }
     var warn = 0, red = 0, basis = "";
+    dpLastDay = dpToday();
     box.innerHTML = keys.map(function(k){
       var st = src[k] || {};
       var c = dpCalc(st);
@@ -1570,6 +1572,11 @@ body::before{
   setInterval(function(){
     if (document.hidden) return;
     if (!marketEs || !marketEs.readyState) marketLoad();
+  }, 30000);
+  /* 자정(KST)을 넘기면 경과 일수가 바뀌므로 재고 추정을 다시 그린다 */
+  setInterval(function(){
+    if (document.hidden) return;
+    if (dpToday() !== dpLastDay) renderDiaper();
   }, 30000);
   window.addEventListener("online", function(){ marketLoad(); });
   setTimeout(function(){

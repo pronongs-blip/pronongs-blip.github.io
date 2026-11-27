@@ -144,6 +144,18 @@ body::before{
   box-shadow:0 6px 14px -8px rgba(255,194,71,.9)}
 .chip.sort{margin-left:auto;color:#a9b8d0}
 
+/* 월별 필터 (두 번째 줄 · 데이터에서 자동 생성) */
+.mrow{display:flex;align-items:center;gap:5px;margin:-1px 0 8px;overflow-x:auto;padding-bottom:2px;
+  scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.mrow::-webkit-scrollbar{display:none}
+.mrow[hidden]{display:none}
+.mlab{flex:0 0 auto;font-size:9px;font-weight:900;letter-spacing:.06em;color:#8e9bb3;
+  padding:0 2px 0 1px;white-space:nowrap}
+.chip.mon{height:24px;padding:0 9px;font-size:10px;font-weight:900;color:#b9c6da;
+  background:rgba(127,182,255,.055);border-color:rgba(127,182,255,.16)}
+.chip.mon.on{color:#0c1727;background:linear-gradient(180deg,#b6d7ff,#7fb6ff);
+  border-color:rgba(127,182,255,.62);box-shadow:0 6px 14px -8px rgba(127,182,255,.85)}
+
 /* 하루 카드 */
 .day{display:block;width:100%;text-align:left;font:inherit;color:var(--txt);cursor:pointer;
   padding:11px 12px;border-radius:14px;margin-bottom:7px;
@@ -405,6 +417,7 @@ body:not(.locked) .lock{display:none}
       <button class="chip" data-range="last" type="button">지난 주</button>
       <button class="chip sort" id="sortBtn" type="button">최신순 ↓</button>
     </div>
+    <div class="mrow" id="months" role="group" aria-label="월별 보기" hidden></div>
     <div id="list"></div>
   </section>
 
@@ -457,7 +470,8 @@ body:not(.locked) .lock{display:none}
   var AUTH_KEY = "eunu_auth_v1";
   var BIRTH = new Date(2025, 8, 19);        /* 2025-09-19 */
 
-  var state = { data: { days: [], notices: [], meta: {} }, range: "all", sortDesc: true, live: false, openIdx: -1, sheetOrder: [], unlocked: false, es: null, timer: null };
+  var state = { data: { days: [], notices: [], meta: {} }, range: "all", month: "", sortDesc: true, live: false, openIdx: -1, sheetOrder: [], unlocked: false, es: null, timer: null };
+  var monthSig = "";
   var photoCache = {};   /* date -> dataURL | null(사진 없음) */
   var $ = function(id){ return document.getElementById(id); };
 
@@ -485,6 +499,67 @@ body:not(.locked) .lock{display:none}
     var monday = new Date(latest); monday.setDate(latest.getDate() - dow);
     var sunday = new Date(monday); sunday.setDate(monday.getDate() + 6);
     return {monday:monday, sunday:sunday};
+  }
+
+  /* ---------- 월별 필터 ---------- */
+  function monthKey(s){ return String(s || "").slice(0, 7); }
+
+  function months(){
+    /* state.data.days 의 YYYY-MM 을 내림차순 고유 추출 + 건수 */
+    var cnt = {}, keys = [];
+    days().forEach(function(x){
+      var k = monthKey(x.d);
+      if(!/^\d{4}-\d{2}$/.test(k)) return;
+      if(!Object.prototype.hasOwnProperty.call(cnt, k)){ cnt[k] = 0; keys.push(k); }
+      cnt[k]++;
+    });
+    keys.sort(function(a, b){ return a < b ? 1 : (a > b ? -1 : 0); });
+    return keys.map(function(k){ return { k: k, n: cnt[k] }; });
+  }
+
+  function monthLabel(m, showYear){
+    var p = m.k.split("-"), mo = +p[1];
+    /* 한 해 안이면 '11월 (20)', 연도가 섞이면 '2026.11 (20)' */
+    return (showYear ? p[0] + "." + String(mo).padStart(2, "0") : mo + "월") + " (" + m.n + ")";
+  }
+
+  function matchesMonth(day){
+    return !state.month || monthKey(day.d) === state.month;
+  }
+
+  function renderMonths(){
+    var box = $("months");
+    if(!box) return;
+    var ms = months();
+    if(state.month && !ms.some(function(m){ return m.k === state.month; })) state.month = "";
+    var sig = ms.map(function(m){ return m.k + ":" + m.n; }).join(",") + "|" + state.month;
+    if(sig === monthSig) return;
+    monthSig = sig;
+    if(!ms.length){ box.innerHTML = ""; box.hidden = true; return; }
+    var showYear = ms.some(function(m){ return m.k.slice(0, 4) !== ms[0].k.slice(0, 4); });
+    var html = '<span class="mlab">월별</span>' +
+      '<button class="chip mon' + (state.month ? "" : " on") + '" type="button" data-m="" aria-pressed="' +
+      (state.month ? "false" : "true") + '">전체 월</button>';
+    ms.forEach(function(m){
+      var on = state.month === m.k;
+      html += '<button class="chip mon' + (on ? " on" : "") + '" type="button" data-m="' + m.k +
+        '" aria-pressed="' + (on ? "true" : "false") + '">' + esc(monthLabel(m, showYear)) + '</button>';
+    });
+    box.innerHTML = html;
+    box.hidden = false;
+    Array.prototype.forEach.call(box.querySelectorAll(".chip.mon"), function(c){
+      c.addEventListener("click", function(){
+        state.month = c.getAttribute("data-m") || "";
+        if(state.month){
+          state.range = "all";
+          Array.prototype.forEach.call($("filters").querySelectorAll(".chip[data-range]"), function(x){
+            x.classList.toggle("on", x.getAttribute("data-range") === "all");
+          });
+        }
+        renderMonths();
+        renderList();
+      });
+    });
   }
 
   function matchesRange(day){
@@ -552,9 +627,15 @@ body:not(.locked) .lock{display:none}
 
   function renderList(){
     var box = $("list");
-    var list = days().filter(matchesRange);
+    var list = days().filter(matchesRange).filter(matchesMonth);
     list.sort(function(a,b){ return state.sortDesc ? (a.d < b.d ? 1 : -1) : (a.d < b.d ? -1 : 1); });
-    if(!list.length){ box.innerHTML = '<div class="empty">해당 기간에 기록이 없습니다.</div>'; return; }
+    if(!list.length){
+      box.innerHTML = '<div class="empty">' +
+        (state.month && !days().some(matchesMonth) ? state.month.replace("-", "년 ") + "월에 기록이 없습니다." : "해당 기간에 기록이 없습니다.") +
+        '</div>';
+      state.sheetOrder = [];
+      return;
+    }
     var td = todayStr();
     box.innerHTML = list.map(function(day){
       var cls = "day" + (day.d === td ? " today" : "");
@@ -874,7 +955,7 @@ body:not(.locked) .lock{display:none}
     window.PTR = { target: targetUrl, isReady: function(){ return ready; } };
   }
 
-  function render(){ renderHero(); renderList(); renderNotices(); }
+  function render(){ renderHero(); renderMonths(); renderList(); renderNotices(); }
 
   /* ---------- 이벤트 ---------- */
   $("refresh").addEventListener("click", function(){
@@ -888,9 +969,11 @@ body:not(.locked) .lock{display:none}
   Array.prototype.forEach.call($("filters").querySelectorAll(".chip[data-range]"), function(c){
     c.addEventListener("click", function(){
       state.range = c.getAttribute("data-range");
+      state.month = "";                     /* 범위 선택 시 월 필터는 전체 월로 리셋 */
       Array.prototype.forEach.call($("filters").querySelectorAll(".chip[data-range]"), function(x){
         x.classList.toggle("on", x === c);
       });
+      renderMonths();
       renderList();
     });
   });

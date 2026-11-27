@@ -437,9 +437,9 @@ body::before{
 
 <script>
 window.ARC = window.ARC || {
-  KEY: 'yg_arcade_stats_v1',
-  HKEY: 'yg_arcade_history_v1',
-  PKEY: 'yg_arcade_pending_v1',
+  KEY: 'yg_arcade_stats_v2',
+  HKEY: 'yg_arcade_history_v2',
+  PKEY: 'yg_arcade_pending_v2',
   DKEY: 'yg_arcade_dev_v1',
   CAP: 200,
   FB: (window.ARC_FB_BASE || 'https://seonongs-hq-default-rtdb.firebaseio.com'),
@@ -447,6 +447,20 @@ window.ARC = window.ARC || {
   _opens: null,
   _cloud: false,
   _clearing: false,
+  peerDev: '',
+  online: false,
+  /* 온라인 1:1(서로 다른 두 기기)만 기록한다 — AI·한 기기 대전은 저장하지 않는다 */
+  setPeer: function (dev, online) {
+    this.peerDev = String(dev || '');
+    this.online = !!online;
+  },
+  allow: function (mode) {
+    if (mode !== undefined && mode !== null && mode !== '') {
+      if (String(mode).toLowerCase() !== 'online') return false;
+    }
+    if (!this.online || !this.peerDev) return false;
+    return this.peerDev !== this.dev();
+  },
   read: function () { try { return JSON.parse(localStorage.getItem(this.KEY) || '{}') || {}; } catch (e) { return {}; } },
   /* 상대 구분: ai(혼자·AI 대전) / pvp(두 사람 — 한 기기·온라인 1:1) */
   vsOf: function (mode) { return (mode === 'ai' || mode === 'solo' || !mode) ? 'ai' : 'pvp'; },
@@ -510,7 +524,7 @@ window.ARC = window.ARC || {
     });
   },
   record: function (id, res, vs) {
-    if (!this.isPvp(vs)) return;
+    if (!this.isPvp(vs) || !this.allow()) return;
     try {
       var all = this.read(), s = all[id] || {};
       s.wins = Math.max(0, +s.wins || 0);
@@ -601,12 +615,16 @@ window.ARC = window.ARC || {
       vs: (v.vs === 'pvp') ? 'pvp' : ((v.vs === 'ai') ? 'ai' : this.vsOf(String(v.mode || ''))),
       myName: String(v.myName || ''),
       oppName: String(v.oppName || ''),
+      dev: String(v.dev || ''),
+      peerDev: String(v.peerDev || ''),
       result: r,
       scoreText: String(v.scoreText || ''),
       playedAt: at
     };
-    /* AI 대전 기록은 읽지도, 다시 올리지도 않는다 */
-    return (rec.vs === 'pvp') ? rec : null;
+    /* AI·한 기기 기록, 기기 구분이 없는 기록은 읽지도, 다시 올리지도 않는다 */
+    if (rec.vs !== 'pvp') return null;
+    if (!rec.dev || !rec.peerDev || rec.dev === rec.peerDev) return null;
+    return rec;
   },
   history: function () {
     try {
@@ -620,7 +638,7 @@ window.ARC = window.ARC || {
   /* 경기 히스토리 — 최신순 최대 200건, 로컬 + Firebase 동시 저장 */
   save: function (o) {
     o = o || {};
-    if (!this.isPvp(o.vs, o.mode)) return;
+    if (!this.isPvp(o.vs, o.mode) || !this.allow(o.mode)) return;
     var rec = null;
     try {
       var arr = this.history();
@@ -639,7 +657,8 @@ window.ARC = window.ARC || {
         result: r,
         scoreText: String(o.scoreText || ''),
         playedAt: Date.now(),
-        dev: this.dev()
+        dev: this.dev(),
+        peerDev: this.peerDev
       };
       arr.unshift(rec);
       if (arr.length > this.CAP) arr.length = this.CAP;
@@ -654,29 +673,30 @@ window.ARC = window.ARC || {
   derive: function (list) {
     var games = {}, players = {};
     list.forEach(function (r) {
-      if (r.vs !== 'pvp') return;
+      if (r.vs !== 'pvp' || !r.dev) return;
       var g = games[r.id] || (games[r.id] = { wins: 0, losses: 0, draws: 0, plays: 0, pvp: { wins: 0, losses: 0, draws: 0 }, ai: { wins: 0, losses: 0, draws: 0 } });
       var k = (r.result === 'win') ? 'wins' : (r.result === 'loss' ? 'losses' : 'draws');
       g[k]++; g.plays++;
       g[r.vs][k]++;
-      var nm = r.myName || '';
-      if (nm) {
-        var p = players[nm] || (players[nm] = { wins: 0, losses: 0, draws: 0, plays: 0 });
-        p[k]++; p.plays++;
-      }
+      /* 전적은 닉네임이 아니라 기기(deviceId)로 묶는다 — 이름을 바꿔도 같은 기기 전적 */
+      var dv = String(r.dev);
+      var p = players[dv] || (players[dv] = { dev: dv, name: '', wins: 0, losses: 0, draws: 0, plays: 0, lastPlayed: 0 });
+      if (r.myName) p.name = String(r.myName);
+      if (r.playedAt > p.lastPlayed) p.lastPlayed = r.playedAt;
+      p[k]++; p.plays++;
     });
-    /* 연승 — 플레이어별 최근 결과 연속 수 */
+    /* 연승 — 기기별 최근 결과 연속 수 */
     var streak = {};
-    var byName = {};
-    list.forEach(function (r) { if (r.myName) (byName[r.myName] = byName[r.myName] || []).push(r); });
-    Object.keys(byName).forEach(function (nm) {
-      var arr = byName[nm].slice().sort(function (a, b) { return b.playedAt - a.playedAt; });
+    var byDev = {};
+    list.forEach(function (r) { if (r.dev) (byDev[r.dev] = byDev[r.dev] || []).push(r); });
+    Object.keys(byDev).forEach(function (dv) {
+      var arr = byDev[dv].slice().sort(function (a, b) { return b.playedAt - a.playedAt; });
       var res = arr[0] ? arr[0].result : '';
       var n = 0;
       for (var i = 0; i < arr.length && arr[i].result === res; i++) n++;
-      streak[nm] = { result: res, n: n };
+      streak[dv] = { result: res, n: n };
     });
-    Object.keys(players).forEach(function (nm) { players[nm].streak = streak[nm] || null; });
+    Object.keys(players).forEach(function (dv) { players[dv].streak = streak[dv] || null; });
     return { games: games, players: players, streak: streak };
   },
   _pushStats: function () {
@@ -740,6 +760,24 @@ window.ARC = window.ARC || {
           };
         });
       }
+      var sp = (sraw && sraw.players) || null;
+      if (sp && typeof sp === 'object') {
+        Object.keys(sp).forEach(function (dv) {
+          if (!dv || dv === 'undefined') return;
+          /* 기기 ID 형식만 받는다 — 예전 닉네임 기준 집계는 버린다 */
+          if (!/^[a-z0-9]{6,20}$/.test(dv)) return;
+          var a = agg.players[dv] || { dev: dv, name: '', wins: 0, losses: 0, draws: 0, plays: 0, lastPlayed: 0 };
+          var b = sp[dv] || {};
+          agg.players[dv] = {
+            dev: dv,
+            name: a.name || String(b.name || ''),
+            wins: self._mx(a.wins, b.wins), losses: self._mx(a.losses, b.losses),
+            draws: self._mx(a.draws, b.draws), plays: self._mx(a.plays, b.plays),
+            lastPlayed: self._mx(a.lastPlayed, b.lastPlayed),
+            streak: a.streak || b.streak || null
+          };
+        });
+      }
       self._agg = agg;
       self._opens = (sraw && sraw.opens) || {};
       self._cloud = reachable;
@@ -770,6 +808,12 @@ window.ARC = window.ARC || {
   }
 };
 (function () {
+  /* 이전 버전(v1) 대전 기록은 기기·닉네임 기준이 달라 한 번 지우고 새로 시작한다 */
+  try {
+    ['yg_arcade_stats_v1', 'yg_arcade_history_v1', 'yg_arcade_pending_v1'].forEach(function (k) {
+      localStorage.removeItem(k);
+    });
+  } catch (e) {}
   function boot() { try { window.ARC.sync(); } catch (e) {} }
   if (document.readyState === 'complete' || document.readyState === 'interactive') setTimeout(boot, 40);
   else document.addEventListener('DOMContentLoaded', function () { setTimeout(boot, 40); });
@@ -781,12 +825,12 @@ window.ARC = window.ARC || {
 <script>
 /* ============================================================
    아케이드 이용 기록 · 동적 배지 시스템 (localStorage)
-   저장 키: yg_arcade_stats_v1
+   저장 키: yg_arcade_stats_v2
    { "wall-baduk2": {clicks: 3, lastOpened: 1763....} , ... }
    ============================================================ */
 (function () {
   "use strict";
-  var KEY = "yg_arcade_stats_v1";
+  var KEY = "yg_arcade_stats_v2";
   var cards = Array.prototype.slice.call(document.querySelectorAll(".card[data-app-id]"));
   if (!cards.length) return;
 
@@ -1027,8 +1071,8 @@ window.ARC = window.ARC || {
 
   function doReset() {
     clearStats();
-    try { window.localStorage.removeItem("yg_arcade_history_v1"); } catch (e) { /* noop */ }
-    try { window.localStorage.removeItem("yg_arcade_pending_v1"); } catch (e) { /* noop */ }
+    try { window.localStorage.removeItem("yg_arcade_history_v2"); } catch (e) { /* noop */ }
+    try { window.localStorage.removeItem("yg_arcade_pending_v2"); } catch (e) { /* noop */ }
     if (window.ARC) {
       /* 메모리에 남은 클라우드 집계까지 즉시 비운다 — 안 지우면 화면에서 기록이 되살아난다 */
       window.ARC._agg = null;
@@ -1063,11 +1107,11 @@ window.ARC = window.ARC || {
 
 <script>
 /* ============================================================
-   경기 기록 모달 (yg_arcade_history_v1)
+   경기 기록 모달 (yg_arcade_history_v2)
    ============================================================ */
 (function () {
   "use strict";
-  var KEY = "yg_arcade_history_v1";
+  var KEY = "yg_arcade_history_v2";
   var modal = document.getElementById("histModal");
   var list = document.getElementById("histList");
   var tabs = document.getElementById("histTabs");
@@ -1095,11 +1139,17 @@ window.ARC = window.ARC || {
       return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
     });
   }
+  /* 기기 라벨 — 기기 ID 끝 4자리 + 최근 닉네임 */
+  function devLabel(dev, name) {
+    var d = String(dev || "");
+    var short = d.length > 4 ? d.slice(-4) : d;
+    return "기기 " + short + (name ? " · " + name : "");
+  }
 
   function renderSum(all) {
     var sub = document.getElementById("histSub");
     var cloud = !!(window.ARC && window.ARC._cloud);
-    if (sub) sub.textContent = (cloud ? "부부 통합 전적 · Firebase 동기화" : "이 기기에만 저장") + " · " + all.length + "경기";
+    if (sub) sub.textContent = (cloud ? "기기별 통합 전적 · Firebase 동기화" : "이 기기에만 저장") + " · " + all.length + "경기";
     var sum = document.getElementById("histSum");
     if (!sum) return;
     var pv = { w: 0, l: 0, d: 0 };
@@ -1110,17 +1160,29 @@ window.ARC = window.ARC || {
     });
     var html = "";
     if (pv.w + pv.l + pv.d) html += '<span class="sm"><b>' + pv.w + "승 " + pv.l + "패</b>" + (pv.d ? " " + pv.d + "무" : "") + '</span>';
+    /* 전적은 닉네임이 아니라 기기 단위 — 기기 ID 끝자리 + 최근 닉네임으로 구분한다 */
     var players = (window.ARC && window.ARC._agg && window.ARC._agg.players) || null;
+    if (!players && all.length) {
+      /* 클라우드 집계가 없어도 이 기기에 쌓인 기록으로 기기별 전적을 보여준다 */
+      players = {};
+      all.forEach(function (e) {
+        if (!e || !e.dev) return;
+        var p = players[e.dev] || (players[e.dev] = { dev: e.dev, name: "", wins: 0, losses: 0, draws: 0, plays: 0 });
+        if (e.myName) p.name = e.myName;
+        if (e.result === "win") p.wins++; else if (e.result === "loss") p.losses++; else p.draws++;
+        p.plays++;
+      });
+    }
     if (players) {
-      var names = Object.keys(players).sort(function (a, b) { return (players[b].plays || 0) - (players[a].plays || 0); }).slice(0, 2);
-      names.forEach(function (nm) {
-        var p = players[nm] || {};
+      var devs = Object.keys(players).sort(function (a, b) { return (players[b].plays || 0) - (players[a].plays || 0); }).slice(0, 3);
+      devs.forEach(function (dv) {
+        var p = players[dv] || {};
         var st = p.streak || null;
         var hot = !!(st && st.result === "win" && st.n >= 2);
         var stx = (st && st.n >= 2)
           ? '<em>' + (st.result === "win" ? "🔥" : "") + st.n + (st.result === "win" ? "연승" : (st.result === "loss" ? "연패" : "연무")) + '</em>'
           : "";
-        html += '<span class="sm' + (hot ? " hot" : "") + '"><b>' + esc(nm) + '</b> ' + (p.wins || 0) + "승 " + (p.losses || 0) + "패 " + stx + '</span>';
+        html += '<span class="sm' + (hot ? " hot" : "") + '"><b>' + esc(devLabel(dv, p.name)) + '</b> ' + (p.wins || 0) + "승 " + (p.losses || 0) + "패 " + stx + '</span>';
       });
     }
     sum.innerHTML = html;
@@ -1163,6 +1225,7 @@ window.ARC = window.ARC || {
       var line = [];
       if (e.myName) line.push(String(e.myName) + (e.oppName ? " vs " + String(e.oppName) : ""));
       if (e.scoreText) line.push(String(e.scoreText));
+      if (e.dev) line.push(devLabel(e.dev, ""));
       h += '<div class="hrow">' +
         '<span class="hres ' + r[0] + '">' + r[1] + "</span>" +
         '<span class="hbody"><span class="h1"><b>' + esc(e.game || e.id || "게임") + "</b></span>" +

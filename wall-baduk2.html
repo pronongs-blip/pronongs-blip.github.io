@@ -35,6 +35,7 @@ body{
   padding:calc(env(safe-area-inset-top,0px) + 14px) 12px calc(env(safe-area-inset-bottom,0px) + 8px);
 }
 .screen.on{display:flex}
+#moreBox{display:none!important}
 button{font-family:inherit;color:inherit;background:none;border:none;cursor:pointer;touch-action:manipulation}
 button:disabled{opacity:.4}
 input{font-family:inherit}
@@ -677,14 +678,14 @@ details.more[open] summary::after{transform:rotate(-90deg)}
         <div class="fld" id="nickField">
           <span>닉네임</span>
           <div class="npick">
-            <select id="nickSel" class="nsel" aria-label="닉네임 — 데블스 플랜 시즌 3 출연자에서 선택"></select>
-            <input id="nickInput" maxlength="10" placeholder="닉네임" value="하석진" class="ninput hide">
+            <input id="nickInput" maxlength="10" placeholder="닉네임 직접 입력" value="" class="ninput">
           </div>
         </div>
 
         <div id="paneOnline">
-          <button class="quick" id="quickBtn" type="button">⚡ 바로 입장<em>방 코드 없이 1:1</em></button>
-          <p class="qmsg" id="quickMsg">두 사람이 각자 누르면 자동으로 연결됩니다</p>
+          <button class="quick" id="quickBtn" type="button">🏠 고정코드 방 만들기<em>코드 0000 · 상대 입장 대기</em></button>
+          <p class="qmsg" id="quickMsg">상대가 방을 열면 ⚡ 입장하기로 바뀝니다</p>
+          <button class="ghost small roomclose hide" id="roomClose" type="button">✕ 방 닫기</button>
 
           <details class="more" id="moreBox">
             <summary>초대 링크 · 코드로 들어가기</summary>
@@ -1410,104 +1411,166 @@ details.more[open] summary::after{transform:rotate(-90deg)}
 </script>
 <!-- AA-ENGINE:END -->
 
-<!-- ===== 《데블스 플랜》 출연자 닉네임 선택 (아케이드 공용) ===== -->
+<!-- ===== 아케이드 공용: 닉네임 직접 입력 + Firebase 고정코드 방 ===== -->
 <style>
 .npick{display:flex;flex-direction:column;gap:6px;flex:1 1 auto;min-width:0}
-.npick .nsel{
-  width:100%;height:38px;border-radius:10px;padding:0 30px 0 11px;
-  font-family:inherit;font-size:13.5px;font-weight:700;letter-spacing:0;
-  color:#f2f6ff;border:1px solid rgba(255,255,255,.16);outline:none;
-  -webkit-appearance:none;appearance:none;
-  background:#151d2b url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%239aa8c0' stroke-width='2.4' stroke-linecap='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E") no-repeat right 9px center;
-  background-size:14px 14px;
-}
-.npick .nsel:focus{border-color:rgba(255,194,71,.65);box-shadow:0 0 0 3px rgba(255,194,71,.12)}
-.npick .ninput{width:100%}
-.npick .ninput.hide{display:none}
+.npick .ninput{width:100%;height:40px;border-radius:10px;padding:0 11px;font-family:inherit;font-size:14px;font-weight:700;
+  color:#f2f6ff;background:#0d131e;border:1px solid rgba(255,255,255,.16);outline:none}
+.npick .ninput:focus{border-color:rgba(255,194,71,.65);box-shadow:0 0 0 3px rgba(255,194,71,.12)}
+.npick .ninput::placeholder{color:#6f7f9a;font-weight:600}
+.roomstate{display:flex;flex-direction:column;gap:2px;margin-top:10px;padding:10px 12px;border-radius:12px;
+  background:rgba(255,194,71,.10);border:1px solid rgba(255,194,71,.34);text-align:center}
+.roomstate b{font-size:13.5px;font-weight:900;color:#ffd88a;letter-spacing:-.01em}
+.roomstate span{font-size:11.5px;font-weight:700;color:#c9b78c}
+.roomclose{width:100%;margin-top:8px}
+.quick:disabled{background:#1a2231;border-color:rgba(255,255,255,.12);color:#93a3bd}
+.quick:disabled em{color:#7c8aa3}
 </style>
 <script>
 (function () {
   'use strict';
-  var CAST = [
-    ['시즌 3 · 데드 어게인', ['장동민', '홍진호', '오현민', '하석진', '김동재', '정현규', '서출구', '유리사', '신동', '현경렬', '존박', '재재', '넉살', '이도', '스텔라장', '정원영']]
-  ];
-  var ALL = [];
-  for (var i = 0; i < CAST.length; i++) ALL = ALL.concat(CAST[i][1]);
+  var NKEY = 'arcade_my_name', DKEY = 'yg_arcade_dev_v1';
+  function ls(k) { try { return localStorage.getItem(k) || ''; } catch (e) { return ''; } }
+  function lsSet(k, v) { try { localStorage.setItem(k, v); } catch (e) {} }
 
-  window.DP = {
-    cast: CAST,
-    all: ALL,
-    has: function (n) { return ALL.indexOf(n) >= 0; },
-    rnd: function (exclude) {
-      var pool = ALL.filter(function (n) { return n !== exclude; });
-      return pool[Math.floor(Math.random() * pool.length)];
+  /* 기기 ID — 닉네임과 무관하게 이 기기를 가리키는 고유 값 */
+  function devId() {
+    var d = ls(DKEY);
+    if (!d || !/^[a-z0-9]{6,20}$/.test(d)) {
+      d = 'd' + Math.random().toString(36).slice(2, 10);
+      lsSet(DKEY, d);
     }
-  };
-
-  function fill(sel, current) {
-    var html = '<option value="" disabled>시즌 3 출연자 선택</option>';
-    for (var i = 0; i < CAST.length; i++) {
-      html += '<optgroup label="' + CAST[i][0] + '">';
-      for (var j = 0; j < CAST[i][1].length; j++) {
-        html += '<option value="' + CAST[i][1][j] + '">' + CAST[i][1][j] + '</option>';
-      }
-      html += '</optgroup>';
-    }
-    html += '<option value="__custom">✎ 직접 입력</option>';
-    sel.innerHTML = html;
-    sel.value = ALL.indexOf(current) >= 0 ? current : '__custom';
+    return d;
   }
 
-  /* input 바로 앞(또는 지정한) select를 출연자 선택 상자로 연결 */
-  window.dpAttach = function (input, sel) {
-    if (!input) return;
-    sel = sel || input.previousElementSibling;
-    if (!sel || sel.tagName !== 'SELECT') return;
-    input._dpSel = sel;
-    fill(sel, input.value);
-    input.classList.add('ninput');
-    var isCast = ALL.indexOf(input.value) >= 0;
-    sel.value = isCast ? input.value : '__custom';
-    input.classList.toggle('hide', isCast);
-
-    sel.addEventListener('change', function () {
-      if (!sel.value) return;              /* 안내 항목(placeholder)은 선택 불가 */
-      if (sel.value === '__custom') {
-        input.classList.remove('hide');
-        if (ALL.indexOf(input.value) >= 0) input.value = '';
-        try { input.focus(); } catch (e) {}
-      } else {
-        input.value = sel.value;
-        input.classList.add('hide');
-        input.dispatchEvent(new Event('input', { bubbles: true }));
-      }
-    });
-    input.addEventListener('blur', function () {
-      if (!input.value.trim()) {
-        input.value = '';
-        sel.value = '__custom';            /* 빈 닉네임은 안내 항목 대신 직접 입력 유지 */
-        input.classList.remove('hide');
-      }
-    });
+  /* 닉네임 — 데블스 플랜 선택 없이 직접 입력, 마지막 이름을 모든 게임이 함께 기억 */
+  var AN = window.AN = {
+    KEY: NKEY,
+    get: function () { return ls(NKEY); },
+    set: function (v) {
+      var s = String(v == null ? '' : v).trim().slice(0, 10);
+      if (s) lsSet(NKEY, s);
+      return s;
+    },
+    dev: devId
   };
 
-  /* 코드에서 닉네임을 바꾼 뒤 선택 상자를 맞춰 준다 */
-  window.dpSync = function (input) {
-    var sel = input && input._dpSel;
-    if (!sel) return;
-    var v = String(input.value || '');
-    if (ALL.indexOf(v) >= 0) { sel.value = v; input.classList.add('hide'); }
-    else { sel.value = '__custom'; input.classList.remove('hide'); }
+  /* 옛 호출 호환 */
+  window.DP = {
+    cast: [], all: [],
+    rnd: function (exclude) {
+      var n = AN.get();
+      if (!exclude) return n || '플레이어1';
+      return '플레이어2';
+    }
+  };
+  window.dpAttach = function (input) {
+    if (!input) return;
+    input.classList.remove('hide', 'nsel');
+    input.classList.add('ninput');
+    if (!input.placeholder) input.placeholder = '닉네임 직접 입력';
+    input.addEventListener('input', function () { AN.set(input.value); });
+  };
+  window.dpSync = function (input) { if (input) input.classList.remove('hide'); };
+
+  /* 닉네임 칸 기본값 — 마지막으로 쓴 이름을 이어받는다 */
+  function fillNames() {
+    var n = AN.get() || '플레이어1';
+    ['#myName', '#nameA', '#nameSolo', '#nickInput'].forEach(function (sel) {
+      var el = document.querySelector(sel);
+      if (el && !el.value) el.value = n;
+    });
+    var b = document.querySelector('#nameB');
+    if (b && !b.value) b.value = '플레이어2';
+  }
+  fillNames();
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', fillNames);
+  else setTimeout(fillNames, 0);
+
+  /* =========================================================
+     Firebase 실시간 DB — 고정코드(0000) 방
+     /arcade_rooms/{gameId}.json = { roomCode, hostName, hostDeviceId, createdAt }
+     ========================================================= */
+  var FB = 'https://seonongs-hq-default-rtdb.firebaseio.com';
+  var AR = window.AROOM = {
+    gid: '', CODE: '0000', TTL: 5 * 60 * 1000,
+    room: null, mine: false, timer: 0, onRoom: null, publishing: false,
+    path: function () { return FB + '/arcade_rooms/' + this.gid + '.json'; },
+    _json: function (t) { try { return t ? JSON.parse(t) : null; } catch (e) { return null; } },
+    req: function (method, body, keep) {
+      var opt = { method: method, cache: 'no-store' };
+      if (keep) opt.keepalive = true;
+      if (body !== undefined) { opt.headers = { 'Content-Type': 'application/json' }; opt.body = JSON.stringify(body); }
+      return fetch(this.path(), opt).then(function (r) {
+        if (!r.ok) return null;
+        return r.text().then(function (t) { return this._json(t); }.bind(this));
+      }.bind(this)).catch(function () { return null; });
+    },
+    read: function () {
+      var self = this;
+      return fetch(this.path() + '?t=' + Date.now(), { cache: 'no-store' })
+        .then(function (r) { return r.ok ? r.text().then(function (t) { return self._json(t); }) : null; })
+        .catch(function () { return null; });
+    },
+    fresh: function (r) {
+      if (!r || typeof r !== 'object') return false;
+      var at = +r.createdAt || 0;
+      if (!at || Date.now() - at >= this.TTL) return false;
+      return String(r.roomCode || '') === this.CODE;
+    },
+    publish: function (name) {
+      var self = this;
+      this.publishing = true;
+      var body = {
+        roomCode: this.CODE,
+        hostName: String(name || '상대').slice(0, 10),
+        hostDeviceId: devId(),
+        createdAt: Date.now()
+      };
+      return this.req('PUT', body).then(function (v) {
+        self.publishing = false;
+        if (v) { self.mine = true; self.room = v; }
+        return !!v;
+      });
+    },
+    remove: function () {
+      var wasMine = this.mine;
+      this.mine = false;
+      this.room = null;
+      if (!wasMine) return Promise.resolve(null);
+      return this.req('DELETE', undefined, true);
+    },
+    start: function (cb) {
+      this.stop();
+      this.onRoom = cb;
+      this.poll();
+    },
+    stop: function () { clearTimeout(this.timer); this.timer = 0; this.onRoom = null; },
+    poll: function () {
+      var self = this;
+      clearTimeout(this.timer);
+      var step = function () {
+        if (!self.onRoom) return;
+        self.read().then(function (r) {
+          if (!self.onRoom) return;
+          var room = self.fresh(r) ? r : null;
+          if (!self.mine) self.room = room;
+          try { self.onRoom(room); } catch (e) {}
+          if (self.onRoom) self.timer = setTimeout(step, 1500);
+        });
+      };
+      step();
+    }
   };
 })();
 </script>
 
-<!-- 아케이드 전적 기록 (yg_arcade_stats_v1 · yg_arcade_history_v1) -->
+<!-- 아케이드 전적 기록 (yg_arcade_stats_v2 · yg_arcade_history_v2) -->
 <script>
 window.ARC = window.ARC || {
-  KEY: 'yg_arcade_stats_v1',
-  HKEY: 'yg_arcade_history_v1',
-  PKEY: 'yg_arcade_pending_v1',
+  KEY: 'yg_arcade_stats_v2',
+  HKEY: 'yg_arcade_history_v2',
+  PKEY: 'yg_arcade_pending_v2',
   DKEY: 'yg_arcade_dev_v1',
   CAP: 200,
   FB: (window.ARC_FB_BASE || 'https://seonongs-hq-default-rtdb.firebaseio.com'),
@@ -1515,6 +1578,20 @@ window.ARC = window.ARC || {
   _opens: null,
   _cloud: false,
   _clearing: false,
+  peerDev: '',
+  online: false,
+  /* 온라인 1:1(서로 다른 두 기기)만 기록한다 — AI·한 기기 대전은 저장하지 않는다 */
+  setPeer: function (dev, online) {
+    this.peerDev = String(dev || '');
+    this.online = !!online;
+  },
+  allow: function (mode) {
+    if (mode !== undefined && mode !== null && mode !== '') {
+      if (String(mode).toLowerCase() !== 'online') return false;
+    }
+    if (!this.online || !this.peerDev) return false;
+    return this.peerDev !== this.dev();
+  },
   read: function () { try { return JSON.parse(localStorage.getItem(this.KEY) || '{}') || {}; } catch (e) { return {}; } },
   /* 상대 구분: ai(혼자·AI 대전) / pvp(두 사람 — 한 기기·온라인 1:1) */
   vsOf: function (mode) { return (mode === 'ai' || mode === 'solo' || !mode) ? 'ai' : 'pvp'; },
@@ -1578,7 +1655,7 @@ window.ARC = window.ARC || {
     });
   },
   record: function (id, res, vs) {
-    if (!this.isPvp(vs)) return;
+    if (!this.isPvp(vs) || !this.allow()) return;
     try {
       var all = this.read(), s = all[id] || {};
       s.wins = Math.max(0, +s.wins || 0);
@@ -1669,12 +1746,16 @@ window.ARC = window.ARC || {
       vs: (v.vs === 'pvp') ? 'pvp' : ((v.vs === 'ai') ? 'ai' : this.vsOf(String(v.mode || ''))),
       myName: String(v.myName || ''),
       oppName: String(v.oppName || ''),
+      dev: String(v.dev || ''),
+      peerDev: String(v.peerDev || ''),
       result: r,
       scoreText: String(v.scoreText || ''),
       playedAt: at
     };
-    /* AI 대전 기록은 읽지도, 다시 올리지도 않는다 */
-    return (rec.vs === 'pvp') ? rec : null;
+    /* AI·한 기기 기록, 기기 구분이 없는 기록은 읽지도, 다시 올리지도 않는다 */
+    if (rec.vs !== 'pvp') return null;
+    if (!rec.dev || !rec.peerDev || rec.dev === rec.peerDev) return null;
+    return rec;
   },
   history: function () {
     try {
@@ -1688,7 +1769,7 @@ window.ARC = window.ARC || {
   /* 경기 히스토리 — 최신순 최대 200건, 로컬 + Firebase 동시 저장 */
   save: function (o) {
     o = o || {};
-    if (!this.isPvp(o.vs, o.mode)) return;
+    if (!this.isPvp(o.vs, o.mode) || !this.allow(o.mode)) return;
     var rec = null;
     try {
       var arr = this.history();
@@ -1707,7 +1788,8 @@ window.ARC = window.ARC || {
         result: r,
         scoreText: String(o.scoreText || ''),
         playedAt: Date.now(),
-        dev: this.dev()
+        dev: this.dev(),
+        peerDev: this.peerDev
       };
       arr.unshift(rec);
       if (arr.length > this.CAP) arr.length = this.CAP;
@@ -1722,29 +1804,30 @@ window.ARC = window.ARC || {
   derive: function (list) {
     var games = {}, players = {};
     list.forEach(function (r) {
-      if (r.vs !== 'pvp') return;
+      if (r.vs !== 'pvp' || !r.dev) return;
       var g = games[r.id] || (games[r.id] = { wins: 0, losses: 0, draws: 0, plays: 0, pvp: { wins: 0, losses: 0, draws: 0 }, ai: { wins: 0, losses: 0, draws: 0 } });
       var k = (r.result === 'win') ? 'wins' : (r.result === 'loss' ? 'losses' : 'draws');
       g[k]++; g.plays++;
       g[r.vs][k]++;
-      var nm = r.myName || '';
-      if (nm) {
-        var p = players[nm] || (players[nm] = { wins: 0, losses: 0, draws: 0, plays: 0 });
-        p[k]++; p.plays++;
-      }
+      /* 전적은 닉네임이 아니라 기기(deviceId)로 묶는다 — 이름을 바꿔도 같은 기기 전적 */
+      var dv = String(r.dev);
+      var p = players[dv] || (players[dv] = { dev: dv, name: '', wins: 0, losses: 0, draws: 0, plays: 0, lastPlayed: 0 });
+      if (r.myName) p.name = String(r.myName);
+      if (r.playedAt > p.lastPlayed) p.lastPlayed = r.playedAt;
+      p[k]++; p.plays++;
     });
-    /* 연승 — 플레이어별 최근 결과 연속 수 */
+    /* 연승 — 기기별 최근 결과 연속 수 */
     var streak = {};
-    var byName = {};
-    list.forEach(function (r) { if (r.myName) (byName[r.myName] = byName[r.myName] || []).push(r); });
-    Object.keys(byName).forEach(function (nm) {
-      var arr = byName[nm].slice().sort(function (a, b) { return b.playedAt - a.playedAt; });
+    var byDev = {};
+    list.forEach(function (r) { if (r.dev) (byDev[r.dev] = byDev[r.dev] || []).push(r); });
+    Object.keys(byDev).forEach(function (dv) {
+      var arr = byDev[dv].slice().sort(function (a, b) { return b.playedAt - a.playedAt; });
       var res = arr[0] ? arr[0].result : '';
       var n = 0;
       for (var i = 0; i < arr.length && arr[i].result === res; i++) n++;
-      streak[nm] = { result: res, n: n };
+      streak[dv] = { result: res, n: n };
     });
-    Object.keys(players).forEach(function (nm) { players[nm].streak = streak[nm] || null; });
+    Object.keys(players).forEach(function (dv) { players[dv].streak = streak[dv] || null; });
     return { games: games, players: players, streak: streak };
   },
   _pushStats: function () {
@@ -1808,6 +1891,24 @@ window.ARC = window.ARC || {
           };
         });
       }
+      var sp = (sraw && sraw.players) || null;
+      if (sp && typeof sp === 'object') {
+        Object.keys(sp).forEach(function (dv) {
+          if (!dv || dv === 'undefined') return;
+          /* 기기 ID 형식만 받는다 — 예전 닉네임 기준 집계는 버린다 */
+          if (!/^[a-z0-9]{6,20}$/.test(dv)) return;
+          var a = agg.players[dv] || { dev: dv, name: '', wins: 0, losses: 0, draws: 0, plays: 0, lastPlayed: 0 };
+          var b = sp[dv] || {};
+          agg.players[dv] = {
+            dev: dv,
+            name: a.name || String(b.name || ''),
+            wins: self._mx(a.wins, b.wins), losses: self._mx(a.losses, b.losses),
+            draws: self._mx(a.draws, b.draws), plays: self._mx(a.plays, b.plays),
+            lastPlayed: self._mx(a.lastPlayed, b.lastPlayed),
+            streak: a.streak || b.streak || null
+          };
+        });
+      }
       self._agg = agg;
       self._opens = (sraw && sraw.opens) || {};
       self._cloud = reachable;
@@ -1838,6 +1939,12 @@ window.ARC = window.ARC || {
   }
 };
 (function () {
+  /* 이전 버전(v1) 대전 기록은 기기·닉네임 기준이 달라 한 번 지우고 새로 시작한다 */
+  try {
+    ['yg_arcade_stats_v1', 'yg_arcade_history_v1', 'yg_arcade_pending_v1'].forEach(function (k) {
+      localStorage.removeItem(k);
+    });
+  } catch (e) {}
   function boot() { try { window.ARC.sync(); } catch (e) {} }
   if (document.readyState === 'complete' || document.readyState === 'interactive') setTimeout(boot, 40);
   else document.addEventListener('DOMContentLoaded', function () { setTimeout(boot, 40); });
@@ -2712,6 +2819,7 @@ const Net = {
   cloud: false, connecting: false, bc: null, mq: null, broker: null,
   seen: new Set(), seq: 0, joinTries: 0, joinTimer: null, lastErr: '',
   reset() {
+    try { if (window.ARC && ARC.setPeer) ARC.setPeer('', false); } catch (e) {}
     clearInterval(this.joinTimer);
     if (this.mq) { try { this.mq.close(); } catch (e) {} }
     this.mq = null; this.cloud = false; this.connecting = false;
@@ -2797,7 +2905,7 @@ const Net = {
     const send = () => {
       if (!this.room || this.role !== 'guest' || this.peer) return;
       this.joinTries++;
-      this.send({ t: 'join', name: myNick() });
+      this.send({ t: 'join', name: myNick(), dev: (window.ARC ? ARC.dev() : '') });
       if (this.joinTries > 14) { lobbyStatus('방을 찾지 못했습니다 · 코드와 인터넷을 확인해 주세요', 'bad'); }
     };
     send();
@@ -2918,7 +3026,8 @@ function onNet(m) {
       Net.peer = m.from;
       Net.peerName = clampStr(m.name || DEF_GUEST, 10);
       if (st && st.net === 'online' && st.names) st.names[1] = Net.peerName;
-      Net.send({ t: 'welcome', to: m.from, seat: 1, hostName: myNick(), started: !!(st && st.net === 'online' && st.phase), snap: (st && st.net === 'online') ? snapshot() : null });
+      try { if (window.ARC && ARC.setPeer) ARC.setPeer(m.dev, true); } catch (e) {}
+      Net.send({ t: 'welcome', to: m.from, seat: 1, hostName: myNick(), dev: (window.ARC ? ARC.dev() : ''), started: !!(st && st.net === 'online' && st.phase), snap: (st && st.net === 'online') ? snapshot() : null });
       netBadge(true);
       if (st && st.net === 'online') { renderAll(); }
       lobbyPeer(true);
@@ -2927,6 +3036,7 @@ function onNet(m) {
     case 'welcome': {
       if (m.to && m.to !== Net.pid) return;
       Net.peer = m.from; Net.peerName = clampStr(m.hostName || DEF_HOST, 10);
+      try { if (window.ARC && ARC.setPeer) ARC.setPeer(m.dev, true); } catch (e) {}
       clearInterval(Net.joinTimer);
       netBadge(true);
       lobbyPeer(false, true);
@@ -3098,8 +3208,6 @@ async function joinRoom(code) {
   code = String(code || '').replace(/\D/g, '').slice(0, 4);
   if (code.length !== 4) { toast('방 코드 4자리를 입력해 주세요'); return; }
   /* 코드로 직접 참가하는 경우: 이름을 고치지 않았다면 손님 기본값으로 */
-  const ni = document.getElementById('nickInput');
-  if (ni && !nickTouched && !/[?&]name=/.test(location.search)) setNick(DEF_GUEST);
   Net.reset();
   Net.room = code; Net.role = 'guest';
   document.getElementById('lobbyChoose').classList.add('hide');
@@ -3605,6 +3713,7 @@ function goHome() {
   st = null;
   hideModal('#overModal'); hideModal('#rulesModal'); hideModal('#lobbyModal'); hideModal('#histModal');
   showScreen('home');
+  setTimeout(function () { try { roomIdle(); roomWatch(); } catch (e) {} }, 0);
 }
 function showModal(sel) {
   const m = $(sel);
@@ -3782,11 +3891,11 @@ function syncHomeFields() {
   const sb = document.getElementById('startBtn');
   if (sb) { sb.classList.toggle('hide', m === 'online'); sb.textContent = '게임 시작'; }
   if (m !== 'online' && quickOn) quickStop(true);
+  if (m !== 'online' && roomIn) roomClose();
+  try { roomWatch(); } catch (e) {}
 }
 
 /* ===== ⚡ 바로 입장 (방 코드 없이 자동 매칭) ===== */
-let quickOn = false, quickPoll = 0;
-const QUICK_CODE = '0000';
 function quickMsg(t, on) {
   const el = document.getElementById('quickMsg');
   if (!el) return;
@@ -3834,30 +3943,140 @@ function quickConnect(role) {
   setNick(role === 'host' ? DEF_HOST : DEF_GUEST);
   Net.open();
 }
-function quickStart() {
-  if (quickOn) { quickStop(true); return; }
-  quickLabel(true);
-  quickOn = true; quickSetBtn(false);   /* 대기 중에도 눌러서 취소 가능 */
-  cfgSel.mode = 'online';
-  syncHomeFields();
-  quickConnect('guest');
-  quickMsg('상대를 찾는 중…', true);
-  const t0 = Date.now();
-  clearInterval(quickPoll);
-  quickPoll = setInterval(() => {
-    if (Net.peer) {
-      clearInterval(quickPoll); quickPoll = 0;
-      quickMsg(Net.role === 'host' ? '상대 입장 완료 · 곧 시작합니다' : '입장 완료 · 곧 시작합니다', true);
-      if (Net.role === 'host' && !st) setTimeout(() => { if (quickOn && Net.peer) startOnlineHost(cfgSel.time || 90); }, 600);
-      return;
+  /* ===== 고정코드(0000) 방 — Firebase 실시간 확인 ===== */
+  var QUICK_CODE = '0000';
+  var quickOn = false, quickPoll = 0;
+  var roomIn = false;
+  var DEF_A = DEF_HOST, DEF_B = DEF_GUEST;
+  function clampName(v, d) { var t = String(v == null ? '' : v).trim().slice(0, 10); return t || d; }                  /* 내가 방을 열고 상대를 기다리는 중 */
+
+  function rEsc(t) {
+    return String(t == null ? '' : t).replace(/[&<>"']/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+    });
+  }
+  function quickMsg(t, on) {
+    var el = $('#quickMsg');
+    if (!el) return;
+    el.textContent = t;
+    el.classList.toggle('on', !!on);
+  }
+  function quickSetBtn(busy) { var b = $('#quickBtn'); if (b) b.disabled = !!busy; }
+  function roomBtn(html, sub) {
+    var b = $('#quickBtn');
+    if (!b) return;
+    b.innerHTML = html + (sub ? '<em>' + sub + '</em>' : '');
+  }
+  function roomStateUI(on) {
+    var c = $('#roomClose');
+    if (c) c.classList.toggle('hide', !on);
+  }
+  /* 로비 + 온라인일 때만 열린 방을 실시간으로 본다 */
+  function roomWatch() {
+    if ((document.getElementById('home') && document.getElementById('home').classList.contains('on')) && cfgSel.mode === 'online') {
+      if (!AROOM.onRoom) AROOM.start(paintRoom);
+    } else {
+      AROOM.stop();
     }
-    if (Net.role === 'guest' && Date.now() - t0 > 1800) {
-      quickConnect('host');
-      quickMsg('방을 열었습니다 · 상대가 ⚡ 바로 입장을 누르면 시작됩니다', true);
+  }
+  function paintRoom(room) {
+    if (roomIn) return;
+    /* 내가 열었던 방이 아직 지워지기 전이면 없는 것으로 본다 */
+    if (room && window.ARC && room.hostDeviceId === ARC.dev()) room = null;
+    if (room) {
+      roomBtn('⚡ 입장하기 (' + rEsc(room.hostName || '상대') + ' 님 대기 중)', '코드 0000 · 누르면 바로 연결');
+      quickMsg('상대가 방을 열었습니다 · ⚡ 입장하기를 누르세요', true);
+    } else {
+      roomBtn('🏠 고정코드 방 만들기', '코드 0000 · 상대 입장 대기');
+      quickMsg('상대가 방을 열면 ⚡ 입장하기로 바뀝니다', false);
     }
-    if (Date.now() - t0 > 45000) quickStop(true);
-  }, 300);
-}
+    quickSetBtn(false);
+    roomStateUI(false);
+  }
+  function roomIdle() {
+    roomIn = false;
+    roomStateUI(false);
+    quickSetBtn(false);
+    paintRoom(AROOM.fresh(AROOM.room) ? AROOM.room : null);
+  }
+  function roomPress() {
+    if (cfgSel.mode !== 'online') return;
+    var room = AROOM.fresh(AROOM.room) ? AROOM.room : null;
+    if (room) roomJoin(room); else roomCreate();
+  }
+  function roomHostName() { return clampName(myNick(), DEF_HOST); }
+  function roomCreate() {
+    var name = roomHostName();
+    AN.set(name); setNick(name);
+    cfgSel.mode = 'online';
+    syncHomeFields();
+    quickMsg('방을 여는 중…', true);
+    roomBtn('⏳ 방 여는 중…', '잠시만 기다려 주세요');
+    quickSetBtn(true);
+    AROOM.stop();
+    AROOM.publish(name).then(function (ok) {
+      if (!ok) { quickSetBtn(false); roomBtn('🏠 고정코드 방 만들기', '코드 0000 · 상대 입장 대기'); quickMsg('방을 열지 못했습니다 · 인터넷 연결을 확인해 주세요', true); return; }
+      roomIn = true;
+      roomBtn('⏳ 방 열림 (코드 0000)', '상대 입장 대기 중');
+      quickMsg('상대가 ⚡ 입장하기를 누르면 시작됩니다', true);
+      roomStateUI(true);
+      Net.reset();
+      Net.room = QUICK_CODE; Net.role = 'host';
+      const _ch = document.getElementById('lobbyChoose');
+      const _ho = document.getElementById('lobbyHost');
+      const _gu = document.getElementById('lobbyGuest');
+      if (_ch) _ch.classList.add('hide');
+      if (_gu) _gu.classList.add('hide');
+      if (_ho) _ho.classList.remove('hide');
+      const _rc0 = document.getElementById('roomCode'); if (_rc0) _rc0.textContent = QUICK_CODE;
+      const _hs = document.getElementById('hostStatus'); if (_hs) _hs.innerHTML = '상대를 기다리는 중…';
+      const _hb = document.getElementById('hostStartBtn'); if (_hb) _hb.disabled = true;
+      Net.open();
+      clearInterval(quickPoll);
+      quickPoll = setInterval(function () {
+        if (Net.peer) { clearInterval(quickPoll); quickPoll = 0; roomBegin(); }
+      }, 300);
+    });
+  }
+  function roomJoin(room) {
+        const name = clampName(myNick(), DEF_GUEST);
+    setNick(name);
+    AN.set(name);
+    roomIn = false;
+    AROOM.stop();
+    roomBtn('⚡ 입장 중…', '잠시만 기다려 주세요');
+    quickSetBtn(true);
+    quickMsg(rEsc((room && room.hostName) || '상대') + ' 님 방에 들어가는 중…', true);
+    if (Net.peer) { try { Net.send({ t: 'bye' }); } catch (e) {} }
+    joinRoom(QUICK_CODE);
+  }
+  function roomBegin() {
+    roomIn = false;
+    AROOM.remove();
+    roomStateUI(false);
+    clearInterval(quickPoll); quickPoll = 0;
+    quickMsg('입장 완료 · 곧 시작합니다', true);
+    if (Net.role === 'host') setTimeout(function () { if (Net.peer) startOnlineHost(cfgSel.time || 90); }, 260);
+  }
+  function roomClose() {
+    clearInterval(quickPoll); quickPoll = 0;
+    roomIn = false;
+    var gone = AROOM.remove();
+    if (Net.room) Net.reset();
+    roomIdle();
+    if (gone && gone.then) gone.then(function () { roomIdle(); roomWatch(); });
+    else roomWatch();
+    toast('방을 닫았습니다');
+  }
+  function quickStop(withReset) {
+    roomIn = false;
+    clearInterval(quickPoll); quickPoll = 0;
+    quickSetBtn(false);
+    if (withReset && Net.room) Net.reset();
+    roomIdle();
+  }
+
+function quickStart() { roomPress(); }
 
 function bindUI() {
   document.getElementById('modeSeg').addEventListener('click', e => {
@@ -3894,6 +4113,10 @@ function bindUI() {
   $('#helpBtn').addEventListener('click', openRules);
   const qb = document.getElementById('quickBtn');
   if (qb) qb.addEventListener('click', quickStart);
+  const _rclose = document.getElementById('roomClose');
+  if (_rclose) _rclose.addEventListener('click', roomClose);
+  window.addEventListener('pagehide', () => { if (AROOM.mine) AROOM.remove(); });
+  window.addEventListener('beforeunload', () => { if (AROOM.mine) AROOM.remove(); });
   $('#homeBtn').addEventListener('click', () => { if (confirm('게임을 나가시겠습니까?')) goHome(); });
   $('#newBtn').addEventListener('click', () => {
     if (st && st.net === 'online') {
@@ -4022,7 +4245,9 @@ buildStatic();
   input.value = DEF_HOST;
   if (window.dpAttach) dpAttach(input, document.getElementById('nickSel'));
 })();
+AROOM.gid = 'wall-baduk2';
 syncHomeFields();
+roomWatch();
 netBadge();
 try { window.AA && AA.init('baduk'); } catch (e) {}
 
@@ -4041,7 +4266,9 @@ try { window.AA && AA.init('baduk'); } catch (e) {}
       syncHomeFields();
       openLobby();
       document.getElementById('codeInput').value = code;
-      setTimeout(() => joinRoom(code), 120);
+      setTimeout(() => {
+        AROOM.read().then((r) => { if (AROOM.fresh(r)) roomJoin(r); else quickMsg('열린 방이 없습니다 · 상대가 방을 열면 자동으로 바뀝니다', true); });
+      }, 120);
     }
   } catch (e) {}
 })();

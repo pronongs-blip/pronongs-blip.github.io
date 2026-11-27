@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
+<title>별똥별 피하기</title>
+<style>
+html,body{margin:0;height:100%;background:#0b1026;overflow:hidden;touch-action:none;font-family:sans-serif}
+canvas{display:block;margin:auto}
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+<script>
+const c = document.getElementById('c'), x = c.getContext('2d');
+let W, H, player, rocks, score, best = 0, over = true, started = false, last = 0, spawn = 0, dir = 0, target = null;
+try { best = +localStorage.getItem('best') || 0; } catch (e) {}
+
+function resize() {
+  W = c.width = Math.min(innerWidth, 480);
+  H = c.height = innerHeight;
+  if (player) { player.y = H - 60; player.x = Math.min(player.x, W - 16); }
+}
+function reset() {
+  player = { x: W / 2, y: H - 60, r: 16 };
+  rocks = []; score = 0; spawn = 0; target = null; dir = 0;
+}
+function start() { reset(); over = false; started = true; }
+
+function update(dt) {
+  score += dt;
+  spawn -= dt;
+  if (spawn <= 0) {
+    const r = 8 + Math.random() * 16;
+    rocks.push({ x: r + Math.random() * (W - 2 * r), y: -r, r, v: 160 + Math.random() * 120 + score * 6 });
+    spawn = Math.max(0.15, 0.6 - score * 0.008);
+  }
+  const speed = 380;
+  if (target !== null) {
+    const d = target - player.x;
+    player.x += Math.sign(d) * Math.min(Math.abs(d), speed * dt);
+  } else player.x += dir * speed * dt;
+  player.x = Math.max(player.r, Math.min(W - player.r, player.x));
+
+  for (const k of rocks) {
+    k.y += k.v * dt;
+    if (Math.hypot(k.x - player.x, k.y - player.y) < k.r + player.r - 4) {
+      over = true;
+      best = Math.max(best, Math.floor(score));
+      try { localStorage.setItem('best', best); } catch (e) {}
+    }
+  }
+  rocks = rocks.filter(k => k.y < H + k.r);
+}
+
+function circle(o, color) {
+  x.fillStyle = color; x.beginPath(); x.arc(o.x, o.y, o.r, 0, Math.PI * 2); x.fill();
+}
+function text(t, y, size) {
+  x.fillStyle = '#fff'; x.font = `bold ${size}px sans-serif`; x.textAlign = 'center'; x.fillText(t, W / 2, y);
+}
+function draw() {
+  x.fillStyle = '#131a3a'; x.fillRect(0, 0, W, H);
+  rocks.forEach(k => circle(k, '#ff9f43'));
+  circle(player, '#54e0c7');
+  text(`점수 ${Math.floor(score)}   최고 ${best}`, 32, 18);
+  if (over) {
+    text(started ? '게임 오버' : '별똥별 피하기', H / 2 - 20, 32);
+    text('터치 또는 스페이스로 시작', H / 2 + 20, 18);
+    text('좌우 드래그 / 방향키', H / 2 + 50, 14);
+  }
+}
+function loop(t) {
+  const dt = Math.min((t - last) / 1000, 0.05); last = t;
+  if (!over) update(dt);
+  draw();
+  requestAnimationFrame(loop);
+}
+
+const px = e => e.clientX - c.getBoundingClientRect().left;
+addEventListener('pointerdown', e => { if (over) start(); target = px(e); });
+addEventListener('pointermove', e => { if (target !== null) target = px(e); });
+addEventListener('pointerup', () => target = null);
+addEventListener('pointercancel', () => target = null);
+addEventListener('keydown', e => {
+  if (e.code === 'Space' && over) start();
+  if (e.code === 'ArrowLeft') dir = -1;
+  if (e.code === 'ArrowRight') dir = 1;
+});
+addEventListener('keyup', e => {
+  if ((e.code === 'ArrowLeft' && dir === -1) || (e.code === 'ArrowRight' && dir === 1)) dir = 0;
+});
+addEventListener('resize', resize);
+resize(); reset();
+requestAnimationFrame(loop);
+</script>
+</body>
+</html>

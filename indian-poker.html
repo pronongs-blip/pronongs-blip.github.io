@@ -179,6 +179,11 @@
   .npick .ninput.hide{display:none}
   .rls-open{width:100%;margin-top:8px}
   #startBtn.ghost{width:100%}
+  #startBtn.online-hide{display:none!important}
+  #hostStartBtn{width:100%;margin:0 0 8px}
+  #makeRoom{display:none!important}
+  #moreBox.has-room .roomrow{display:none}
+  #hostStartBtn:disabled{opacity:.55;filter:saturate(.75);cursor:default}
 
   /* ---------- 게임 화면 ---------- */
   #game{gap:6px}
@@ -559,6 +564,7 @@
           <p class="qmsg" id="quickMsg">두 사람이 각자 누르면 자동으로 연결됩니다</p>
           <details class="more" id="moreBox">
             <summary>초대 링크 · 코드로 들어가기</summary>
+            <button id="hostStartBtn" class="ghost small" type="button">방장으로 코드 방 열기</button>
             <div class="roomrow">
               <input id="roomInput" inputmode="numeric" maxlength="4" placeholder="방 코드 4자리" autocomplete="off">
               <button id="makeRoom" class="ghost small">방 만들기</button>
@@ -2031,6 +2037,7 @@ window.ARC = window.ARC || {
       else if (Net.room) hint.textContent = '브로커 연결 실패 · 같은 기기 모드 이용';
       else hint.textContent = '';
     }
+    paintHostBtn();
   }
 
   /* =========================================================
@@ -2562,6 +2569,25 @@ window.ARC = window.ARC || {
     }, 300);
   }
 
+  /* ===== 방장(코드 방) 시작 — 초대 링크 안쪽 버튼 ===== */
+  function paintHostBtn() {
+    var b = document.getElementById('hostStartBtn');
+    if (!b) return;
+    if (S.mode !== 'online' || !Net.room) { b.textContent = '방장으로 코드 방 열기'; b.disabled = false; return; }
+    if (Net.role === 'guest') { b.textContent = '참가 중 · 방장이 시작합니다'; b.disabled = true; return; }
+    if (Net.peer) { b.textContent = '▶ 게임 시작 (방장)'; b.disabled = false; return; }
+    b.textContent = '방 열림 · 상대 입장 대기 중'; b.disabled = true;
+  }
+  var _hostBtn = document.getElementById('hostStartBtn');
+  if (_hostBtn) _hostBtn.addEventListener('click', function () {
+    if (S.mode !== 'online') return;
+    var box = document.getElementById('moreBox');
+    if (box) box.open = true;
+    var sb = document.getElementById('startBtn');
+    if (sb) sb.click();          /* 기존 시작 로직 100% 재사용 (방 없으면 개설, 상대 있으면 시작) */
+    paintHostBtn();
+  });
+
   function setMode(m) {
     S.mode = m;
     $$('#modeSeg .mode').forEach(function (x) { x.classList.toggle('on', x.dataset.val === m); });
@@ -2571,11 +2597,14 @@ window.ARC = window.ARC || {
     var sb = $('#startBtn');
     if (m === 'online') {
       sb.classList.remove('primary'); sb.classList.add('ghost');
-      sb.textContent = '방장으로 시작';
+      sb.classList.add('online-hide');          /* 온라인은 ⚡ 바로 입장 하나만 */
+      sb.textContent = '대국 시작';
     } else {
-      sb.classList.remove('ghost'); sb.classList.add('primary');
+      sb.classList.remove('ghost'); sb.classList.remove('online-hide'); sb.classList.remove('hide');
+      sb.classList.add('primary');
       sb.textContent = '대국 시작';
     }
+    paintHostBtn();
     if (m === 'online' && Net.room) $('#inviteBox').classList.remove('hide');
     if (m !== 'online' && quickOn) quickStop(true);
   }
@@ -2592,6 +2621,8 @@ window.ARC = window.ARC || {
   }
 
   function paintInvite() {
+    var _mb = document.getElementById('moreBox');
+    if (_mb) _mb.classList.toggle('has-room', !!Net.room);
     if (!Net.room) {
       $('#inviteBox').classList.add('hide');
       return;
@@ -2628,6 +2659,7 @@ window.ARC = window.ARC || {
     S.role = 'guest'; S.mySeat = 1;
     connectAs('guest', code);
     $('#startBtn').classList.add('hide');
+    var _jb = document.getElementById('moreBox'); if (_jb) _jb.open = true;   /* 손님도 입장 상태 확인 */
     toast('방 ' + code + ' 참가 중…');
   }
 

@@ -495,6 +495,11 @@ details.more[open] summary::after{transform:rotate(-90deg)}
 .ghost:active{background:rgba(255,255,255,.1)}
 .rls-open{width:100%;margin-top:8px}
 #startBtn.ghost{width:100%}
+  #startBtn.online-hide{display:none!important}
+  #hostStartBtn{width:100%;margin:0 0 8px}
+  #makeRoom{display:none!important}
+  #moreBox.has-room .roomrow{display:none}
+  #hostStartBtn:disabled{opacity:.55;filter:saturate(.75);cursor:default}
 
 .portal-dock{justify-content:space-between}
 .lg-name{position:absolute;left:50%;transform:translateX(-50%);font-size:13px;font-weight:900;letter-spacing:-.01em;color:#e9effb;pointer-events:none;white-space:nowrap}
@@ -584,6 +589,7 @@ details.more[open] summary::after{transform:rotate(-90deg)}
           <p class="qmsg" id="quickMsg">두 사람이 각자 누르면 자동으로 연결됩니다</p>
           <details class="more" id="moreBox">
             <summary>초대 링크 · 코드로 들어가기</summary>
+            <button id="hostStartBtn" class="ghost small" type="button">방장으로 코드 방 열기</button>
             <div class="roomrow">
               <input id="roomInput" inputmode="numeric" maxlength="4" placeholder="방 코드 4자리" autocomplete="off">
               <button id="makeRoom" class="ghost small">방 만들기</button>
@@ -2506,9 +2512,35 @@ window.ARC = window.ARC || {
     }
   };
 
+  /* ===== 방장(코드 방) 시작 — 초대 링크 안쪽 버튼 ===== */
+  function paintHostBtn() {
+    var b = document.getElementById('hostStartBtn');
+    if (!b) return;
+    if (!Net.room) { b.textContent = '방장으로 코드 방 열기'; b.disabled = false; return; }
+    if (S.seat !== 0) { b.textContent = '참가 중 · 방장이 시작합니다'; b.disabled = true; return; }
+    if (Net.peer) { b.textContent = '▶ 게임 시작 (방장)'; b.disabled = false; return; }
+    b.textContent = '방 열림 · 상대 입장 대기 중'; b.disabled = true;
+  }
+  /* 온라인에서는 바깥 시작 버튼을 감춘다 (바로 입장 하나만) */
+  function syncModeUI() {
+    var sb = document.getElementById('startBtn');
+    if (sb) sb.classList.toggle('online-hide', S.mode === 'online');
+    paintHostBtn();
+  }
+  var _hostBtn = document.getElementById('hostStartBtn');
+  if (_hostBtn) _hostBtn.addEventListener('click', function () {
+    var box = document.getElementById('moreBox');
+    if (box) box.open = true;
+    if (!Net.room) { var mk = document.getElementById('makeRoom'); if (mk) mk.click(); paintHostBtn(); return; }
+    if (S.seat === 0 && Net.peer) { var sb = document.getElementById('startBtn'); if (sb) sb.click(); paintHostBtn(); return; }
+    toast(S.seat === 0 ? '상대를 기다리는 중입니다' : '방장이 시작합니다');
+  });
+
   function paintBadge() {
     var b = $('#netBadge');
     if (!b) return;
+    var _mb = document.getElementById('moreBox');
+    if (_mb) _mb.classList.toggle('has-room', !!Net.room);
     var nt = b.querySelector('.nt');
     b.classList.remove('ok', 'wait', 'bad');
     if (Net.connecting) { nt.textContent = '재연결'; b.classList.add('wait'); }
@@ -2524,6 +2556,7 @@ window.ARC = window.ARC || {
       else if (Net.room) hint.textContent = '브로커 연결 실패 · 같은 기기 모드 이용';
       else hint.textContent = '';
     }
+    paintHostBtn();
   }
 
   function cfgOf() { return { diff: S.diff, rounds: S.rounds, limit: S.limit, name: S.names[S.seat] }; }
@@ -2653,6 +2686,7 @@ window.ARC = window.ARC || {
     segged('#modeSeg', 'online');
     $('#paneSolo').classList.add('hide');
     $('#paneOnline').classList.remove('hide');
+    syncModeUI();
   }
   function quickPromote() {
     Net.role = 'host'; S.host = true; S.seat = 0;
@@ -2773,6 +2807,7 @@ window.ARC = window.ARC || {
       $('#paneSolo').classList.toggle('hide', v !== 'solo');
       $('#paneOnline').classList.toggle('hide', v !== 'online');
       if (v !== 'online' && quickOn) quickStop(true);
+      syncModeUI();
     });
     var qb = $('#quickBtn');
     if (qb) qb.addEventListener('click', quickStart);
@@ -2806,6 +2841,7 @@ window.ARC = window.ARC || {
       Net.room = code;
       showInvite(code);
       Net.open();
+      var _jb = document.getElementById('moreBox'); if (_jb) _jb.open = true;
       toast('방 ' + code + ' · 입장 중…');
     });
 
@@ -2871,6 +2907,7 @@ window.ARC = window.ARC || {
       S.mode = 'online';
       $('#paneSolo').classList.add('hide');
       $('#paneOnline').classList.remove('hide');
+      syncModeUI();
       $('#roomInput').value = code;
       $('#myName').value = DEF_B;
       if (window.dpSync) dpSync($('#myName'));
@@ -2900,6 +2937,7 @@ window.ARC = window.ARC || {
   S.phase = 'lobby';
   setTimer('30');
   paintBadge();
+  syncModeUI();
 
   /* 테스트용 노출 */
   window.WF = {

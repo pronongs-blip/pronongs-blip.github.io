@@ -41,8 +41,8 @@
 - **Web Audio 사운드 엔진** — 외부 음원 파일 없이 합성한 게임별 BGM과 효과음, 헤더의 `♪ | 🔊` 토글로 개별 온·오프(설정 공유).
 - **MQTT 온라인 1:1** — 공개 브로커(`wss://broker.emqx.io:8084/mqtt`) 위의 미니 MQTT 클라이언트와 `?room=XXXX` 초대 링크. 같은 기기에서는 BroadcastChannel로 자동 폴백.
 - **국기 268종 인라인 SVG** — 이모지가 아니라 실제 벡터 국기. 유엔 회원국 193개국 + 지역·자치령·기구기 전체를 4:3 규격으로 통일했습니다.
-- **기록 배지** — 포털이 `localStorage`(`yg_arcade_stats_v1`)로 실행 횟수를 세어 `NEW` · `최다` · `N회` 배지를 답니다.
-- **📜 경기 기록** — 판이 끝날 때마다 승/패·상대·점수·시각을 `yg_arcade_history_v1`에 최근 100건 저장합니다. 포털 하단 구석의 `📜 기록`에서 **전체 / 사람 / AI** 로 걸러 볼 수 있고, 전적도 `사람 N승 M패 · AI N승 M패`로 나눠 셉니다.
+- **기록 배지** — 포털이 `localStorage`(`yg_arcade_stats_v1`)와 Firebase `/arcade_stats` 를 함께 읽어 실행 횟수를 세어 `NEW` · `최다` · `N회` 배지를 답니다.
+- **📜 경기 기록** — 판이 끝날 때마다 승/패·상대·점수·시각을 `yg_arcade_history_v1` 와 Firebase `/arcade_history` 에 함께 저장합니다. 두 사람이 각자 폰으로 둘러도 하나의 **부부 통합 전적**으로 쌓이고, 포털 하단 `📜 기록`에서 ​**전체 / 사람 / AI** 로 걸러 볼 수 있으며 전적도 `사람 N승 M패 · AI N승 M패` 와 연승으로 나눠 셉니다(최신 200경기 유지).
 - **iOS 홈 화면** — Safari 공유 → 홈 화면에 추가. 전용 아이콘(`apple-touch-icon.png`)과 전체화면 메타 태그가 들어 있습니다.
 
 ---
@@ -51,7 +51,8 @@
 
 ```text
 pronongs-blip.github.io/
-├── index.html            # 아케이드 포털
+├── index.html            # 오락실 (아케이드 포털)
+├── office.html           # 비서실 (행동대장 HQ · 시세판·회의실 메모)
 ├── wall-baduk2.html      # 벽바둑 2
 ├── black-white.html      # 흑과 백
 ├── memory-poker.html     # 기억포커

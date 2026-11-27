@@ -7,9 +7,9 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="행동대장 HQ">
-<meta name="description" content="선홍 님 전용 비서실 오피스 · 행동대장 HQ. 집무실·자동화 작업실·라운지 실시간 현황판.">
-<title>🏢 선홍 님 비서실 · 행동대장 HQ</title>
+<meta name="apple-mobile-web-app-title" content="비서실">
+<meta name="description" content="비서실 · 행동대장 HQ. 집무실·자동화 작업실·라운지 실시간 현황판과 최저가 시세판.">
+<title>비서실 · 행동대장 HQ</title>
 <link rel="apple-touch-icon" sizes="180x180" href="./office-icon.png">
 <link rel="icon" type="image/png" sizes="180x180" href="./office-icon.png">
 <style>
@@ -41,7 +41,7 @@ body::before{
 .wrap{
   position:relative;z-index:1;
   width:100%;max-width:960px;margin:0 auto;
-  padding:calc(env(safe-area-inset-top,0px) + 12px) 14px calc(env(safe-area-inset-bottom,0px) + 22px);
+  padding:calc(env(safe-area-inset-top,0px) + 12px) 16px calc(env(safe-area-inset-bottom,0px) + 22px);
 }
 
 /* ---------- 상단 바 ---------- */
@@ -69,11 +69,12 @@ body::before{
 .brand p b{color:#e2c98c;font-weight:900}
 .tools{flex:0 0 auto;display:flex;align-items:center;gap:6px}
 .rbtn{
-  flex:0 0 auto;width:34px;height:34px;border-radius:11px;cursor:pointer;
-  display:flex;align-items:center;justify-content:center;font-size:15px;
+  flex:0 0 auto;width:34px;height:34px;border-radius:11px;cursor:pointer;text-decoration:none;
+  display:flex;align-items:center;justify-content:center;font-size:15px;line-height:1;
   color:var(--txt);background:var(--panel3);border:1px solid var(--line);
   transition:transform .2s, background .2s;
 }
+.rbtn.nav{background:rgba(111,157,255,.10);border-color:rgba(111,157,255,.30)}
 .rbtn:active{transform:scale(.94);background:#232f47}
 .rbtn.spin{animation:spin .7s linear}
 @keyframes spin{to{transform:rotate(360deg)}}
@@ -191,19 +192,32 @@ body::before{
   background:radial-gradient(circle, rgba(255,194,71,.17) 0%, rgba(255,194,71,.05) 45%, rgba(255,194,71,0) 70%);
 }
 .char-svg{display:block;width:100%;height:auto;overflow:visible;filter:drop-shadow(0 0 2px rgba(6,9,15,.95)) drop-shadow(0 7px 12px rgba(0,0,0,.5))}
-.char .body{transform-origin:50% 60%;animation:breathe 3.8s ease-in-out infinite}
-@keyframes breathe{0%,100%{transform:scale(1,1)}50%{transform:scale(1.018,.982)}}
-.char .stk{fill:none;stroke:url(#beigeG);stroke-width:16;stroke-linecap:round}
+.char .body{transform-origin:50% 88%;animation:breathe 4.4s ease-in-out infinite}
+@keyframes breathe{0%,100%{transform:scale(1,1)}50%{transform:scale(1.012,.988)}}
+.char .hair-back{fill:#0d121b}
+.char .hair{fill:url(#hairG)}
+.char .skin{fill:url(#skinG)}
+.char .suit-body{fill:url(#suitG);stroke:rgba(6,10,18,.55);stroke-width:.6}
+.char .sleeve{fill:url(#suitG2);stroke:rgba(6,10,18,.45);stroke-width:.5}
+.char .pants{fill:url(#pantsG);stroke:rgba(6,10,18,.45);stroke-width:.5}
+.char .shoe{fill:url(#shoeG)}
+.char .lapel{fill:url(#suitG2);opacity:.96;stroke:rgba(255,255,255,.05);stroke-width:.4}
+.char .belt{fill:#0d121b}
+.char .buckle{fill:url(#goldG)}
+.char .collar{fill:url(#shirtG);stroke:rgba(120,135,160,.45);stroke-width:.45}
 .char .suit .shirt{fill:url(#shirtG);stroke:rgba(18,24,36,.28);stroke-width:.55}
-.char .suit .tie{fill:url(#tieG);stroke:rgba(230,214,178,.55);stroke-width:.55}
+.char .suit .tie{fill:url(#tieG);stroke:rgba(230,214,178,.5);stroke-width:.45}
 .char .suit .pin{fill:url(#goldG)}
 .char .suit .badge{fill:url(#goldG);stroke:rgba(80,50,8,.55);stroke-width:.35}
-.char .face .brow{stroke:#eadcb9;stroke-width:1.9;stroke-linecap:round}
-.char .shades .lens{fill:url(#lensG);stroke:#e6d6b2;stroke-width:1;stroke-linejoin:round}
-.char .shades .bridge{stroke:#e6d6b2;stroke-width:1.5;stroke-linecap:round}
-.char .face .mouth{stroke:#eadcb9;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
-.char .sh{fill:rgba(0,0,0,.4);animation:shad 3.8s ease-in-out infinite}
-@keyframes shad{0%,100%{opacity:.4;transform:scaleX(1)}50%{opacity:.25;transform:scaleX(.9)}}
+.char .face .brow{stroke:#2a3346;stroke-width:1.9;stroke-linecap:round;fill:none}
+.char .shades .lens{fill:url(#lensG);stroke:#05080d;stroke-width:.9;stroke-linejoin:round}
+.char .shades .shine{fill:#ffffff;opacity:.5}
+.char .shades .bridge{stroke:#05080d;stroke-width:1.3;stroke-linecap:round;fill:none}
+.char .face .mouth{stroke:#8a5b41;stroke-width:1.1;stroke-linecap:round;stroke-linejoin:round;fill:none}
+.char .face .nose{stroke:#c08b62;stroke-width:.9;stroke-linecap:round;fill:none;opacity:.75}
+.char .ear-txt{fill:#8a5b41}
+.char .sh{fill:rgba(0,0,0,.45);animation:shad 4.4s ease-in-out infinite}
+@keyframes shad{0%,100%{opacity:.42;transform:scaleX(1)}50%{opacity:.28;transform:scaleX(.92)}}
 .char.walk{animation:step .3s ease-in-out infinite}
 @keyframes step{0%,100%{transform:translate(-50%,-50%) rotate(0deg)}25%{transform:translate(-50%,-54%) rotate(-2deg)}50%{transform:translate(-50%,-50%) rotate(0deg)}75%{transform:translate(-50%,-54%) rotate(2deg)}}
 .char.walk .body{animation-duration:1.2s}
@@ -318,6 +332,50 @@ body::before{
 .nitem .del:active{color:#ff9f6b}
 .nempty{margin-top:7px;font-size:10.5px;color:#6d7b93;text-align:center;padding:7px 0}
 
+/* ---------- 실시간 시세판 ---------- */
+.mkt{padding:2px 0 0;overflow:hidden}
+.mkt-g{padding:9px 11px 8px;border-bottom:1px solid var(--line2)}
+.mkt-g:last-child{border-bottom:0}
+.mkt-gh{display:flex;align-items:center;gap:7px;min-width:0}
+.mkt-gh b{font-size:11.5px;font-weight:900;color:#eef3ff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mkt-th{margin-left:auto;flex:0 0 auto;font-size:8.5px;font-weight:900;letter-spacing:.02em;color:#ffd98a;
+  padding:2px 6px;border-radius:999px;background:rgba(255,194,71,.10);border:1px solid rgba(255,194,71,.26);white-space:nowrap}
+.mkt-row{display:flex;align-items:center;gap:8px;padding:6px 0 0;min-width:0}
+.mkt-nm{flex:1 1 auto;min-width:0;display:flex;flex-direction:column;gap:1px}
+.mkt-nm b{font-size:11px;font-weight:800;color:#dfe6f4;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mkt-nm span{font-size:9px;font-weight:700;color:var(--dim2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mkt-px{flex:0 0 auto;text-align:right;font-variant-numeric:tabular-nums;display:flex;align-items:baseline;gap:2px}
+.mkt-px b{font-size:12.5px;font-weight:900;color:#fff;letter-spacing:-.02em}
+.mkt-px span{font-size:8.5px;font-weight:800;color:var(--dim2)}
+.mkt-bd{flex:0 0 auto;width:52px;text-align:center;font-size:8.5px;font-weight:900;letter-spacing:.01em;
+  padding:3px 0;border-radius:6px;white-space:nowrap}
+.mkt-bd.ok{color:#0b2a1d;background:var(--ok)}
+.mkt-bd.wait{color:#2a1607;background:var(--warn)}
+.mkt-ft{margin-top:5px;font-size:8.5px;font-weight:700;color:#606e86;font-variant-numeric:tabular-nums}
+.mkt-empty{padding:14px;text-align:center;font-size:11px;color:#6d7b93}
+@media (min-width:760px){
+  .mkt-gh b{font-size:12.5px}
+  .mkt-nm b{font-size:12px}
+  .mkt-nm span{font-size:10px}
+  .mkt-px b{font-size:14px}
+}
+
+/* ---------- 당겨서 새로고침 ---------- */
+.ptr{
+  position:fixed;left:0;right:0;top:0;z-index:70;pointer-events:none;
+  display:flex;align-items:center;justify-content:center;gap:6px;
+  height:42px;padding-top:env(safe-area-inset-top,0px);box-sizing:content-box;
+  transform:translateY(-110%);transition:transform .18s ease, background .18s ease;
+  background:linear-gradient(180deg,rgba(22,30,46,.98),rgba(16,22,34,.96));
+  border-bottom:1px solid var(--line);
+  font-size:11px;font-weight:900;letter-spacing:.01em;color:#ffd98a;
+}
+.ptr.on{transform:translateY(0)}
+.ptr.ready{background:linear-gradient(180deg,#ffd77a,#ffb928);color:#1c1503;border-bottom-color:rgba(0,0,0,.2)}
+.ptr-i{display:block;font-size:14px;line-height:1;transition:transform .2s ease}
+.ptr.ready .ptr-i{transform:rotate(180deg)}
+body{overscroll-behavior-y:contain}
+
 /* ---------- 푸터 ---------- */
 .foot{margin-top:14px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:center;
   font-size:9px;font-weight:700;color:#5f6d85;text-align:center}
@@ -359,16 +417,18 @@ body::before{
 </style>
 </head>
 <body>
+<div class="ptr" id="ptr" aria-hidden="true"><span class="ptr-i">↻</span><span class="ptr-t">놓으면 최신 버전으로 새로고침</span></div>
 <div class="wrap">
 
   <!-- 상단 바 -->
-  <header class="top" aria-label="🏢 선홍 님 비서실 · 행동대장 HQ">
+  <header class="top" aria-label="비서실 · 행동대장 HQ">
     <div class="mark" aria-hidden="true">🏢</div>
     <div class="brand">
-      <h1>선홍 님 비서실</h1>
-      <p><b>행동대장 HQ</b> · PERSONAL SECRETARIAT</p>
+      <h1>비서실</h1>
+      <p><b>행동대장 HQ</b> · SECRETARIAT</p>
     </div>
     <div class="tools">
+      <a class="rbtn nav" href="./index.html" aria-label="오락실로 이동" title="오락실">🕹️</a>
       <button class="rbtn" id="refresh" type="button" aria-label="새로고침" title="새로고침">↻</button>
     </div>
   </header>
@@ -407,22 +467,44 @@ body::before{
 
         <div class="char" id="char" aria-hidden="true">
           <div class="bubble" id="bubble">형님, 대기 및 모니터링 중입니다.</div>
-          <svg class="char-svg" viewBox="10 8 86 96" role="presentation">
+          <svg class="char-svg" viewBox="0 0 100 118" role="presentation">
             <defs>
-              <linearGradient id="beigeG" gradientUnits="userSpaceOnUse" x1="20" y1="12" x2="86" y2="90">
-                <stop offset="0" stop-color="#f4ebd9"/>
-                <stop offset=".5" stop-color="#e8dcc4"/>
-                <stop offset="1" stop-color="#cfbc96"/>
+              <linearGradient id="skinG" x1="0" y1="0" x2=".35" y2="1">
+                <stop offset="0" stop-color="#f2d6b0"/>
+                <stop offset=".55" stop-color="#e3bc90"/>
+                <stop offset="1" stop-color="#c99a6c"/>
+              </linearGradient>
+              <linearGradient id="hairG" x1=".2" y1="0" x2=".85" y2="1">
+                <stop offset="0" stop-color="#323c50"/>
+                <stop offset=".42" stop-color="#1a2130"/>
+                <stop offset="1" stop-color="#0a0e16"/>
+              </linearGradient>
+              <linearGradient id="suitG" x1=".15" y1="0" x2=".85" y2="1">
+                <stop offset="0" stop-color="#2c374c"/>
+                <stop offset=".48" stop-color="#1c2534"/>
+                <stop offset="1" stop-color="#101724"/>
+              </linearGradient>
+              <linearGradient id="suitG2" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0" stop-color="#364259"/>
+                <stop offset="1" stop-color="#151d2b"/>
+              </linearGradient>
+              <linearGradient id="pantsG" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0" stop-color="#1b2331"/>
+                <stop offset="1" stop-color="#0d131e"/>
+              </linearGradient>
+              <linearGradient id="shoeG" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0" stop-color="#2b3444"/>
+                <stop offset="1" stop-color="#080c13"/>
               </linearGradient>
               <linearGradient id="tieG" x1="0" y1="0" x2="1" y2="1">
-                <stop offset="0" stop-color="#4e6183"/>
-                <stop offset=".5" stop-color="#26334c"/>
-                <stop offset="1" stop-color="#111926"/>
+                <stop offset="0" stop-color="#54678c"/>
+                <stop offset=".5" stop-color="#283449"/>
+                <stop offset="1" stop-color="#0f1622"/>
               </linearGradient>
               <linearGradient id="lensG" x1="0" y1="0" x2=".6" y2="1">
-                <stop offset="0" stop-color="#3e4d69"/>
-                <stop offset=".4" stop-color="#101520"/>
-                <stop offset="1" stop-color="#03050a"/>
+                <stop offset="0" stop-color="#45536d"/>
+                <stop offset=".38" stop-color="#101622"/>
+                <stop offset="1" stop-color="#02040a"/>
               </linearGradient>
               <linearGradient id="goldG" x1="0" y1="0" x2="0" y2="1">
                 <stop offset="0" stop-color="#ffeec0"/>
@@ -431,65 +513,93 @@ body::before{
               </linearGradient>
               <linearGradient id="shirtG" x1="0" y1="0" x2="0" y2="1">
                 <stop offset="0" stop-color="#ffffff"/>
-                <stop offset="1" stop-color="#e0e6f1"/>
+                <stop offset="1" stop-color="#dbe2ee"/>
               </linearGradient>
-              <radialGradient id="faceGlow" cx=".5" cy=".5" r=".5">
-                <stop offset="0" stop-color="#d6ba84" stop-opacity=".20"/>
-                <stop offset=".62" stop-color="#d6ba84" stop-opacity=".07"/>
-                <stop offset="1" stop-color="#d6ba84" stop-opacity="0"/>
+              <radialGradient id="faceGlow" cx=".42" cy=".34" r=".62">
+                <stop offset="0" stop-color="#fff2d8" stop-opacity=".38"/>
+                <stop offset=".62" stop-color="#ffe9c4" stop-opacity=".10"/>
+                <stop offset="1" stop-color="#ffe9c4" stop-opacity="0"/>
               </radialGradient>
-              <clipPath id="lensL"><path d="M41.4 43.0 L40.8 37.0 L42.4 34.0 L52.8 33.2 L53.0 42.4 Z"/></clipPath>
-              <clipPath id="lensR"><path d="M69.6 43.0 L70.2 37.0 L68.6 34.0 L58.2 33.2 L58.0 42.4 Z"/></clipPath>
             </defs>
-            <ellipse class="sh" cx="54" cy="96" rx="18" ry="4"/>
+            <ellipse class="sh" cx="50" cy="114.5" rx="20" ry="3.2"/>
             <g class="body">
-              <path class="stk" d="M26 20 H82"/>
-              <path class="stk" d="M82 20 V84"/>
-              <path class="stk" d="M36 61.5 H75"/>
+              <!-- 다리 · 구두 -->
+              <path class="pants" d="M34.6 91.4 H48.8 L48.4 108.6 H37.6 Z"/>
+              <path class="pants" d="M51.2 91.4 H65.4 L62.4 108.6 H51.6 Z"/>
+              <path d="M50 91.6 V106" stroke="#05080d" stroke-width="1.1" opacity=".9"/>
+              <rect class="shoe" x="35.6" y="107.8" width="13.4" height="5.4" rx="2.2"/>
+              <rect class="shoe" x="51" y="107.8" width="13.4" height="5.4" rx="2.2"/>
+              <rect x="35.6" y="111.6" width="13.4" height="1.5" rx=".75" fill="#05080d" opacity=".85"/>
+              <rect x="51" y="111.6" width="13.4" height="1.5" rx=".75" fill="#05080d" opacity=".85"/>
 
-              <!-- 무전기 안테나 -->
-              <g class="ant">
-                <path d="M84.4 18.0 L90.2 11.8" fill="none" stroke="#1a2231" stroke-width="2" stroke-linecap="round"/>
-                <circle cx="90.6" cy="11.3" r="1.7" fill="url(#goldG)"/>
-              </g>
-
-              <!-- 인이어 무전기 + 연결선 -->
-              <g class="ear">
-                <rect x="75.2" y="33.8" width="4.6" height="6.4" rx="2.3" fill="#1b2331" stroke="#f0c465" stroke-width=".5" stroke-opacity=".6"/>
-                <circle cx="77.5" cy="35.9" r=".85" fill="#f0c465" opacity=".85"/>
-                <path d="M77.5 40.2 C 80.4 44.6 77.2 47.6 80.2 53.2" fill="none" stroke="#1b2331" stroke-width="1.4" stroke-linecap="round"/>
-              </g>
-
-              <!-- 정장: 화이트 셔츠 V 칼라 · 다크 넥타이 · 골드 타이핀 · 배지 -->
+              <!-- 정장 자켓 -->
+              <path class="suit-body" d="M50 49.4 C 40.2 49.4 32.6 53.4 30.2 60.8 L27.6 87.4 C 27.4 89.2 28.7 90.4 30.6 90.4 L69.4 90.4 C 71.3 90.4 72.6 89.2 72.4 87.4 L69.8 60.8 C 67.4 53.4 59.8 49.4 50 49.4 Z"/>
+              <!-- 셔츠 · 칼라 · 넥타이 -->
               <g class="suit">
-                <path class="shirt" d="M49.0 53.9 L55.5 60.6 L62.0 53.9 Z"/>
-                <path class="tie" d="M52.4 55.4 L58.6 55.4 L57.7 61.8 L53.3 61.8 Z"/>
-                <path class="tie" d="M53.5 61.6 L57.5 61.6 L59.5 73.0 L55.5 79.4 L51.5 73.0 Z"/>
-                <path d="M55.5 62.2 V78.2" fill="none" stroke="#7d8fae" stroke-width=".9" opacity=".35"/>
-                <rect class="pin" x="52.6" y="67.0" width="5.9" height="1.5" rx=".75"/>
-                <path class="badge" d="M37.4 56.4 H41.8 V61.0 L39.6 63.4 L37.4 61.0 Z"/>
-                <path d="M39.6 58.6 l.65 1.2 1.2 .36 -1.2 .36 -.65 1.2 -.65 -1.2 -1.2 -.36 1.2 -.36 Z" fill="#4a3106" opacity=".7"/>
+                <path class="shirt" d="M46.6 49.4 L50 50.2 L53.4 49.4 L52.6 68.4 L50 71.6 L47.4 68.4 Z"/>
+                <path class="collar" d="M46.6 49.4 L50 54.4 L48 50 Z"/>
+                <path class="collar" d="M53.4 49.4 L50 54.4 L52 50 Z"/>
+                <path class="tie" d="M48.2 51.8 L51.8 51.8 L51.3 56.4 L48.7 56.4 Z"/>
+                <path class="tie" d="M48.7 56.2 L51.3 56.2 L52.3 66 L50 69.8 L47.7 66 Z"/>
+                <path d="M50 57 V68.6" fill="none" stroke="#93a4c2" stroke-width=".5" opacity=".28"/>
+                <path class="lapel" d="M46.6 49.4 L40.6 54.4 L46.2 70.6 L47.4 68.4 L47 57.6 Z"/>
+                <path class="lapel" d="M53.4 49.4 L59.4 54.4 L53.8 70.6 L52.6 68.4 L53 57.6 Z"/>
+                <path d="M30.4 60.8 C 32.8 53.4 40.2 49.4 50 49.4" fill="none" stroke="rgba(255,255,255,.10)" stroke-width="1"/>
+                <path d="M69.6 60.8 C 67.2 53.4 59.8 49.4 50 49.4" fill="none" stroke="rgba(255,255,255,.10)" stroke-width="1"/>
+                <rect class="pin" x="48.4" y="58.8" width="3.2" height="1" rx=".5"/>
+                <circle cx="50" cy="74.8" r="1" fill="url(#goldG)" opacity=".9"/>
+                <!-- 가슴 골드 배지 -->
+                <path class="badge" d="M35.6 58.6 H40.2 V63.4 L37.9 65.8 L35.6 63.4 Z"/>
+                <path d="M37.9 60.8 l.62 1.15 1.15 .34 -1.15 .34 -.62 1.15 -.62 -1.15 -1.15 -.34 1.15 -.34 Z" fill="#4a3106" opacity=".72"/>
+              </g>
+              <!-- 벨트 -->
+              <rect class="belt" x="29.4" y="87.6" width="41.2" height="4.2" rx="1.2"/>
+              <rect class="buckle" x="47.2" y="88" width="5.6" height="3.4" rx=".9"/>
+              <!-- 팔 -->
+              <path class="sleeve" d="M33 57.2 C 29 61.6 27 70.4 27.2 81.2 C 27.3 83.2 28.5 84.4 30.3 84.4 C 32.1 84.4 33.3 83.2 33.4 81.2 C 33.9 71.4 35.2 65.4 38 61 Z"/>
+              <path class="sleeve" d="M67 57.2 C 71 61.6 73 70.4 72.8 81.2 C 72.7 83.2 71.5 84.4 69.7 84.4 C 67.9 84.4 66.7 83.2 66.6 81.2 C 66.1 71.4 64.8 65.4 62 61 Z"/>
+              <ellipse class="skin" cx="30.3" cy="86.6" rx="3" ry="2.9"/>
+              <ellipse class="skin" cx="69.7" cy="86.6" rx="3" ry="2.9"/>
+
+              <!-- 목 · 얼굴 -->
+              <path class="skin" d="M46.6 42.4 H53.4 V52.4 H46.6 Z"/>
+              <path d="M46.6 42.4 H53.4 V45.6 C 51.6 47.8 48.4 47.8 46.6 45.6 Z" fill="#a9744a" opacity=".45"/>
+              <ellipse class="skin" cx="27.9" cy="30.6" rx="2.4" ry="3.4"/>
+              <ellipse class="skin" cx="72.1" cy="30.6" rx="2.4" ry="3.4"/>
+              <ellipse class="hair-back" cx="50" cy="24.8" rx="22.8" ry="19.8"/>
+              <ellipse class="skin" cx="50" cy="30" rx="21.4" ry="20.4"/>
+              <ellipse cx="50" cy="30" rx="21.4" ry="20.4" fill="url(#faceGlow)"/>
+
+              <!-- 헤어 (단정한 사이드 파트) -->
+              <path class="hair" d="M28 31 C 27 16.4 37 7 50 7 C 63 7 73 16.4 72 31 L69.6 31 C 69 25 67.4 21.4 65 19 C 60.4 21.6 55.4 21.8 51 19.8 C 45.8 17.4 39.4 18 34.4 21 C 31.6 22.8 29.8 25.8 29.2 31 Z"/>
+              <path d="M51.4 10.4 C 55 12.6 57.8 15.6 59.4 18.6" fill="none" stroke="#3b465d" stroke-width=".9" opacity=".55" stroke-linecap="round"/>
+
+
+              <!-- 당찬 눈썹 · 선글라스 · 미소 -->
+              <g class="face">
+                <path class="brow" d="M36.6 22.2 L46.4 23.8"/>
+                <path class="brow" d="M63.4 22.2 L53.6 23.8"/>
+                <g class="shades">
+                  <path class="bridge" d="M47.6 28.4 H52.4"/>
+                  <rect class="lens" x="35.2" y="26.2" width="12.6" height="8.8" rx="3.2"/>
+                  <rect class="lens" x="52.2" y="26.2" width="12.6" height="8.8" rx="3.2"/>
+                  <path d="M35.2 28 L28.6 29.2" stroke="#05080d" stroke-width="1.3" stroke-linecap="round" fill="none"/>
+                  <path d="M64.8 28 L71.4 29.2" stroke="#05080d" stroke-width="1.3" stroke-linecap="round" fill="none"/>
+                  <path class="shine" d="M38.2 33.4 L41.6 27.4 L43.2 27.4 L39.8 33.4 Z"/>
+                  <path class="shine" d="M42.4 33.4 L45.8 27.4 L47.1 27.4 L43.7 33.4 Z" opacity=".28"/>
+                  <path class="shine" d="M55.2 33.4 L58.6 27.4 L60.2 27.4 L56.8 33.4 Z"/>
+                  <path class="shine" d="M59.4 33.4 L62.8 27.4 L64.1 27.4 L60.7 33.4 Z" opacity=".28"/>
+                </g>
+                <path class="nose" d="M50.3 34.6 C 50.3 36.6 50.7 37.8 51.7 38.6"/>
+                <path class="mouth" d="M44.8 42.6 C 47.6 45.4 52.4 45.4 55.2 42.8 C 56.3 41.8 56.9 40.9 57.1 40.1"/>
+                <path d="M43.6 46.4 C 46.8 48.4 53.2 48.4 56.4 46.4" fill="none" stroke="#b8895d" stroke-width=".8" opacity=".22"/>
               </g>
 
-              <!-- 얼굴 -->
-              <g class="face">
-                <ellipse cx="55.5" cy="38.6" rx="21" ry="13.4" fill="url(#faceGlow)"/>
-                <path class="brow" d="M42.6 31.6 L51.6 30.2" fill="none"/>
-                <path class="brow" d="M68.4 31.6 L59.4 30.2" fill="none"/>
-                <g class="shades">
-                  <path class="lens" d="M41.4 43.0 L40.8 37.0 L42.4 34.0 L52.8 33.2 L53.0 42.4 Z"/>
-                  <path class="lens" d="M69.6 43.0 L70.2 37.0 L68.6 34.0 L58.2 33.2 L58.0 42.4 Z"/>
-                  <path class="bridge" d="M53.2 35.4 L57.8 35.4" fill="none"/>
-                  <g clip-path="url(#lensL)">
-                    <path d="M43.4 41.8 L47.4 34.2 L49.0 34.2 L45.0 41.8 Z" fill="#ffffff" opacity=".62"/>
-                    <path d="M49.6 41.0 L51.2 37.4 L51.9 37.4 L50.3 41.0 Z" fill="#ffffff" opacity=".3"/>
-                  </g>
-                  <g clip-path="url(#lensR)">
-                    <path d="M61.6 41.8 L65.6 34.2 L67.2 34.2 L63.2 41.8 Z" fill="#ffffff" opacity=".62"/>
-                    <path d="M67.8 41.0 L69.4 37.4 L70.1 37.4 L68.5 41.0 Z" fill="#ffffff" opacity=".3"/>
-                  </g>
-                </g>
-                <path class="mouth" d="M49.6 46.8 Q55.0 49.9 60.6 46.3 L61.8 45.3" fill="none"/>
+              <!-- 인이어 무전기 -->
+              <g>
+                <rect x="70.4" y="29" width="3.6" height="5.6" rx="1.8" fill="#141b28" stroke="#f0c465" stroke-width=".45" stroke-opacity=".6"/>
+                <circle cx="72.2" cy="30.9" r=".75" fill="#f0c465" opacity=".9"/>
+                <path d="M72.6 34.4 C 73.4 36 72.6 37.2 73 38.4" fill="none" stroke="#161d2a" stroke-width="1" stroke-linecap="round"/>
               </g>
             </g>
           </svg>
@@ -509,6 +619,13 @@ body::before{
     <div class="metrics" id="metrics"></div>
   </section>
 
+  <!-- 실시간 시세판 -->
+  <section class="sec">
+    <div class="sec-h"><h2>📊 실시간 최저가 시세판</h2><span class="k" id="mktStamp">SYNC</span><span class="sp"></span>
+      <span class="live" id="mktLive"><i></i><span id="mktLiveTxt">동기화</span></span></div>
+    <div class="card mkt" id="mkt"><div class="mkt-empty">시세를 불러오는 중입니다…</div></div>
+  </section>
+
   <div class="cols">
     <section class="sec">
       <div class="sec-h"><h2>정기 스케줄</h2><span class="k">6 TASKS</span><span class="sp"></span><span class="k" id="nextTag"></span></div>
@@ -522,14 +639,14 @@ body::before{
 
   <!-- 회의실 메모 -->
   <section class="sec">
-    <div class="sec-h"><h2>📋 회의실 메모</h2><span class="k">LOCAL</span></div>
+    <div class="sec-h"><h2>📋 회의실 메모</h2><span class="k" id="notesK">FIREBASE</span></div>
     <div class="card notes">
       <div class="notes-h">
         <h2>형님 전용 명령 노트</h2>
         <span class="chip-link on" id="linkChip">🔥 Firebase 실시간 연결됨</span>
       </div>
       <form class="nform" id="nform" autocomplete="off">
-        <input id="ninput" type="text" maxlength="120" placeholder="할 일·지시를 적어두세요 (이 기기에 저장)" aria-label="회의실 메모 입력">
+        <input id="ninput" type="text" maxlength="120" placeholder="할 일·지시를 적어두세요 (Firebase 실시간 동기화)" aria-label="회의실 메모 입력">
         <button type="submit">등록</button>
       </form>
       <div class="nlist" id="nlist"></div>
@@ -541,7 +658,7 @@ body::before{
     <span class="dot"></span>
     <span id="srcNote">Firebase 실시간 · 10초 폴백</span>
     <span class="dot"></span>
-    <a href="./index.html">🏠 아케이드</a>
+    <a href="./index.html">🏠 오락실</a>
   </footer>
 </div>
 
@@ -551,7 +668,7 @@ body::before{
   "updated_at": "2026-11-27T14:48:48+09:00",
   "butler": {
     "name": "행동대장",
-    "shape": "ㅋ",
+    "shape": "human",
     "color": "#E8DCC4",
     "status": "대기 및 모니터링 중",
     "zone": "lounge",
@@ -620,6 +737,38 @@ body::before{
 }
 </script>
 
+<script id="fallback-market" type="application/json">
+{
+  "updated_at": "2026-11-27T08:45:00+09:00",
+  "groups": [
+    {
+      "id": "diaper",
+      "label": "하기스 5단계 팬티",
+      "threshold": 599,
+      "unit": "원/장",
+      "qty_unit": "매",
+      "note": "알리 포함 · 장당 기준",
+      "items": [
+        { "name": "K-Venue 맥스드라이 88매", "vendor": "알리", "price": 49808, "qty": 88, "unit_price": 566, "measured_at": "2026-11-27T08:45:00+09:00" },
+        { "name": "K-Venue 보송보송 88매", "vendor": "알리", "price": 37012, "qty": 88, "unit_price": 421, "measured_at": "2026-11-27T08:45:00+09:00" }
+      ]
+    },
+    {
+      "id": "capsule",
+      "label": "스타벅스 네스프레소 캡슐",
+      "threshold": 600,
+      "unit": "원/개",
+      "qty_unit": "입",
+      "note": "국내 배송만 · 직구 제외",
+      "items": [
+        { "name": "에스프레소 로스트 100입", "vendor": "쿠팡 국내로켓", "price": 58560, "qty": 100, "unit_price": 586, "measured_at": "2026-11-27T08:45:00+09:00" },
+        { "name": "에스프레소 로스트 빅팩 36입", "vendor": "네이버 가격비교", "price": 21300, "qty": 36, "unit_price": 592, "measured_at": "2026-11-27T08:45:00+09:00" }
+      ]
+    }
+  ]
+}
+</script>
+
 <script>
 (function(){
   "use strict";
@@ -636,8 +785,14 @@ body::before{
   };
   var ZONE_NAME = { office: "집무실", work: "작업실", lounge: "라운지" };
   var NOTE_KEY = "office_notes_v1";
+  var NOTE_OUT = "office_notes_outbox_v1";
 
-  var FIREBASE_URL = "https://seonongs-hq-default-rtdb.firebaseio.com/office_state.json";
+  var FB_BASE = "https://seonongs-hq-default-rtdb.firebaseio.com";
+  var FIREBASE_URL = FB_BASE + "/office_state.json";
+  var NOTES_ROOT = FB_BASE + "/office_notes";
+  var NOTES_URL = NOTES_ROOT + ".json";
+  var MARKET_ROOT = FB_BASE + "/market_prices";
+  var MARKET_URL = MARKET_ROOT + ".json";
 
   var FALLBACK = JSON.parse(document.getElementById("fallback-state").textContent);
   var state = FALLBACK;
@@ -1004,31 +1159,214 @@ body::before{
     });
   }
 
-  /* ---------- 회의실 메모 ---------- */
+  /* ---------- 회의실 메모 (Firebase 양방향) ---------- */
+  var notes = [];
+  var noteMigrated = false;
+  var noteEs = null;
+
+  function genUid(){ return "n" + Date.now().toString(36) + Math.random().toString(36).slice(2, 6); }
+  function hstr(s){
+    var h = 0, i;
+    for (i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) | 0;
+    return (h >>> 0).toString(36);
+  }
+  function noteSort(a, b){ return (b.at || 0) - (a.at || 0); }
+
   function notesRead(){
     try {
-      var raw = localStorage.getItem(NOTE_KEY);
-      var arr = raw ? JSON.parse(raw) : [];
-      return Array.isArray(arr) ? arr : [];
+      var arr = JSON.parse(localStorage.getItem(NOTE_KEY) || "[]");
+      if (!Array.isArray(arr)) return [];
+      return arr.map(function(n){
+        n = n || {};
+        var text = String(n.text == null ? "" : n.text);
+        var at = +n.at || 0;
+        return { uid: String(n.uid || ("l" + at + "-" + hstr(text))), text: text, done: !!n.done, at: at };
+      }).filter(function(n){ return n.text; });
     } catch (e){ return []; }
   }
   function notesWrite(arr){
-    try { localStorage.setItem(NOTE_KEY, JSON.stringify(arr)); } catch (e){}
+    try { localStorage.setItem(NOTE_KEY, JSON.stringify(arr.slice(0, 80))); } catch (e){}
   }
+  function notesMap(){
+    var m = {};
+    notes.forEach(function(n){ m[n.uid] = { text: n.text, done: !!n.done, at: n.at || 0 }; });
+    return m;
+  }
+
+  function outRead(){
+    try { var a = JSON.parse(localStorage.getItem(NOTE_OUT) || "[]"); return Array.isArray(a) ? a : []; }
+    catch (e){ return []; }
+  }
+  function outWrite(a){ try { localStorage.setItem(NOTE_OUT, JSON.stringify(a.slice(-40))); } catch (e){} }
+  function outPush(op){ var a = outRead(); a.push(op); outWrite(a); }
+
+  function fbReq(url, method, body){
+    var opt = { method: method, cache: "no-store" };
+    if (body !== undefined){ opt.headers = { "Content-Type": "application/json" }; opt.body = JSON.stringify(body); }
+    return fetch(url, opt).then(function(r){
+      if (!r.ok) throw new Error("HTTP " + r.status);
+      return r.text().then(function(t){ try { return t ? JSON.parse(t) : null; } catch (e){ return null; } });
+    });
+  }
+
+  function setNoteState(ok){
+    var k = $("notesK");
+    if (k) k.textContent = ok ? "FIREBASE 양방향" : "이 기기에 저장";
+    var chip = $("linkChip");
+    if (chip) chip.title = ok ? "Firebase Realtime DB와 양방향 동기화 중" : "오프라인 · 이 기기에 저장 중";
+  }
+
   function renderNotes(){
-    var arr = notesRead();
+    var arr = notes.slice().sort(noteSort);
     var box = $("nlist");
+    if (!box) return;
     if (!arr.length){
       box.innerHTML = '<div class="nempty">아직 메모가 없습니다. 형님 지시를 적어두세요.</div>';
       return;
     }
-    box.innerHTML = arr.map(function(n, i){
-      return '<div class="nitem' + (n.done ? " done" : "") + '" data-i="' + i + '">' +
+    box.innerHTML = arr.map(function(n){
+      return '<div class="nitem' + (n.done ? " done" : "") + '" data-uid="' + esc(n.uid) + '">' +
         '<button class="ck" type="button" aria-label="완료 표시">✓</button>' +
         '<div class="nx">' + esc(n.text) + '</div>' +
         '<button class="del" type="button" aria-label="삭제">✕</button>' +
         '</div>';
     }).join("");
+  }
+
+  /* Firebase 스냅샷을 화면에 반영 (미전송·직전 추가 항목은 보존) */
+  function noteApply(map){
+    var list = [];
+    Object.keys(map || {}).forEach(function(k){
+      var v = map[k];
+      if (!v || typeof v !== "object") return;
+      var text = String(v.text == null ? "" : v.text).trim();
+      if (!text) return;
+      list.push({ uid: k, text: text, done: !!v.done, at: +v.at || 0 });
+    });
+    var pend = {}, now = Date.now();
+    outRead().forEach(function(o){ pend[o.uid] = 1; });
+    notesRead().forEach(function(n){
+      if (list.some(function(x){ return x.uid === n.uid; })) return;
+      if (pend[n.uid] || n.at > now - 15000) list.push(n);
+    });
+    list.sort(noteSort);
+    notes = list;
+    notesWrite(list);
+    renderNotes();
+  }
+
+  function noteLoad(){
+    return fetchJSON(NOTES_URL)
+      .then(function(d){
+        setNoteState(true);
+        var map = (d && typeof d === "object" && !Array.isArray(d)) ? d : {};
+        if (!Object.keys(map).length && !noteMigrated){
+          noteMigrated = true;
+          var loc = notesRead();
+          if (loc.length){
+            loc.forEach(function(n){
+              fbReq(NOTES_ROOT + "/" + encodeURIComponent(n.uid) + ".json", "PUT",
+                { text: n.text, done: !!n.done, at: n.at }).catch(function(){});
+            });
+            notes = loc;
+            renderNotes();
+            return;
+          }
+        }
+        noteMigrated = true;
+        noteApply(map);
+      })
+      .catch(function(){
+        setNoteState(false);
+        var loc = notesRead();
+        if (!notes.length || notes.length !== loc.length) notes = loc;
+        renderNotes();
+      });
+  }
+
+  function noteFlush(){
+    var ops = outRead();
+    if (!ops.length) return Promise.resolve();
+    var done = [];
+    var chain = Promise.resolve();
+    ops.forEach(function(op){
+      chain = chain.then(function(){
+        var url = NOTES_ROOT + "/" + encodeURIComponent(op.uid) + ".json";
+        var p = op.op === "put" ? fbReq(url, "PUT", op.data)
+          : (op.op === "del" ? fbReq(url, "DELETE") : fbReq(url, "PATCH", op.data));
+        return p.then(function(){ done.push(op); }, function(err){ throw err; });
+      });
+    });
+    return chain.catch(function(){}).then(function(){
+      if (!done.length) return;
+      outWrite(outRead().filter(function(o){ return done.indexOf(o) < 0; }));
+      noteLoad();
+    });
+  }
+
+  function noteAdd(text){
+    var n = { uid: genUid(), text: text, done: false, at: Date.now() };
+    notes.push(n);
+    notes.sort(noteSort);
+    notesWrite(notes);
+    renderNotes();
+    fbReq(NOTES_ROOT + "/" + n.uid + ".json", "PUT", { text: n.text, done: false, at: n.at })
+      .then(function(){ setNoteState(true); })
+      .catch(function(){ outPush({ op: "put", uid: n.uid, data: { text: n.text, done: false, at: n.at } }); setNoteState(false); });
+  }
+
+  function noteSetDone(uid, done){
+    fbReq(NOTES_ROOT + "/" + encodeURIComponent(uid) + "/done.json", "PUT", !!done)
+      .then(function(){ setNoteState(true); })
+      .catch(function(){ outPush({ op: "patch", uid: uid, data: { done: !!done } }); setNoteState(false); });
+  }
+
+  function noteDel(uid){
+    fbReq(NOTES_ROOT + "/" + encodeURIComponent(uid) + ".json", "DELETE")
+      .then(function(){ setNoteState(true); })
+      .catch(function(){ outPush({ op: "del", uid: uid }); setNoteState(false); });
+  }
+
+  function noteStream(){
+    if (!window.EventSource || noteEs) return;
+    try { noteEs = new EventSource(NOTES_URL); } catch (e){ noteEs = null; return; }
+    function applyPath(path, data, isPatch){
+      var segs = String(path == null ? "/" : path).replace(/^\/+/, "").split("/").filter(function(s){ return s !== ""; });
+      if (segs.length && segs[0] === "office_notes") segs.shift();   /* 목 서버용 절대 경로 호환 */
+      if (!segs.length){
+        if (data && typeof data === "object") noteApply(data);
+        return;
+      }
+      var uid = segs[0], rest = segs.slice(1);
+      var cur = notesMap();
+      var node = cur[uid];
+      if (!rest.length){
+        if (data === null) delete cur[uid];
+        else if (typeof data === "object") cur[uid] = mergeDeep(node || {}, data);
+      } else if (rest[0] === "done"){
+        cur[uid] = mergeDeep(node || {}, { done: !!data });
+      } else if (rest[0] === "text"){
+        cur[uid] = mergeDeep(node || {}, { text: String(data == null ? "" : data) });
+      }
+      noteApply(cur);
+    }
+    noteEs.addEventListener("put", function(ev){
+      var m; try { m = JSON.parse(ev.data || "{}"); } catch (e){ return; }
+      setNoteState(true);
+      applyPath(m.path, m.data, false);
+    });
+    noteEs.addEventListener("patch", function(ev){
+      var m; try { m = JSON.parse(ev.data || "{}"); } catch (e){ return; }
+      setNoteState(true);
+      var segs = String(m.path == null ? "/" : m.path).replace(/^\/+/, "").split("/").filter(function(s){ return s !== ""; });
+      if (segs.length && segs[0] === "office_notes") segs.shift();
+      if (!segs.length){
+        var cur = notesMap();
+        Object.keys(m.data || {}).forEach(function(k){ cur[k] = mergeDeep(cur[k] || {}, m.data[k] || {}); });
+        noteApply(cur);
+      } else applyPath(m.path, m.data, true);
+    });
+    noteEs.addEventListener("error", function(){ setNoteState(false); });
   }
 
   /* ---------- 이벤트 ---------- */
@@ -1043,34 +1381,36 @@ body::before{
     b.classList.add("spin");
     liveTxt.textContent = "동기화 중";
     load().then(function(){ renderStatus(); });
+    noteLoad();
+    marketLoad();
+    say("형님, 최신 데이터로 동기화했습니다.", 2600);
   });
 
   $("nform").addEventListener("submit", function(e){
     e.preventDefault();
     var v = $("ninput").value.trim();
     if (!v) return;
-    var arr = notesRead();
-    arr.unshift({ text: v, done: false, at: Date.now() });
-    notesWrite(arr);
     $("ninput").value = "";
-    renderNotes();
+    noteAdd(v);
   });
 
   $("nlist").addEventListener("click", function(e){
     var row = e.target.closest ? e.target.closest(".nitem") : null;
     if (!row) return;
-    var i = parseInt(row.getAttribute("data-i"), 10);
-    var arr = notesRead();
-    if (!arr[i]) return;
+    var uid = row.getAttribute("data-uid");
+    var n = notes.filter(function(x){ return x.uid === uid; })[0];
+    if (!n) return;
     if (e.target.classList.contains("del")){
-      arr.splice(i, 1);
+      notes = notes.filter(function(x){ return x.uid !== uid; });
+      notesWrite(notes);
+      renderNotes();
+      noteDel(uid);
     } else if (e.target.classList.contains("ck")){
-      arr[i].done = !arr[i].done;
-    } else {
-      return;
+      n.done = !n.done;
+      notesWrite(notes);
+      renderNotes();
+      noteSetDone(uid, n.done);
     }
-    notesWrite(arr);
-    renderNotes();
   });
 
   window.addEventListener("resize", function(){
@@ -1082,12 +1422,166 @@ body::before{
     if (!document.hidden) load();
   });
 
+  /* ---------- 실시간 저가 시세판 ---------- */
+  var market = null;
+  var marketEs = null;
+
+  function unitOf(it){
+    var u = +it.unit_price;
+    if (u > 0) return Math.round(u);
+    var p = +it.price || 0, q = +it.qty || 0;
+    return (p > 0 && q > 0) ? Math.round(p / q) : 0;
+  }
+  function fmtAt(v){
+    if (!v) return "";
+    var d = typeof v === "number" ? new Date(v) : new Date(String(v));
+    if (isNaN(d.getTime())) return String(v);
+    function p(n){ return (n < 10 ? "0" : "") + n; }
+    return p(d.getMonth() + 1) + "-" + p(d.getDate()) + " " + p(d.getHours()) + ":" + p(d.getMinutes());
+  }
+  function setMarketState(ok){
+    var t = $("mktLiveTxt");
+    var box = $("mktLive");
+    if (t) t.textContent = ok ? "실시간" : "내장";
+    if (box) box.classList.toggle("off", !ok);
+  }
+  function renderMarket(){
+    var box = $("mkt");
+    if (!box) return;
+    var data = market;
+    if (!data || !data.groups || !data.groups.length){
+      box.innerHTML = '<div class="mkt-empty">시세 데이터를 불러오지 못했습니다.</div>';
+      return;
+    }
+    var stamp = $("mktStamp");
+    if (stamp) stamp.textContent = data.updated_at ? ("실측 " + fmtAt(data.updated_at)) : "SYNC";
+    var html = "";
+    data.groups.forEach(function(g){
+      var items = (g.items || []).slice().sort(function(a, b){ return unitOf(a) - unitOf(b); });
+      html += '<div class="mkt-g"><div class="mkt-gh"><b>' + esc(g.label) + '</b>' +
+        '<span class="mkt-th">기준 ' + esc(String(g.threshold || 0)) + '원 이하</span></div>';
+      items.forEach(function(it){
+        var u = unitOf(it);
+        var ok = u > 0 && u <= (+g.threshold || 0);
+        html += '<div class="mkt-row">' +
+          '<span class="mkt-nm"><b>' + esc(it.name) + '</b><span>' + esc(it.vendor || "") + ' · ' +
+          esc(fmt(+it.price || 0)) + '원 · ' + esc(String(it.qty || 0)) + esc(g.qty_unit || "매") + '</span></span>' +
+          '<span class="mkt-px"><b>' + esc(fmt(u)) + '</b><span>' + esc(g.unit || "원") + '</span></span>' +
+          '<span class="mkt-bd ' + (ok ? "ok" : "wait") + '">' + (ok ? "기준 충족" : "대기") + '</span>' +
+          '</div>';
+      });
+      var last = (g.items || []).reduce(function(m, x){
+        var t = x.measured_at || "";
+        return (t && (!m || t > m)) ? t : m;
+      }, "");
+      html += '<div class="mkt-ft">마지막 실측 ' + esc(fmtAt(last || data.updated_at) || "-") + '</div></div>';
+    });
+    box.innerHTML = html;
+  }
+
+  function marketLoad(){
+    return fetchJSON(MARKET_URL)
+      .then(function(d){
+        if (!d || !d.groups) throw new Error("empty");
+        market = d;
+        setMarketState(true);
+        renderMarket();
+      })
+      .catch(function(){
+        setMarketState(false);
+        if (!market){
+          try { market = JSON.parse(document.getElementById("fallback-market").textContent); } catch (e){ market = null; }
+        }
+        renderMarket();
+      });
+  }
+
+  function marketStream(){
+    if (!window.EventSource || marketEs) return;
+    try { marketEs = new EventSource(MARKET_URL); } catch (e){ marketEs = null; return; }
+    marketEs.addEventListener("put", function(ev){
+      var m; try { m = JSON.parse(ev.data || "{}"); } catch (e){ return; }
+      var segs = String(m.path == null ? "/" : m.path).replace(/^\/+/, "").split("/").filter(function(s){ return s !== ""; });
+      if (segs.length && segs[0] === "market_prices") segs.shift();
+      var path = "/" + segs.join("/");
+      if (!segs.length){
+        if (m.data && m.data.groups){ market = m.data; setMarketState(true); renderMarket(); }
+      } else {
+        var cur = JSON.parse(JSON.stringify(market || {}));
+        cur = setPath(cur, path, m.data, false);
+        if (m.data === null){ try { marketLoad(); } catch (e){} return; }
+        if (cur && cur.groups){ market = cur; setMarketState(true); renderMarket(); }
+      }
+    });
+    marketEs.addEventListener("error", function(){ setMarketState(false); });
+  }
+
+  /* ---------- 당겨서 새로고침 (iOS 홈화면 웹앱) ---------- */
+  (function(){
+    var bar = $("ptr");
+    if (!bar) return;
+    var sy = 0, sx = 0, dy = 0, active = false, ready = false;
+    var TH = 70;
+    function topY(){
+      return window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop || 0;
+    }
+    function targetUrl(){
+      var u = location.pathname + location.search;
+      u = u.replace(/([?&])v=\d+/g, function(t, s){ return s === "?" ? "?" : ""; });
+      u = u.replace(/\?&/, "?").replace(/[?&]$/, "");
+      return u + (u.indexOf("?") >= 0 ? "&" : "?") + "v=" + Date.now();
+    }
+    function clear(){ bar.classList.remove("on", "ready"); ready = false; }
+    document.addEventListener("touchstart", function(e){
+      if (e.touches.length !== 1 || topY() > 0){ active = false; return; }
+      active = true; ready = false;
+      sy = e.touches[0].clientY; sx = e.touches[0].clientX;
+    }, { passive: true });
+    document.addEventListener("touchmove", function(e){
+      if (!active || e.touches.length !== 1){ return; }
+      dy = e.touches[0].clientY - sy;
+      var dx = e.touches[0].clientX - sx;
+      if (topY() > 0){ active = false; clear(); return; }
+      if (dy <= 0 || Math.abs(dy) <= Math.abs(dx)){ clear(); return; }
+      bar.classList.add("on");
+      ready = dy >= TH;
+      bar.classList.toggle("ready", ready);
+      var t = bar.querySelector(".ptr-t");
+      if (t) t.textContent = ready ? "놓으면 최신 버전으로 새로고침" : "아래로 당기세요";
+    }, { passive: true });
+    document.addEventListener("touchend", function(){
+      if (!active) return;
+      var go = ready && dy >= TH;
+      active = false; ready = false;
+      if (!go){ clear(); return; }
+      var t = bar.querySelector(".ptr-t");
+      if (t) t.textContent = "새로고침 중…";
+      bar.classList.add("on", "ready");
+      if (window.__PTR_TEST__){ window.__PTR_LAST__ = targetUrl(); return; }
+      location.replace(targetUrl());
+    }, { passive: true });
+    document.addEventListener("touchcancel", function(){ active = false; clear(); }, { passive: true });
+    window.PTR = { target: targetUrl, isReady: function(){ return ready; } };
+  })();
+
   /* ---------- 시작 ---------- */
   apply(FALLBACK);
+  notes = notesRead();
   renderNotes();
   load();
   connectStream();
+  noteLoad();
+  noteStream();
+  noteFlush();
+  marketLoad();
+  marketStream();
   setInterval(function(){ if (!streamOk) load(); }, 10000);
+  setInterval(function(){
+    if (document.hidden) return;
+    if (!noteEs || !noteEs.readyState) { noteLoad(); noteFlush(); }
+    if (!marketEs || !marketEs.readyState) marketLoad();
+  }, 30000);
+  window.addEventListener("online", function(){ noteFlush(); noteLoad(); marketLoad(); });
   setTimeout(function(){
     if (state.butler && state.butler.bubble) say(state.butler.bubble, 6000);
   }, 1800);

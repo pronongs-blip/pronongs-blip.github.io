@@ -7,14 +7,14 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="DEVIL'S ARCADE">
-<meta name="description" content="두뇌 서바이벌 아케이드. 벽바둑 2 · 흑과 백 · 기억포커 · 유배지 만국기 · 결! 합! · 인디언 포커 게임 6종.">
-<title>DEVIL'S ARCADE · 두뇌 서바이벌 아케이드</title>
+<meta name="apple-mobile-web-app-title" content="오락실">
+<meta name="description" content="오락실 · DEVIL'S ARCADE. 두뇌 서바이벌 아케이드 6종 — 벽바둑 2 · 흑과 백 · 기억포커 · 유배지 만국기 · 결! 합! · 인디언 포커.">
+<title>오락실 · DEVIL'S ARCADE</title>
 <link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png">
 <link rel="icon" type="image/png" href="./apple-touch-icon.png">
 <style>
 :root{
-  --bg:#0a0d14; --panel:#121826; --panel2:#161e2e;
+  --bg:#0a0d14; --panel:#121826; --panel2:#161e2e; --panel3:#1b2438;
   --line:rgba(255,255,255,.10); --line2:rgba(255,255,255,.06);
   --txt:#f3f6fc; --dim:#9aa8c0; --dim2:#7b8aa5;
   --acc:#ffc247; --acc2:#5b8cff; --ok:#34d399;
@@ -46,28 +46,58 @@ body::before{
   padding:calc(env(safe-area-inset-top,0px) + 22px) 16px calc(env(safe-area-inset-bottom,0px) + 14px);
 }
 
-/* ---------- 헤더 ---------- */
-.top{display:flex;align-items:center;gap:12px;flex:0 0 auto}
+/* ---------- 헤더 (비서실과 공통) ---------- */
+.top{
+  flex:0 0 auto;display:flex;align-items:center;gap:10px;
+  padding:9px 10px;border-radius:16px;
+  background:linear-gradient(180deg, rgba(22,30,46,.94), rgba(16,22,34,.94));
+  border:1px solid var(--line);
+}
 .mark{
-  flex:0 0 auto;width:46px;height:46px;border-radius:14px;
-  display:flex;align-items:center;justify-content:center;
-  background:var(--panel2);border:1px solid var(--line);
-  color:var(--acc);
+  flex:0 0 auto;width:40px;height:40px;border-radius:12px;
+  display:flex;align-items:center;justify-content:center;font-size:18px;
+  background:radial-gradient(circle at 30% 25%, #2a3550, #161e2e);
+  border:1px solid rgba(255,194,71,.28);color:var(--acc);
 }
-.mark svg{width:26px;height:26px}
-.ttl{flex:1 1 auto;min-width:0}
-.ttl h1{
-  margin:0;font-size:21px;line-height:1.15;font-weight:900;
-  letter-spacing:.06em;color:#fff;
+.mark svg{width:22px;height:22px}
+.brand{flex:1 1 auto;min-width:0}
+.brand h1{
+  margin:0;font-size:16.5px;line-height:1.2;font-weight:900;
+  letter-spacing:-.015em;color:#fff;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
 }
-.ttl p{margin:3px 0 0;font-size:11.5px;font-weight:700;color:var(--dim);letter-spacing:.01em}
-.stat{
-  flex:0 0 auto;display:inline-flex;align-items:center;gap:5px;
-  height:24px;padding:0 9px;border-radius:999px;
-  font-size:10.5px;font-weight:800;letter-spacing:.02em;color:#cfd9ea;
-  background:var(--panel);border:1px solid var(--line);white-space:nowrap;
+.brand p{
+  margin:3px 0 0;font-size:9px;font-weight:800;letter-spacing:.055em;color:var(--dim2);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
 }
-.stat i{width:6px;height:6px;border-radius:50%;background:var(--ok);display:block}
+.brand p b{color:#e2c98c;font-weight:900}
+.tools{flex:0 0 auto;display:flex;align-items:center;gap:6px}
+.rbtn{
+  flex:0 0 auto;width:34px;height:34px;border-radius:11px;cursor:pointer;text-decoration:none;
+  display:flex;align-items:center;justify-content:center;font-size:15px;line-height:1;
+  color:var(--txt);background:var(--panel3);border:1px solid var(--line);
+  transition:transform .2s, background .2s;font-family:inherit;
+}
+.rbtn:active{transform:scale(.94);background:#232f47}
+.rbtn.nav{background:rgba(111,157,255,.10);border-color:rgba(111,157,255,.30)}
+.rbtn.spin{animation:spin .7s linear}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ---------- 당겨서 새로고침 (공통) ---------- */
+.ptr{
+  position:fixed;left:0;right:0;top:0;z-index:70;pointer-events:none;
+  display:flex;align-items:center;justify-content:center;gap:6px;
+  height:42px;padding-top:env(safe-area-inset-top,0px);box-sizing:content-box;
+  transform:translateY(-110%);transition:transform .18s ease, background .18s ease;
+  background:linear-gradient(180deg,rgba(22,30,46,.98),rgba(16,22,34,.96));
+  border-bottom:1px solid var(--line);
+  font-size:11px;font-weight:900;letter-spacing:.01em;color:#ffd98a;
+}
+.ptr.on{transform:translateY(0)}
+.ptr.ready{background:linear-gradient(180deg,#ffd77a,#ffb928);color:#1c1503;border-bottom-color:rgba(0,0,0,.2)}
+.ptr-i{display:block;font-size:14px;line-height:1;transition:transform .2s ease}
+.ptr.ready .ptr-i{transform:rotate(180deg)}
+body{overscroll-behavior-y:contain}
 
 /* ---------- 게임 목록 ---------- */
 .stage{flex:1 1 auto;display:flex;flex-direction:column;justify-content:center;gap:8px;padding:12px 0 8px;min-height:0}
@@ -147,6 +177,13 @@ body::before{
   color:#cfd9ea;background:rgba(255,255,255,.06);border:1px solid var(--line);line-height:1;
 }
 .hx:active{background:rgba(255,255,255,.14)}
+.hsum{display:flex;flex-wrap:wrap;gap:5px;margin:10px 0 0;flex:0 0 auto}
+.hsum:empty{display:none}
+.hsum .sm{display:inline-flex;align-items:center;gap:4px;font-size:9.5px;font-weight:800;
+  padding:4px 8px;border-radius:8px;color:#cfd9ea;background:rgba(255,255,255,.05);border:1px solid var(--line2);white-space:nowrap}
+.hsum .sm b{color:#fff;font-weight:900}
+.hsum .sm em{font-style:normal;color:#ffd98a;font-weight:900}
+.hsum .sm.hot{color:#ffe0a3;background:rgba(255,194,71,.10);border-color:rgba(255,194,71,.28)}
 .htabs{display:flex;gap:5px;margin:12px 0 10px;flex:0 0 auto;padding:4px;border-radius:12px;
   background:rgba(255,255,255,.045);border:1px solid var(--line2)}
 .htabs .tab{
@@ -185,10 +222,12 @@ body::before{
 /* ---------- 넓은 화면 ---------- */
 @media (min-width:760px){
   .portal{max-width:860px;padding-top:calc(env(safe-area-inset-top,0px) + 48px);padding-bottom:40px}
-  .mark{width:56px;height:56px;border-radius:17px}
-  .mark svg{width:31px;height:31px}
-  .ttl h1{font-size:26px}
-  .ttl p{font-size:13px}
+  .top{padding:10px 12px}
+  .mark{width:44px;height:44px;border-radius:13px;font-size:20px}
+  .mark svg{width:24px;height:24px}
+  .brand h1{font-size:19px}
+  .brand p{font-size:9.5px}
+  .rbtn{width:36px;height:36px;font-size:16px}
   .stage{justify-content:flex-start;padding:34px 0 10px;gap:14px}
   .stage>section{flex:0 0 auto}
   .cards{flex:0 0 auto;display:grid;grid-template-columns:1fr 1fr;gap:14px}
@@ -223,6 +262,7 @@ body::before{
 </style>
 </head>
 <body>
+<div class="ptr" id="ptr" aria-hidden="true"><span class="ptr-i">↻</span><span class="ptr-t">놓으면 최신 버전으로 새로고침</span></div>
 <main class="portal">
 
   <header class="top">
@@ -233,16 +273,19 @@ body::before{
         <path d="M15.6 11.2h.01M17.6 12.8h.01"/>
       </svg>
     </div>
-    <div class="ttl">
-      <h1>DEVIL'S ARCADE</h1>
-      <p>두뇌 서바이벌 아케이드</p>
+    <div class="brand">
+      <h1>오락실</h1>
+      <p><b>DEVIL'S ARCADE</b> · 두뇌 서바이벌</p>
     </div>
-    <span class="stat" id="statPill"><i></i><span id="statPillTxt">READY</span></span>
+    <div class="tools">
+      <a class="rbtn nav" href="./office.html" aria-label="비서실로 이동" title="비서실">🏢</a>
+      <button class="rbtn" id="refreshBtn" type="button" aria-label="새로고침" title="새로고침">↻</button>
+    </div>
   </header>
 
   <div class="stage">
     <section aria-label="게임">
-      <div class="shead"><span class="lb">GAMES</span><span class="cnt">6 TITLES</span></div>
+      <div class="shead"><span class="lb">GAMES</span><span class="cnt">6 TITLES · <span id="statPillTxt">READY</span></span></div>
       <div class="cards">
 
         <a class="card c-cool" href="./wall-baduk2.html" data-app-id="wall-baduk2" data-released="2026-11-21">
@@ -348,7 +391,7 @@ body::before{
 
   <footer class="foot">
     <button class="rst hbtn" type="button" id="histBtn" aria-haspopup="dialog">📜 기록</button>
-    <button class="rst" type="button" id="resetStats" aria-pressed="false" title="이 기기에 저장된 실행 기록과 경기 기록을 지웁니다">기록 초기화</button>
+    <button class="rst" type="button" id="resetStats" aria-pressed="false" title="부부 통합 기록까지 함께 지웁니다 (양쪽 폰 공통)">기록 초기화</button>
   </footer>
 
 </main>
@@ -363,6 +406,7 @@ body::before{
       </div>
       <button class="hx" type="button" id="histClose" aria-label="기록 닫기">✕</button>
     </div>
+    <div class="hsum" id="histSum"></div>
     <div class="htabs" id="histTabs" role="tablist">
       <button class="tab on" type="button" data-v="all" role="tab" aria-selected="true">전체 <b>0</b></button>
       <button class="tab" type="button" data-v="pvp" role="tab" aria-selected="false">사람 <b>0</b></button>
@@ -371,6 +415,328 @@ body::before{
     <div class="hlist" id="histList"></div>
   </div>
 </div>
+
+<script>
+window.ARC = window.ARC || {
+  KEY: 'yg_arcade_stats_v1',
+  HKEY: 'yg_arcade_history_v1',
+  PKEY: 'yg_arcade_pending_v1',
+  DKEY: 'yg_arcade_dev_v1',
+  CAP: 200,
+  FB: (window.ARC_FB_BASE || 'https://seonongs-hq-default-rtdb.firebaseio.com'),
+  _agg: null,
+  _opens: null,
+  _cloud: false,
+  read: function () { try { return JSON.parse(localStorage.getItem(this.KEY) || '{}') || {}; } catch (e) { return {}; } },
+  /* 상대 구분: ai(혼자·AI 대전) / pvp(한 기기·온라인 사람 대전) */
+  vsOf: function (mode) { return (mode === 'ai' || mode === 'solo' || !mode) ? 'ai' : 'pvp'; },
+  dev: function () {
+    try {
+      var d = localStorage.getItem(this.DKEY);
+      if (!d || !/^[a-z0-9]{6,20}$/.test(d)) {
+        d = 'd' + Math.random().toString(36).slice(2, 10);
+        localStorage.setItem(this.DKEY, d);
+      }
+      return d;
+    } catch (e) { return 'd0'; }
+  },
+  canCloud: function () {
+    try {
+      if (/[?&]nofb=1/.test(location.search)) return false;
+      return location.protocol === 'http:' || location.protocol === 'https:';
+    } catch (e) { return false; }
+  },
+  _req: function (path, method, body) {
+    var opt = { method: method || 'GET', cache: 'no-store' };
+    if (body !== undefined) { opt.headers = { 'Content-Type': 'application/json' }; opt.body = JSON.stringify(body); }
+    return fetch(this.FB + path, opt).then(function (r) {
+      if (!r.ok) throw new Error('HTTP ' + r.status);
+      return r.text().then(function (t) { try { return t ? JSON.parse(t) : null; } catch (e) { return null; } });
+    });
+  },
+  _writeHist: function (arr) { try { localStorage.setItem(this.HKEY, JSON.stringify(arr.slice(0, this.CAP))); } catch (e) {} },
+  _pending: function () { try { var a = JSON.parse(localStorage.getItem(this.PKEY) || '[]'); return Array.isArray(a) ? a : []; } catch (e) { return []; } },
+  _queue: function (rec) {
+    try {
+      var a = this._pending();
+      for (var i = 0; i < a.length; i++) if (a[i] && a[i].uid === rec.uid) return;
+      a.push(rec);
+      localStorage.setItem(this.PKEY, JSON.stringify(a.slice(-60)));
+    } catch (e) {}
+  },
+  _flushPending: function () {
+    var self = this, list = this._pending();
+    if (!list.length) return Promise.resolve();
+    var done = [];
+    var chain = Promise.resolve();
+    list.forEach(function (rec) {
+      chain = chain.then(function () {
+        return self._req('/arcade_history/' + rec.uid + '.json', 'PUT', rec).then(function () { done.push(rec.uid); }, function () { throw 0; });
+      });
+    });
+    return chain.catch(function () {}).then(function () {
+      if (!done.length) return;
+      try {
+        localStorage.setItem(self.PKEY, JSON.stringify(self._pending().filter(function (r) { return done.join(' ').indexOf(r.uid) < 0; })));
+      } catch (e) {}
+    });
+  },
+  record: function (id, res, vs) {
+    try {
+      var all = this.read(), s = all[id] || {};
+      s.wins = Math.max(0, +s.wins || 0);
+      s.losses = Math.max(0, +s.losses || 0);
+      s.draws = Math.max(0, +s.draws || 0);
+      if (res === 'win') s.wins++; else if (res === 'lose') s.losses++; else s.draws++;
+      var k = (vs === 'ai') ? 'ai' : ((vs === 'pvp') ? 'pvp' : this.vsOf(''));
+      var g = s[k] || {};
+      g.wins = Math.max(0, +g.wins || 0);
+      g.losses = Math.max(0, +g.losses || 0);
+      g.draws = Math.max(0, +g.draws || 0);
+      if (res === 'win') g.wins++; else if (res === 'lose') g.losses++; else g.draws++;
+      s[k] = g;
+      s.played = s.wins + s.losses + s.draws;
+      s.lastResult = res;
+      s.lastPlayed = Date.now();
+      all[id] = s;
+      localStorage.setItem(this.KEY, JSON.stringify(all));
+    } catch (e) {}
+  },
+  part: function (g) {
+    if (!g) return '';
+    var w = Math.max(0, +g.wins || 0), l = Math.max(0, +g.losses || 0), d = Math.max(0, +g.draws || 0);
+    if (!w && !l && !d) return '';
+    return w + '승 ' + l + '패' + (d ? ' ' + d + '무' : '');
+  },
+  _mx: function (a, b) { return Math.max(+a || 0, +b || 0); },
+  _grp: function (a, b) {
+    if (!a && !b) return undefined;
+    a = a || {}; b = b || {};
+    return { wins: this._mx(a.wins, b.wins), losses: this._mx(a.losses, b.losses), draws: this._mx(a.draws, b.draws) };
+  },
+  /* 로컬 전적 + 클라우드 집계(최댓값 병합 — 중복 없이 합산) */
+  statOf: function (id) {
+    var a = this.read()[id] || {};
+    var b = (this._agg && this._agg.games && this._agg.games[id]) || {};
+    var o = {
+      wins: this._mx(a.wins, b.wins),
+      losses: this._mx(a.losses, b.losses),
+      draws: this._mx(a.draws, b.draws)
+    };
+    var p = this._grp(a.pvp, b.pvp), q = this._grp(a.ai, b.ai);
+    if (p) o.pvp = p;
+    if (q) o.ai = q;
+    return o;
+  },
+  line: function (id) {
+    var s = this.statOf(id);
+    var w = s.wins, l = s.losses, d = s.draws;
+    if (!w && !l && !d) return '';
+    var tot = '통산 ' + w + '승 ' + l + '패' + (d ? ' ' + d + '무' : '');
+    var pv = this.part(s.pvp), ai = this.part(s.ai);
+    var parts = [];
+    if (pv) parts.push('사람 ' + pv);
+    if (ai) parts.push('AI ' + ai);
+    if (!parts.length) return tot;
+    var sum = (s.pvp ? s.pvp.wins + s.pvp.losses + s.pvp.draws : 0) + (s.ai ? s.ai.wins + s.ai.losses + s.ai.draws : 0);
+    if (parts.length === 1 && (w + l + d) === sum) return tot + ' · ' + parts[0];
+    return tot + ' · ' + parts.join(' · ');
+  },
+  show: function (id, modal) {
+    var root = typeof modal === 'string' ? document.querySelector(modal) : modal;
+    if (!root) return;
+    var box = root.querySelector('.modal') || root.querySelector('.card') || root;
+    var txt = this.line(id);
+    var el = box.querySelector('.res-stat');
+    if (!txt) { if (el) el.remove(); return; }
+    if (!el) {
+      el = document.createElement('div');
+      el.className = 'res-stat';
+      el.innerHTML = '<span>내 전적</span><b></b>';
+      var foot = box.querySelector('.mrow, .endact, .rules-close');
+      if (foot && foot.parentNode === box) box.insertBefore(el, foot); else box.appendChild(el);
+    }
+    el.querySelector('b').textContent = txt;
+  },
+  norm: function (v, key) {
+    if (!v || typeof v !== 'object') return null;
+    var at = +v.playedAt || 0;
+    if (!at) return null;
+    var r = String(v.result || 'draw');
+    if (r === 'lose') r = 'loss';
+    if (r !== 'win' && r !== 'loss' && r !== 'draw') r = 'draw';
+    return {
+      uid: String(v.uid || key || ('h' + at + '-' + String(v.id || v.game || ''))),
+      id: String(v.id || v.game || ''),
+      game: String(v.game || v.title || v.id || ''),
+      mode: String(v.mode || ''),
+      vs: (v.vs === 'ai') ? 'ai' : 'pvp',
+      myName: String(v.myName || ''),
+      oppName: String(v.oppName || ''),
+      result: r,
+      scoreText: String(v.scoreText || ''),
+      playedAt: at
+    };
+  },
+  history: function () {
+    try {
+      var a = JSON.parse(localStorage.getItem(this.HKEY) || '[]');
+      if (!Array.isArray(a)) return [];
+      var self = this, out = [];
+      a.forEach(function (x) { var r = self.norm(x); if (r) out.push(r); });
+      return out;
+    } catch (e) { return []; }
+  },
+  /* 경기 히스토리 — 최신순 최대 200건, 로컬 + Firebase 동시 저장 */
+  save: function (o) {
+    var rec = null;
+    try {
+      o = o || {};
+      var arr = this.history();
+      var r = o.result;
+      if (r === 'lose') r = 'loss';
+      if (r !== 'win' && r !== 'loss' && r !== 'draw') r = 'draw';
+      var mode = String(o.mode || '');
+      rec = {
+        uid: 'h' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6),
+        id: String(o.game || ''),
+        game: String(o.title || o.game || ''),
+        mode: mode,
+        vs: (o.vs === 'ai' || o.vs === 'pvp') ? o.vs : this.vsOf(mode),
+        myName: String(o.myName || ''),
+        oppName: String(o.oppName || ''),
+        result: r,
+        scoreText: String(o.scoreText || ''),
+        playedAt: Date.now(),
+        dev: this.dev()
+      };
+      arr.unshift(rec);
+      if (arr.length > this.CAP) arr.length = this.CAP;
+      this._writeHist(arr);
+    } catch (e) { return; }
+    if (!this.canCloud()) return;
+    var self = this;
+    this._req('/arcade_history/' + rec.uid + '.json', 'PUT', rec)
+      .then(function () { self._cloud = true; return self._pushStats(); })
+      .catch(function () { self._queue(rec); });
+  },
+  derive: function (list) {
+    var games = {}, players = {};
+    list.forEach(function (r) {
+      var g = games[r.id] || (games[r.id] = { wins: 0, losses: 0, draws: 0, plays: 0, pvp: { wins: 0, losses: 0, draws: 0 }, ai: { wins: 0, losses: 0, draws: 0 } });
+      var k = (r.result === 'win') ? 'wins' : (r.result === 'loss' ? 'losses' : 'draws');
+      g[k]++; g.plays++;
+      g[r.vs][k]++;
+      var nm = r.myName || '';
+      if (nm) {
+        var p = players[nm] || (players[nm] = { wins: 0, losses: 0, draws: 0, plays: 0 });
+        p[k]++; p.plays++;
+      }
+    });
+    /* 연승 — 플레이어별 최근 결과 연속 수 */
+    var streak = {};
+    var byName = {};
+    list.forEach(function (r) { if (r.myName) (byName[r.myName] = byName[r.myName] || []).push(r); });
+    Object.keys(byName).forEach(function (nm) {
+      var arr = byName[nm].slice().sort(function (a, b) { return b.playedAt - a.playedAt; });
+      var res = arr[0] ? arr[0].result : '';
+      var n = 0;
+      for (var i = 0; i < arr.length && arr[i].result === res; i++) n++;
+      streak[nm] = { result: res, n: n };
+    });
+    Object.keys(players).forEach(function (nm) { players[nm].streak = streak[nm] || null; });
+    return { games: games, players: players, streak: streak };
+  },
+  _pushStats: function () {
+    if (!this.canCloud() || !this._agg) return Promise.resolve();
+    var self = this;
+    return this._req('/arcade_stats/games.json', 'PUT', this._agg.games)
+      .then(function () { return self._req('/arcade_stats/players.json', 'PUT', self._agg.players); })
+      .then(function () { return self._req('/arcade_stats/updatedAt.json', 'PUT', Date.now()); })
+      .catch(function () {});
+  },
+  open: function (id, clicks, lastOpened) {
+    if (!this.canCloud()) return;
+    var rec = { clicks: Math.max(0, +clicks || 0), lastOpened: +lastOpened || Date.now() };
+    this._req('/arcade_stats/opens/' + this.dev() + '/' + id + '.json', 'PUT', rec).catch(function () {});
+    if (this._opens) { var d = this.dev(); this._opens[d] = this._opens[d] || {}; this._opens[d][id] = rec.clicks; }
+  },
+  opensOf: function (id) {
+    var all = this._opens || {}, n = 0;
+    Object.keys(all).forEach(function (dev) {
+      var g = all[dev];
+      if (g && typeof g === 'object') n += Math.max(0, +g[id] || 0);
+    });
+    return n;
+  },
+  sync: function () {
+    if (!this.canCloud()) return Promise.resolve();
+    var self = this;
+    return Promise.all([
+      this._req('/arcade_history.json?t=' + Date.now()).catch(function () { return null; }),
+      this._req('/arcade_stats.json?t=' + Date.now()).catch(function () { return null; })
+    ]).then(function (res) {
+      var hraw = res[0], sraw = res[1];
+      var cloud = [], map = (hraw && typeof hraw === 'object') ? hraw : {};
+      Object.keys(map).forEach(function (k) {
+        var r = self.norm(map[k], k);
+        if (r) cloud.push(r);
+      });
+      var seen = {}, merged = [];
+      cloud.concat(self.history()).forEach(function (r) {
+        if (seen[r.uid]) return;
+        seen[r.uid] = 1;
+        merged.push(r);
+      });
+      merged.sort(function (a, b) { return b.playedAt - a.playedAt; });
+      if (merged.length > self.CAP) merged.length = self.CAP;
+      self._writeHist(merged);
+
+      var agg = self.derive(merged);
+      var sg = (sraw && sraw.games) || null;
+      if (sg) {
+        Object.keys(sg).forEach(function (id) {
+          var a = agg.games[id] || { wins: 0, losses: 0, draws: 0, plays: 0, pvp: { wins: 0, losses: 0, draws: 0 }, ai: { wins: 0, losses: 0, draws: 0 } };
+          var b = sg[id] || {};
+          agg.games[id] = {
+            wins: self._mx(a.wins, b.wins), losses: self._mx(a.losses, b.losses), draws: self._mx(a.draws, b.draws),
+            plays: self._mx(a.plays, b.plays),
+            pvp: self._grp(a.pvp, b.pvp) || { wins: 0, losses: 0, draws: 0 },
+            ai: self._grp(a.ai, b.ai) || { wins: 0, losses: 0, draws: 0 }
+          };
+        });
+      }
+      self._agg = agg;
+      self._opens = (sraw && sraw.opens) || {};
+      self._cloud = !!(hraw || sraw);
+
+      var have = {};
+      cloud.forEach(function (r) { have[r.uid] = 1; });
+      merged.forEach(function (r) { if (!have[r.uid]) self._queue(r); });
+      self._flushPending();
+      if (hraw) self._pushStats();
+      if (typeof window.ARC_ON_SYNC === 'function') { try { window.ARC_ON_SYNC(agg, merged); } catch (e) {} }
+    }).catch(function () {});
+  },
+  clearHistory: function () { try { localStorage.removeItem(this.HKEY); } catch (e) {} try { localStorage.removeItem(this.PKEY); } catch (e) {} },
+  clearCloud: function () {
+    var self = this;
+    if (!this.canCloud()) return Promise.resolve();
+    return this._req('/arcade_history.json', 'DELETE')
+      .then(function () { return self._req('/arcade_stats/games.json', 'PUT', {}); })
+      .then(function () { return self._req('/arcade_stats/players.json', 'PUT', {}); })
+      .then(function () { return self._req('/arcade_stats/opens.json', 'DELETE'); })
+      .catch(function () {});
+  }
+};
+(function () {
+  function boot() { try { window.ARC.sync(); } catch (e) {} }
+  if (document.readyState === 'complete' || document.readyState === 'interactive') setTimeout(boot, 40);
+  else document.addEventListener('DOMContentLoaded', function () { setTimeout(boot, 40); });
+  window.addEventListener('pageshow', boot);
+  document.addEventListener('visibilitychange', function () { if (!document.hidden) boot(); });
+})();
+</script>
 
 <script>
 /* ============================================================
@@ -399,10 +765,9 @@ body::before{
     var out = {};
     var raw = null;
     try { raw = window.localStorage.getItem(KEY); } catch (e) { raw = null; }
-    if (!raw) return out;
-    var data;
-    try { data = JSON.parse(raw); } catch (e) { return out; }
-    if (!data || typeof data !== "object") return out;
+    var data = {};
+    if (raw) { try { data = JSON.parse(raw); } catch (e) { data = {}; } }
+    if (!data || typeof data !== "object") data = {};
     ids.forEach(function (id) {
       var s = data[id];
       if (!s || typeof s !== "object") return;
@@ -418,7 +783,38 @@ body::before{
           pvp: grp(s.pvp), ai: grp(s.ai) };
       }
     });
+    mergeCloud(out);
     return out;
+  }
+
+  /* Firebase 집계와 큰 값을 골라 합치기 — 기기를 바꾸거나 캐시가 날아가도 부부 통합 전적 유지 */
+  function mergeCloud(out) {
+    var agg = (window.ARC && window.ARC._agg) || null;
+    ids.forEach(function (id) {
+      var c = agg && agg.games && agg.games[id];
+      var opens = (window.ARC && window.ARC.opensOf) ? window.ARC.opensOf(id) : 0;
+      if (!c && !opens) return;
+      var s = out[id] || { clicks: 0, lastOpened: 0, wins: 0, losses: 0, draws: 0 };
+      if (opens > s.clicks) s.clicks = opens;
+      if (c) {
+        s.wins = Math.max(s.wins, Math.floor(Number(c.wins) || 0));
+        s.losses = Math.max(s.losses, Math.floor(Number(c.losses) || 0));
+        s.draws = Math.max(s.draws, Math.floor(Number(c.draws) || 0));
+        s.pvp = maxGrp(s.pvp, c.pvp);
+        s.ai = maxGrp(s.ai, c.ai);
+      }
+      if (s.clicks > 0 || s.wins + s.losses + s.draws > 0) out[id] = s;
+    });
+  }
+
+  function maxGrp(a, b) {
+    if (!a && !b) return null;
+    a = a || { wins: 0, losses: 0, draws: 0 };
+    b = b || { wins: 0, losses: 0, draws: 0 };
+    var o = { wins: Math.max(a.wins || 0, b.wins || 0),
+      losses: Math.max(a.losses || 0, b.losses || 0),
+      draws: Math.max(a.draws || 0, b.draws || 0) };
+    return (o.wins || o.losses || o.draws) ? o : null;
   }
 
   function grp(g) {
@@ -507,20 +903,24 @@ body::before{
     cards.forEach(function (card) {
       var id = card.getAttribute("data-app-id");
       var s = stats[id] || { clicks: 0, lastOpened: 0 };
+      var plays = (s.wins || 0) + (s.losses || 0) + (s.draws || 0);
       total += s.clicks;
 
       var badge = card.querySelector('[data-slot="badge"]');
       var when = card.querySelector('[data-slot="when"]');
       var cls, text;
-      if (s.clicks < 1) {
+      if (s.clicks < 1 && plays < 1) {
         cls = "bdg new";
         text = "NEW";
       } else if (id === fav) {
         cls = "bdg hot";
         text = "최다 · " + s.clicks + "회";
-      } else {
+      } else if (s.clicks > 0) {
         cls = "bdg cnt";
         text = s.clicks + "회";
+      } else {
+        cls = "bdg cnt";
+        text = plays + "판";
       }
       if (badge) {
         if (badge.textContent !== text) badge.textContent = text;
@@ -529,11 +929,12 @@ body::before{
       }
 
       if (when) {
-        if (s.clicks > 0) {
-          var rec = recOf(s);
-          var label = rec + "최근 " + (ago(s.lastOpened) || "오늘");
+        var rec = recOf(s);
+        var tail = s.lastOpened ? ("최근 " + (ago(s.lastOpened) || "오늘")) : "";
+        var label = (rec + tail).replace(/\s*·\s*$/, "").trim();
+        if (label) {
           if (when.textContent !== label) when.textContent = label;
-          when.title = "마지막 실행 " + fullTime(s.lastOpened);
+          when.title = (s.lastOpened ? "마지막 실행 " + fullTime(s.lastOpened) : "부부 통합 전적");
           when.hidden = false;
         } else {
           when.hidden = true;
@@ -548,17 +949,14 @@ body::before{
   }
 
   function bump(id) {
-    var all = readStats();
     var raw = {};
     try { raw = JSON.parse(window.localStorage.getItem(KEY) || "{}") || {}; } catch (e) { raw = {}; }
-    var s = all[id] || raw[id] || { clicks: 0, lastOpened: 0 };
-    s.wins = Math.max(0, Math.floor(Number(s.wins) || 0));
-    s.losses = Math.max(0, Math.floor(Number(s.losses) || 0));
-    s.draws = Math.max(0, Math.floor(Number(s.draws) || 0));
-    s.clicks += 1;
+    var s = raw[id] || { clicks: 0, lastOpened: 0 };
+    s.clicks = Math.max(0, Math.floor(Number(s.clicks) || 0)) + 1;
     s.lastOpened = Date.now();
-    all[id] = s;
-    writeStats(all);
+    raw[id] = s;
+    writeStats(raw);
+    if (window.ARC && ARC.open) ARC.open(id, s.clicks, s.lastOpened);
     render();
   }
 
@@ -570,6 +968,7 @@ body::before{
 
   window.addEventListener("pageshow", render);
   window.addEventListener("focus", render);
+  window.addEventListener("arcade-sync", render);
   document.addEventListener("visibilitychange", function () { if (!document.hidden) render(); });
   window.addEventListener("storage", function (ev) { if (!ev.key || ev.key === KEY) render(); });
   setInterval(function () { if (!document.hidden) render(); }, 30000);
@@ -589,6 +988,7 @@ body::before{
       if (!armed) {
         armed = true;
         resetBtn.textContent = "한 번 더 누르면 지워요";
+        resetBtn.title = "부부 통합 기록(양쪽 폰)까지 함께 지웁니다";
         resetBtn.classList.add("arm");
         resetBtn.setAttribute("aria-pressed", "true");
         armTimer = setTimeout(disarm, 3500);
@@ -597,6 +997,10 @@ body::before{
       disarm();
       clearStats();
       try { window.localStorage.removeItem("yg_arcade_history_v1"); } catch (e) { /* noop */ }
+      if (window.ARC) {
+        try { ARC.clearHistory(); } catch (e) { /* noop */ }
+        try { ARC.clearCloud(); } catch (e) { /* noop */ }
+      }
       render();
       try { window.HIST && window.HIST.render(); } catch (e) { /* noop */ }
       if (pillTxt) pillTxt.textContent = "READY";
@@ -640,8 +1044,40 @@ body::before{
     });
   }
 
+  function renderSum(all) {
+    var sub = document.getElementById("histSub");
+    var cloud = !!(window.ARC && window.ARC._cloud);
+    if (sub) sub.textContent = (cloud ? "부부 통합 전적 · Firebase 동기화" : "이 기기에만 저장") + " · " + all.length + "경기";
+    var sum = document.getElementById("histSum");
+    if (!sum) return;
+    var pv = { w: 0, l: 0, d: 0 }, ai = { w: 0, l: 0, d: 0 };
+    all.forEach(function (e) {
+      var g = ((e && e.vs === "ai") ? ai : pv);
+      var r = e && e.result;
+      if (r === "win") g.w++; else if (r === "loss" || r === "lose") g.l++; else g.d++;
+    });
+    var html = "";
+    if (pv.w + pv.l + pv.d) html += '<span class="sm">사람 <b>' + pv.w + "승 " + pv.l + "패</b>" + (pv.d ? " " + pv.d + "무" : "") + '</span>';
+    if (ai.w + ai.l + ai.d) html += '<span class="sm">AI <b>' + ai.w + "승 " + ai.l + "패</b>" + (ai.d ? " " + ai.d + "무" : "") + '</span>';
+    var players = (window.ARC && window.ARC._agg && window.ARC._agg.players) || null;
+    if (players) {
+      var names = Object.keys(players).sort(function (a, b) { return (players[b].plays || 0) - (players[a].plays || 0); }).slice(0, 2);
+      names.forEach(function (nm) {
+        var p = players[nm] || {};
+        var st = p.streak || null;
+        var hot = !!(st && st.result === "win" && st.n >= 2);
+        var stx = (st && st.n >= 2)
+          ? '<em>' + (st.result === "win" ? "🔥" : "") + st.n + (st.result === "win" ? "연승" : (st.result === "loss" ? "연패" : "연무")) + '</em>'
+          : "";
+        html += '<span class="sm' + (hot ? " hot" : "") + '"><b>' + esc(nm) + '</b> ' + (p.wins || 0) + "승 " + (p.losses || 0) + "패 " + stx + '</span>';
+      });
+    }
+    sum.innerHTML = html;
+  }
+
   function render() {
     var all = read();
+    renderSum(all);
     var cnt = { all: all.length, pvp: 0, ai: 0 };
     all.forEach(function (e) { cnt[(e && e.vs === "ai") ? "ai" : "pvp"] += 1; });
 
@@ -701,7 +1137,76 @@ body::before{
   });
 
   window.HIST = { render: render, open: open, close: close };
+  window.addEventListener("arcade-sync", render);
   render();
+})();
+</script>
+
+<script>
+/* ============================================================
+   새로고침 · 당겨서 새로고침 (iOS 홈화면 웹앱)
+   ============================================================ */
+(function () {
+  "use strict";
+  function targetUrl() {
+    var u = location.pathname + location.search;
+    u = u.replace(/([?&])v=\d+/g, function (t, s) { return s === "?" ? "?" : ""; });
+    u = u.replace(/\?&/, "?").replace(/[?&]$/, "");
+    return u + (u.indexOf("?") >= 0 ? "&" : "?") + "v=" + Date.now();
+  }
+  window.ARC_ON_SYNC = function () { try { window.dispatchEvent(new Event("arcade-sync")); } catch (e) {} };
+
+  var rf = document.getElementById("refreshBtn");
+  if (rf) rf.addEventListener("click", function () {
+    rf.classList.remove("spin");
+    void rf.offsetWidth;
+    rf.classList.add("spin");
+    if (window.ARC && ARC.sync) ARC.sync();
+    try { window.dispatchEvent(new Event("arcade-sync")); } catch (e) {}
+    setTimeout(function () {
+      if (window.__PTR_TEST__) { window.__PTR_LAST__ = targetUrl(); return; }
+      location.replace(targetUrl());
+    }, 260);
+  });
+
+  var bar = document.getElementById("ptr");
+  if (!bar) return;
+  var sy = 0, sx = 0, dy = 0, active = false, ready = false;
+  var TH = 70;
+  function topY() {
+    return window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop || 0;
+  }
+  function clear() { bar.classList.remove("on", "ready"); ready = false; }
+  document.addEventListener("touchstart", function (e) {
+    if (e.touches.length !== 1 || topY() > 0) { active = false; return; }
+    active = true; ready = false;
+    sy = e.touches[0].clientY; sx = e.touches[0].clientX;
+  }, { passive: true });
+  document.addEventListener("touchmove", function (e) {
+    if (!active || e.touches.length !== 1) return;
+    dy = e.touches[0].clientY - sy;
+    var dx = e.touches[0].clientX - sx;
+    if (topY() > 0) { active = false; clear(); return; }
+    if (dy <= 0 || Math.abs(dy) <= Math.abs(dx)) { clear(); return; }
+    bar.classList.add("on");
+    ready = dy >= TH;
+    bar.classList.toggle("ready", ready);
+    var t = bar.querySelector(".ptr-t");
+    if (t) t.textContent = ready ? "놓으면 최신 버전으로 새로고침" : "아래로 당기세요";
+  }, { passive: true });
+  document.addEventListener("touchend", function () {
+    if (!active) return;
+    var go = ready && dy >= TH;
+    active = false; ready = false;
+    if (!go) { clear(); return; }
+    var t = bar.querySelector(".ptr-t");
+    if (t) t.textContent = "새로고침 중…";
+    bar.classList.add("on", "ready");
+    if (window.__PTR_TEST__) { window.__PTR_LAST__ = targetUrl(); return; }
+    location.replace(targetUrl());
+  }, { passive: true });
+  document.addEventListener("touchcancel", function () { active = false; clear(); }, { passive: true });
+  window.PTR = { target: targetUrl, isReady: function () { return ready; } };
 })();
 </script>
 </body>

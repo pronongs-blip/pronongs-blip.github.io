@@ -41,7 +41,7 @@ body::before{
     radial-gradient(85% 48% at 100% 102%, rgba(255,194,71,.055) 0%, rgba(10,15,30,0) 70%);
 }
 .wrap{position:relative;z-index:1;width:100%;max-width:760px;margin:0 auto;
-  padding:calc(env(safe-area-inset-top,0px) + 10px) 16px calc(env(safe-area-inset-bottom,0px) + 26px)}
+  padding:calc(env(safe-area-inset-top,0px) + 8px) 16px calc(env(safe-area-inset-bottom,0px) + 26px)}
 
 /* ---------- 당겨서 새로고침 ---------- */
 .ptr{position:fixed;left:0;right:0;top:0;height:64px;display:flex;align-items:flex-end;justify-content:center;
@@ -53,56 +53,42 @@ body::before{
 .ptr.busy i{animation:spin .8s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
 
-/* ---------- 상단 ---------- */
-.top{display:flex;align-items:center;gap:8px;padding:8px 9px;border-radius:var(--r);
-  background:linear-gradient(180deg, rgba(24,34,56,.94), rgba(17,24,40,.94));
-  border:1px solid var(--line);position:sticky;top:calc(env(safe-area-inset-top,0px) + 4px);z-index:4;
-  backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
-.mark{flex:0 0 auto;width:36px;height:36px;border-radius:11px;overflow:hidden;
-  border:1px solid rgba(255,194,71,.30);background:#0d1526}
-.mark img{display:block;width:100%;height:100%}
-.brand{flex:1 1 auto;min-width:0}
-.brand h1{margin:0;font-size:16px;line-height:1.15;font-weight:900;letter-spacing:-.02em;
-  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.brand p{margin:2px 0 0;font-size:8.2px;font-weight:800;letter-spacing:.01em;color:var(--dim2);
-  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.brand p b{color:#e2c98c;font-weight:900}
-.tools{flex:0 0 auto;display:flex;align-items:center;gap:5px}
-.nbtn{flex:0 0 auto;display:inline-flex;align-items:center;gap:3px;height:30px;padding:0 8px;border-radius:9px;cursor:pointer;
-  font:inherit;font-size:9.5px;font-weight:900;color:#ffe1a0;background:rgba(255,194,71,.10);
-  border:1px solid rgba(255,194,71,.30);white-space:nowrap;
-  transition:transform .18s,background .18s}
-.nbtn:active{transform:scale(.95);background:rgba(255,194,71,.19)}
-.nbtn em{font-style:normal;font-size:12px;line-height:1}
-.nbtn .cnt{font-style:normal;display:inline-flex;align-items:center;justify-content:center;min-width:14px;height:14px;
-  padding:0 3px;border-radius:99px;font-size:8.4px;font-weight:900;color:#1c1503;
-  background:linear-gradient(180deg,#ffd77a,#ffb928);font-variant-numeric:tabular-nums}
-.nbtn .cnt[hidden]{display:none}
-.rbtn{flex:0 0 auto;width:30px;height:30px;border-radius:9px;cursor:pointer;display:flex;align-items:center;justify-content:center;
-  font:inherit;font-size:14px;color:var(--txt);background:var(--panel3);border:1px solid var(--line);
-  transition:transform .18s,background .18s;padding:0}
-.rbtn:active{transform:scale(.94);background:#26334d}
-.rbtn.spin{animation:spin .7s linear}
-
-/* ---------- 히어로 ---------- */
-.hero{margin-top:10px;border-radius:var(--r);border:1px solid var(--line);overflow:hidden;
+/* ---------- 히어로 (상단 프로필 카드) ---------- */
+.hero{border-radius:var(--r);border:1px solid var(--line);overflow:hidden;
   background:linear-gradient(180deg,#16203a,#101827)}
-.hero-top{display:flex;align-items:center;gap:10px;padding:12px 12px 10px}
+.hero-top{display:flex;align-items:flex-start;gap:10px;padding:13px 12px 11px}
 .ava{flex:0 0 auto;width:52px;height:52px;border-radius:15px;overflow:hidden;
   border:1px solid rgba(255,194,71,.34);background:#0d1526;box-shadow:0 8px 22px -12px rgba(255,194,71,.5)}
 .ava img{display:block;width:100%;height:100%}
 .who{flex:1 1 auto;min-width:0}
-.who strong{display:block;font-size:15.5px;font-weight:900;letter-spacing:-.01em}
+.who strong{display:block;font-size:16px;font-weight:900;letter-spacing:-.01em;line-height:1.2}
 .who span{display:block;font-size:10px;font-weight:700;color:#b8c6dc;margin-top:2px;line-height:1.4;
   white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .who span b{color:#ffe1a0;font-weight:900;font-variant-numeric:tabular-nums}
-.live{flex:0 0 auto;display:inline-flex;align-items:center;gap:5px;height:22px;padding:0 8px;border-radius:999px;
-  font-size:8.5px;font-weight:900;letter-spacing:.06em;color:#cfe6da;
+.live{flex:0 0 auto;margin-left:auto;margin-top:1px;display:inline-flex;align-items:center;gap:5px;height:22px;padding:0 9px;
+  border-radius:999px;font-size:8.5px;font-weight:900;letter-spacing:.06em;color:#cfe6da;
   background:rgba(52,211,153,.10);border:1px solid rgba(52,211,153,.30);white-space:nowrap}
 .live i{width:6px;height:6px;border-radius:50%;background:var(--mint);display:block;animation:pulse 2.4s ease-in-out infinite}
 .live.off{color:#f3d2c2;background:rgba(255,159,107,.10);border-color:rgba(255,159,107,.30)}
 .live.off i{background:var(--warn);animation:none}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.32}}
+
+/* 프로필 카드 내 액션 줄: 공지 · 새로고침 · 잠금 */
+.hero-act{display:flex;gap:7px;padding:0 12px 12px}
+.abtn{flex:1 1 0;min-width:0;height:36px;display:inline-flex;align-items:center;justify-content:center;gap:5px;
+  padding:0 8px;border-radius:10px;cursor:pointer;font:inherit;font-size:10.5px;font-weight:900;
+  color:#d9e3f4;background:rgba(255,255,255,.05);border:1px solid var(--line2);white-space:nowrap;
+  transition:transform .16s,background .18s,border-color .18s}
+.abtn:active{transform:scale(.97);background:rgba(255,255,255,.11)}
+.abtn em{font-style:normal;font-size:12.5px;line-height:1}
+.abtn.gold{color:#ffe1a0;background:rgba(255,194,71,.10);border-color:rgba(255,194,71,.30)}
+.abtn.gold:active{background:rgba(255,194,71,.19)}
+.abtn .cnt{font-style:normal;display:inline-flex;align-items:center;justify-content:center;min-width:15px;height:15px;
+  padding:0 4px;border-radius:99px;font-size:8.6px;font-weight:900;color:#1c1503;
+  background:linear-gradient(180deg,#ffd77a,#ffb928);font-variant-numeric:tabular-nums}
+.abtn .cnt[hidden]{display:none}
+.abtn.spin em{animation:spin .7s linear}
+
 .hg-wrap{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--line2);
   border-top:1px solid var(--line2)}
 .hg{background:#111a2b;padding:8px 11px;min-width:0}
@@ -271,15 +257,15 @@ body::before{
 
 @media (min-width:600px){
   .wrap{max-width:820px;padding-left:20px;padding-right:20px}
-  .brand h1{font-size:17.5px}
+  .hero-act{justify-content:flex-end}
+  .abtn{flex:0 1 auto;min-width:118px;padding:0 16px}
   .hg{grid-template-columns:none}
   .stat{grid-template-columns:repeat(6,1fr)}
   .sheet{max-height:86vh;border-radius:20px;margin-bottom:24px}
   .sheet-wrap{align-items:center}
 }
 @media (max-width:359px){
-  .brand p{display:none}
-  .nbtn span{display:none}
+  .abtn{font-size:9.6px;gap:4px}
   .hl{font-size:11.2px}
 }
 @media (prefers-reduced-motion:reduce){
@@ -314,10 +300,7 @@ body:not(.locked) .lock{display:none}
 .shake{animation:shake .34s}
 @keyframes shake{10%,90%{transform:translateX(-2px)}30%,70%{transform:translateX(4px)}50%{transform:translateX(-6px)}}
 .lockhint{margin-top:15px;font-size:8.8px;font-weight:700;color:#5f6d85;line-height:1.7}
-.hact{flex:0 0 auto;display:flex;flex-direction:column;align-items:flex-end;gap:4px}
-.lockbtn{height:21px;padding:0 8px;border-radius:999px;cursor:pointer;font:inherit;font-size:8.6px;font-weight:900;
-  color:#ffd98a;background:rgba(255,194,71,.08);border:1px solid rgba(255,194,71,.28);white-space:nowrap}
-.lockbtn:active{transform:scale(.95)}
+
 </style>
 </head>
 <body>
@@ -350,20 +333,6 @@ body:not(.locked) .lock{display:none}
 
 <div class="wrap">
 
-  <header class="top">
-    <div class="mark" aria-hidden="true"><img src="./eunu-icon.png" alt=""></div>
-    <div class="brand">
-      <h1>은우방</h1>
-      <p id="brandSub"><b>EUNU</b> · 가족 전용 공간</p>
-    </div>
-    <div class="tools">
-      <button class="nbtn" id="noticeBtn" type="button" aria-label="공지·일정 보기" aria-haspopup="dialog">
-        <em aria-hidden="true">📢</em><span>공지</span><i class="cnt" id="noticeCnt" hidden>0</i>
-      </button>
-      <button class="rbtn" id="refresh" type="button" aria-label="새로고침" title="새로고침">↻</button>
-    </div>
-  </header>
-
   <section class="hero" aria-label="은우 요약">
     <div class="hero-top">
       <div class="ava" aria-hidden="true"><img src="./eunu-icon.png" alt=""></div>
@@ -372,10 +341,18 @@ body:not(.locked) .lock{display:none}
         <span id="whoBirth">생후 <b id="livedays">-</b>일</span>
         <span id="whoMeta">-</span>
       </div>
-      <div class="hact">
-        <span class="live" id="live"><i></i><span id="liveTxt">LIVE</span></span>
-        <button class="lockbtn" id="lockBtn" type="button">🔒 잠금</button>
-      </div>
+      <span class="live" id="live"><i></i><span id="liveTxt">LIVE</span></span>
+    </div>
+    <div class="hero-act">
+      <button class="abtn gold" id="noticeBtn" type="button" aria-label="공지·일정 보기" aria-haspopup="dialog">
+        <em aria-hidden="true">📢</em><span>공지</span><i class="cnt" id="noticeCnt" hidden>0</i>
+      </button>
+      <button class="abtn" id="refresh" type="button" aria-label="새로고침" title="새로고침">
+        <em aria-hidden="true">↻</em><span>새로고침</span>
+      </button>
+      <button class="abtn" id="lockBtn" type="button" aria-label="잠금">
+        <em aria-hidden="true">🔒</em><span>잠금</span>
+      </button>
     </div>
     <div class="hg-wrap">
       <div class="hg"><b>최근 등록</b><span id="hgLatest" class="gold">-</span></div>
@@ -505,7 +482,6 @@ body:not(.locked) .lock{display:none}
     if(ch.center || ch.className){
       $("whoMeta").innerHTML = esc(ch.center || "") + " <b>" + esc(ch.className || "") + "</b>" +
         (ch.teacher ? " · " + esc(ch.teacher.replace(/\s*선생님$/, "")) : "");
-      $("brandSub").innerHTML = "<b>EUNU</b> · " + esc(ch.center || "") + " " + esc(ch.className || "");
     }
     var d = days();
     if(!d.length) return;

@@ -1355,9 +1355,18 @@ window.ARC = window.ARC || {
   _agg: null,
   _opens: null,
   _cloud: false,
+  _clearing: false,
   read: function () { try { return JSON.parse(localStorage.getItem(this.KEY) || '{}') || {}; } catch (e) { return {}; } },
-  /* 상대 구분: ai(혼자·AI 대전) / pvp(한 기기·온라인 사람 대전) */
+  /* 상대 구분: ai(혼자·AI 대전) / pvp(두 사람 — 한 기기·온라인 1:1) */
   vsOf: function (mode) { return (mode === 'ai' || mode === 'solo' || !mode) ? 'ai' : 'pvp'; },
+  /* 기록은 두 사람 승부만 — AI 대전은 로컬·Firebase 어디에도 남기지 않는다 */
+  isPvp: function (vs, mode) {
+    if (vs === 'pvp') return true;
+    if (vs === 'ai' || vs === 'solo') return false;
+    var m = String(mode || '');
+    if (!m) return false;
+    return this.vsOf(m) === 'pvp';
+  },
   dev: function () {
     try {
       var d = localStorage.getItem(this.DKEY);
@@ -1410,13 +1419,14 @@ window.ARC = window.ARC || {
     });
   },
   record: function (id, res, vs) {
+    if (!this.isPvp(vs)) return;
     try {
       var all = this.read(), s = all[id] || {};
       s.wins = Math.max(0, +s.wins || 0);
       s.losses = Math.max(0, +s.losses || 0);
       s.draws = Math.max(0, +s.draws || 0);
       if (res === 'win') s.wins++; else if (res === 'lose') s.losses++; else s.draws++;
-      var k = (vs === 'ai') ? 'ai' : ((vs === 'pvp') ? 'pvp' : this.vsOf(''));
+      var k = 'pvp';
       var g = s[k] || {};
       g.wins = Math.max(0, +g.wins || 0);
       g.losses = Math.max(0, +g.losses || 0);
@@ -1442,33 +1452,32 @@ window.ARC = window.ARC || {
     a = a || {}; b = b || {};
     return { wins: this._mx(a.wins, b.wins), losses: this._mx(a.losses, b.losses), draws: this._mx(a.draws, b.draws) };
   },
+  /* 두 사람 승부 몫 — 옛 AI 기록이 섞여 있으면 빼고 센다 */
+  _pvp: function (s) {
+    if (!s) return { wins: 0, losses: 0, draws: 0 };
+    if (s.pvp) return {
+      wins: Math.max(0, +s.pvp.wins || 0),
+      losses: Math.max(0, +s.pvp.losses || 0),
+      draws: Math.max(0, +s.pvp.draws || 0)
+    };
+    var ai = s.ai || {};
+    return {
+      wins: Math.max(0, (+s.wins || 0) - (+ai.wins || 0)),
+      losses: Math.max(0, (+s.losses || 0) - (+ai.losses || 0)),
+      draws: Math.max(0, (+s.draws || 0) - (+ai.draws || 0))
+    };
+  },
   /* 로컬 전적 + 클라우드 집계(최댓값 병합 — 중복 없이 합산) */
   statOf: function (id) {
-    var a = this.read()[id] || {};
-    var b = (this._agg && this._agg.games && this._agg.games[id]) || {};
-    var o = {
-      wins: this._mx(a.wins, b.wins),
-      losses: this._mx(a.losses, b.losses),
-      draws: this._mx(a.draws, b.draws)
-    };
-    var p = this._grp(a.pvp, b.pvp), q = this._grp(a.ai, b.ai);
-    if (p) o.pvp = p;
-    if (q) o.ai = q;
-    return o;
+    var a = this._pvp(this.read()[id]);
+    var b = this._pvp((this._agg && this._agg.games && this._agg.games[id]) || null);
+    return { wins: this._mx(a.wins, b.wins), losses: this._mx(a.losses, b.losses), draws: this._mx(a.draws, b.draws) };
   },
   line: function (id) {
     var s = this.statOf(id);
     var w = s.wins, l = s.losses, d = s.draws;
     if (!w && !l && !d) return '';
-    var tot = '통산 ' + w + '승 ' + l + '패' + (d ? ' ' + d + '무' : '');
-    var pv = this.part(s.pvp), ai = this.part(s.ai);
-    var parts = [];
-    if (pv) parts.push('사람 ' + pv);
-    if (ai) parts.push('AI ' + ai);
-    if (!parts.length) return tot;
-    var sum = (s.pvp ? s.pvp.wins + s.pvp.losses + s.pvp.draws : 0) + (s.ai ? s.ai.wins + s.ai.losses + s.ai.draws : 0);
-    if (parts.length === 1 && (w + l + d) === sum) return tot + ' · ' + parts[0];
-    return tot + ' · ' + parts.join(' · ');
+    return '통산 ' + w + '승 ' + l + '패' + (d ? ' ' + d + '무' : '');
   },
   show: function (id, modal) {
     var root = typeof modal === 'string' ? document.querySelector(modal) : modal;
@@ -1493,18 +1502,20 @@ window.ARC = window.ARC || {
     var r = String(v.result || 'draw');
     if (r === 'lose') r = 'loss';
     if (r !== 'win' && r !== 'loss' && r !== 'draw') r = 'draw';
-    return {
+    var rec = {
       uid: String(v.uid || key || ('h' + at + '-' + String(v.id || v.game || ''))),
       id: String(v.id || v.game || ''),
       game: String(v.game || v.title || v.id || ''),
       mode: String(v.mode || ''),
-      vs: (v.vs === 'ai') ? 'ai' : 'pvp',
+      vs: (v.vs === 'pvp') ? 'pvp' : ((v.vs === 'ai') ? 'ai' : this.vsOf(String(v.mode || ''))),
       myName: String(v.myName || ''),
       oppName: String(v.oppName || ''),
       result: r,
       scoreText: String(v.scoreText || ''),
       playedAt: at
     };
+    /* AI 대전 기록은 읽지도, 다시 올리지도 않는다 */
+    return (rec.vs === 'pvp') ? rec : null;
   },
   history: function () {
     try {
@@ -1517,9 +1528,10 @@ window.ARC = window.ARC || {
   },
   /* 경기 히스토리 — 최신순 최대 200건, 로컬 + Firebase 동시 저장 */
   save: function (o) {
+    o = o || {};
+    if (!this.isPvp(o.vs, o.mode)) return;
     var rec = null;
     try {
-      o = o || {};
       var arr = this.history();
       var r = o.result;
       if (r === 'lose') r = 'loss';
@@ -1530,7 +1542,7 @@ window.ARC = window.ARC || {
         id: String(o.game || ''),
         game: String(o.title || o.game || ''),
         mode: mode,
-        vs: (o.vs === 'ai' || o.vs === 'pvp') ? o.vs : this.vsOf(mode),
+        vs: 'pvp',
         myName: String(o.myName || ''),
         oppName: String(o.oppName || ''),
         result: r,
@@ -1551,6 +1563,7 @@ window.ARC = window.ARC || {
   derive: function (list) {
     var games = {}, players = {};
     list.forEach(function (r) {
+      if (r.vs !== 'pvp') return;
       var g = games[r.id] || (games[r.id] = { wins: 0, losses: 0, draws: 0, plays: 0, pvp: { wins: 0, losses: 0, draws: 0 }, ai: { wins: 0, losses: 0, draws: 0 } });
       var k = (r.result === 'win') ? 'wins' : (r.result === 'loss' ? 'losses' : 'draws');
       g[k]++; g.plays++;
@@ -1598,7 +1611,7 @@ window.ARC = window.ARC || {
     return n;
   },
   sync: function () {
-    if (!this.canCloud()) return Promise.resolve();
+    if (!this.canCloud() || this._clearing) return Promise.resolve();
     var self = this;
     return Promise.all([
       this._req('/arcade_history.json?t=' + Date.now()).catch(function () { return undefined; }),
@@ -1651,12 +1664,18 @@ window.ARC = window.ARC || {
   clearHistory: function () { try { localStorage.removeItem(this.HKEY); } catch (e) {} try { localStorage.removeItem(this.PKEY); } catch (e) {} },
   clearCloud: function () {
     var self = this;
+    /* 메모리에 남은 클라우드 집계까지 지워야 화면에서 기록이 되살아나지 않는다 */
+    self._agg = null; self._opens = {}; self._cloud = false;
     if (!this.canCloud()) return Promise.resolve();
-    return this._req('/arcade_history.json', 'DELETE')
-      .then(function () { return self._req('/arcade_stats/games.json', 'PUT', {}); })
-      .then(function () { return self._req('/arcade_stats/players.json', 'PUT', {}); })
-      .then(function () { return self._req('/arcade_stats/opens.json', 'DELETE'); })
-      .catch(function () {});
+    function fire(path, method, body) {
+      return self._req(path, method, body).then(function (v) { return v; }, function () { return null; });
+    }
+    self._clearing = true;
+    return fire('/arcade_history.json', 'DELETE')
+      .then(function () { return fire('/arcade_stats/games.json', 'PUT', {}); })
+      .then(function () { return fire('/arcade_stats/players.json', 'PUT', {}); })
+      .then(function () { return fire('/arcade_stats/opens.json', 'DELETE'); })
+      .then(function () { self._clearing = false; });
   }
 };
 (function () {

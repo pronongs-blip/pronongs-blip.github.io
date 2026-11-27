@@ -6,7 +6,7 @@
 <meta name="theme-color" content="#0a0d14">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
 <meta name="apple-mobile-web-app-title" content="오락실">
 <meta name="description" content="오락실 · DEVIL'S ARCADE. 두뇌 서바이벌 아케이드 6종 — 벽바둑 2 · 흑과 백 · 기억포커 · 유배지 만국기 · 결! 합! · 인디언 포커.">
 <title>오락실 · DEVIL'S ARCADE</title>
@@ -44,7 +44,7 @@ body::before{
   width:100%;max-width:430px;margin:0 auto;
   min-height:100vh;min-height:100dvh;
   display:flex;flex-direction:column;
-  padding:calc(env(safe-area-inset-top,0px) + 22px) 16px calc(env(safe-area-inset-bottom,0px) + 14px);
+  padding:calc(env(safe-area-inset-top,0px) + 28px) 16px calc(env(safe-area-inset-bottom,0px) + 14px);
 }
 
 /* ---------- 헤더 (비서실과 공통) ---------- */
@@ -234,6 +234,7 @@ body::before{
   .ic svg{width:23px;height:23px}
 }
 @media (max-height:700px) and (max-width:759px){
+  .portal{padding-top:calc(env(safe-area-inset-top,0px) + 22px)}
   .stage{justify-content:flex-start;padding-top:8px}
   .card{min-height:76px;padding:8px 11px}
   .cards{gap:7px}

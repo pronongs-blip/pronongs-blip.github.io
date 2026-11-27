@@ -6,7 +6,7 @@
 <meta name="theme-color" content="#0a0d14">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
 <meta name="apple-mobile-web-app-title" content="인디언 포커">
 <meta name="description" content="내 카드는 모르고 상대 카드만 보이는 1:1 심리전. 1~10 카드와 칩 베팅, 10 폴드 페널티.">
 <title>인디언 포커 · Indian Poker</title>
@@ -35,7 +35,7 @@
   #app{position:relative;height:100vh;height:100dvh;max-width:430px;margin:0 auto;overflow:hidden}
   .screen{
     position:absolute;inset:0;display:flex;flex-direction:column;
-    padding:calc(env(safe-area-inset-top,0px) + 8px) 14px calc(env(safe-area-inset-bottom,0px) + 8px);
+    padding:calc(env(safe-area-inset-top,0px) + 14px) 14px calc(env(safe-area-inset-bottom,0px) + 8px);
     gap:7px;opacity:0;pointer-events:none;transition:opacity .22s ease;
   }
   .screen.show{opacity:1;pointer-events:auto}
@@ -51,7 +51,7 @@
   .portal-pill .chev{font-size:14px;font-weight:900;line-height:1;color:var(--acc);margin-top:-1px}
   .portal-pill:active{background:rgba(255,255,255,.12)}
   .portal-dock{
-    position:absolute;z-index:30;top:calc(env(safe-area-inset-top,0px) + 10px);left:0;right:0;
+    position:absolute;z-index:30;top:calc(env(safe-area-inset-top,0px) + 26px);left:0;right:0;
     max-width:430px;margin:0 auto;padding:0 14px;display:flex;justify-content:space-between;pointer-events:none;
   }
   .portal-dock .portal-pill{pointer-events:none}
@@ -151,7 +151,7 @@
     padding:2px 0 6px;scrollbar-width:none;-webkit-overflow-scrolling:touch;
   }
   .lobby-scroll::-webkit-scrollbar{display:none}
-  .lobby-inner{width:100%;margin:0;padding:46px 2px 0;display:flex;flex-direction:column;gap:10px}
+  .lobby-inner{width:100%;margin:0;padding:62px 2px 0;display:flex;flex-direction:column;gap:10px}
   .brand{margin:0;padding:2px 0 0;text-align:center}
   .brand .crown{
     display:flex;align-items:center;justify-content:center;
@@ -390,7 +390,7 @@
     .rtable .rh,.rtable .rr{grid-template-columns:32px 1fr 1fr;padding:6px 7px;font-size:11px}
   }
   @media (max-height:700px){
-    .lobby-inner{padding-top:42px;gap:8px}
+    .lobby-inner{padding-top:58px;gap:8px}
     .brand .crown{width:46px;height:46px}
     .brand h1{font-size:22px}
     .primary{height:46px;margin-top:10px}

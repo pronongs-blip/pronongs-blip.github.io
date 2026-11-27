@@ -1656,10 +1656,12 @@ window.ARC = window.ARC || {
     if (!this.canCloud()) return Promise.resolve();
     var self = this;
     return Promise.all([
-      this._req('/arcade_history.json?t=' + Date.now()).catch(function () { return null; }),
-      this._req('/arcade_stats.json?t=' + Date.now()).catch(function () { return null; })
+      this._req('/arcade_history.json?t=' + Date.now()).catch(function () { return undefined; }),
+      this._req('/arcade_stats.json?t=' + Date.now()).catch(function () { return undefined; })
     ]).then(function (res) {
-      var hraw = res[0], sraw = res[1];
+      var reachable = (res[0] !== undefined) || (res[1] !== undefined);
+      var hraw = (res[0] === undefined) ? null : res[0];
+      var sraw = (res[1] === undefined) ? null : res[1];
       var cloud = [], map = (hraw && typeof hraw === 'object') ? hraw : {};
       Object.keys(map).forEach(function (k) {
         var r = self.norm(map[k], k);
@@ -1691,7 +1693,7 @@ window.ARC = window.ARC || {
       }
       self._agg = agg;
       self._opens = (sraw && sraw.opens) || {};
-      self._cloud = !!(hraw || sraw);
+      self._cloud = reachable;
 
       var have = {};
       cloud.forEach(function (r) { have[r.uid] = 1; });

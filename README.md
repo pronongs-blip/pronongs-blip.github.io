@@ -51,15 +51,20 @@
 
 ```text
 pronongs-blip.github.io/
-├── index.html            # 오락실 (아케이드 포털)
-├── office.html           # 비서실 (행동대장 HQ · 시세판·회의실 메모)
+├── index.html            # 미래전략실 대문 (비서실·오락실·은우방 3대 앱)
+├── office.html           # 비서실 (행동대장 HQ · 최저가 시세판·어미새 핫딜)
+├── arcade.html           # 오락실 (아케이드 포털 · 게임 6종)
+├── eunu.html             # 은우방 (소화어린이집 꽃들3반 · 알림장·식판)
 ├── wall-baduk2.html      # 벽바둑 2
 ├── black-white.html      # 흑과 백
 ├── memory-poker.html     # 기억포커
 ├── world-flags.html      # 유배지 만국기 (국기 268종 인라인 SVG)
 ├── indian-poker.html     # 인디언 포커
 ├── spot-diff.html        # 틀린 그림 찾기
-└── apple-touch-icon.png  # 홈 화면 아이콘
+├── home-icon.png         # 홈 화면 아이콘 (미래전략실 대문)
+├── apple-touch-icon.png  # 홈 화면 아이콘 (오락실)
+├── office-icon.png       # 홈 화면 아이콘 (비서실)
+└── eunu-icon.png         # 홈 화면 아이콘 (은우방)
 ```
 
 <div align="center">

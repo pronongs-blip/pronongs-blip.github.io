@@ -291,54 +291,12 @@ body::before{
 .tl-t{font-size:9.5px;font-weight:900;font-variant-numeric:tabular-nums;color:var(--acc);letter-spacing:.02em}
 .tl-x{margin-top:2px;font-size:11px;font-weight:700;color:#d5deef;line-height:1.4}
 
-/* ---------- 회의실 메모 ---------- */
-.notes{padding:11px}
-.notes-h{display:flex;align-items:center;gap:7px;flex-wrap:wrap}
-.notes-h h2{margin:0;font-size:12.5px;font-weight:900}
-.chip-link{
-  display:inline-flex;align-items:center;gap:4px;font-size:8.5px;font-weight:900;letter-spacing:.02em;
-  color:#a3b3cc;padding:3px 8px;border-radius:999px;background:rgba(111,157,255,.08);
-  border:1px dashed rgba(111,157,255,.38);white-space:nowrap;
-}
-.chip-link.on{color:#cfe6da;background:rgba(52,211,153,.10);border:1px solid rgba(52,211,153,.34)}
-.nform{display:flex;gap:6px;margin-top:9px}
-.nform input{
-  flex:1 1 auto;min-width:0;height:36px;padding:0 10px;border-radius:10px;font:inherit;font-size:12px;
-  color:var(--txt);background:#0d1320;border:1px solid var(--line);outline:none;
-  -webkit-appearance:none;appearance:none;
-}
-.nform input::placeholder{color:#5f6d85;font-size:11px}
-.nform input:focus{border-color:rgba(255,194,71,.5);box-shadow:0 0 0 2px rgba(255,194,71,.12)}
-.nform button{
-  flex:0 0 auto;height:36px;padding:0 13px;border-radius:10px;cursor:pointer;
-  font:inherit;font-size:11.5px;font-weight:900;color:#1c1503;
-  background:linear-gradient(180deg,#ffd77a,#ffb928);border:1px solid rgba(0,0,0,.15);
-}
-.nform button:active{transform:scale(.97)}
-.nlist{margin-top:8px;display:flex;flex-direction:column;gap:5px}
-.nitem{display:flex;align-items:flex-start;gap:7px;padding:7px 8px;border-radius:9px;
-  background:rgba(255,255,255,.035);border:1px solid var(--line2);min-width:0}
-.nitem button.ck{
-  flex:0 0 auto;width:18px;height:18px;margin-top:0;border-radius:5px;cursor:pointer;
-  background:transparent;border:1.5px solid #5d6b83;color:transparent;font-size:10px;line-height:1;
-  display:flex;align-items:center;justify-content:center;padding:0;
-}
-.nitem.done button.ck{background:var(--ok);border-color:var(--ok);color:#06231a}
-.nitem .nx{flex:1 1 auto;min-width:0;font-size:11.5px;line-height:1.45;color:#dbe3f2;word-break:break-word}
-.nitem.done .nx{color:#6d7b93;text-decoration:line-through}
-.nitem .del{flex:0 0 auto;width:22px;height:22px;border-radius:6px;cursor:pointer;padding:0;
-  background:transparent;border:0;color:#6d7b93;font-size:12px;line-height:1}
-.nitem .del:active{color:#ff9f6b}
-.nempty{margin-top:7px;font-size:10.5px;color:#6d7b93;text-align:center;padding:7px 0}
-
 /* ---------- 실시간 시세판 ---------- */
 .mkt{padding:2px 0 0;overflow:hidden}
 .mkt-g{padding:9px 11px 8px;border-bottom:1px solid var(--line2)}
 .mkt-g:last-child{border-bottom:0}
 .mkt-gh{display:flex;align-items:center;gap:7px;min-width:0}
 .mkt-gh b{font-size:11.5px;font-weight:900;color:#eef3ff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.mkt-th{margin-left:auto;flex:0 0 auto;font-size:8.5px;font-weight:900;letter-spacing:.02em;color:#ffd98a;
-  padding:2px 6px;border-radius:999px;background:rgba(255,194,71,.10);border:1px solid rgba(255,194,71,.26);white-space:nowrap}
 .mkt-row{display:flex;align-items:center;gap:8px;padding:6px 0 0;min-width:0}
 .mkt-nm{flex:1 1 auto;min-width:0;display:flex;flex-direction:column;gap:1px}
 .mkt-nm b{font-size:11px;font-weight:800;color:#dfe6f4;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -354,10 +312,11 @@ body::before{
 .mkt-px.mkt-go:active{background:rgba(88,166,255,.16)}
 .mkt-px.mkt-go:not(.ok) b{color:#8aa6c6;text-decoration-color:rgba(138,166,198,.55)}
 .mkt-px.mkt-go:not(.ok) span{color:#6f859f}
-.mkt-bd{flex:0 0 auto;width:52px;text-align:center;font-size:8.5px;font-weight:900;letter-spacing:.01em;
-  padding:3px 0;border-radius:6px;white-space:nowrap}
-.mkt-bd.ok{color:#0b2a1d;background:var(--ok)}
-.mkt-bd.wait{color:#2a1607;background:var(--warn)}
+.mkt-deals{padding:10px 11px 9px;border-top:1px solid var(--line);background:linear-gradient(180deg,rgba(111,157,255,.07),rgba(111,157,255,0))}
+.mkt-dh{display:flex;align-items:center;gap:6px;min-width:0}
+.mkt-dh b{font-size:11.5px;font-weight:900;color:#eaf1ff;white-space:nowrap}
+.mkt-dh .k{margin-left:auto;flex:0 0 auto;font-size:8.5px;font-weight:900;letter-spacing:.02em;color:#9fc0ff;
+  padding:2px 7px;border-radius:999px;background:rgba(111,157,255,.12);border:1px solid rgba(111,157,255,.28);white-space:nowrap}
 .mkt-ft{margin-top:5px;font-size:8.5px;font-weight:700;color:#606e86;font-variant-numeric:tabular-nums}
 .mkt-empty{padding:14px;text-align:center;font-size:11px;color:#6d7b93}
 @media (min-width:760px){
@@ -626,22 +585,6 @@ body::before{
     </section>
   </div>
 
-  <!-- 회의실 메모 -->
-  <section class="sec">
-    <div class="sec-h"><h2>📋 회의실 메모</h2><span class="k" id="notesK">FIREBASE</span></div>
-    <div class="card notes">
-      <div class="notes-h">
-        <h2>형님 전용 명령 노트</h2>
-        <span class="chip-link on" id="linkChip">🔥 Firebase 실시간 연결됨</span>
-      </div>
-      <form class="nform" id="nform" autocomplete="off">
-        <input id="ninput" type="text" maxlength="120" placeholder="할 일·지시를 적어두세요 (Firebase 실시간 동기화)" aria-label="회의실 메모 입력">
-        <button type="submit">등록</button>
-      </form>
-      <div class="nlist" id="nlist"></div>
-    </div>
-  </section>
-
   <footer class="foot">
     <span class="sync">마지막 동기화 <b id="syncAt">--:--:--</b></span>
     <span class="dot"></span>
@@ -697,14 +640,14 @@ body::before{
       "lines": [
         "DEVIL'S ARCADE 6종 GitHub Pages 배포 운영 중",
         "UFC 전담 브리핑 D-9 · 12/06 21:00",
-        "회의실 메모 접수 · 합동 비서실 연결 준비중"
+        "시세판 · 어미새 핫딜 · 3대 앱 대문 운영 중"
       ]
     }
   ],
   "metrics": [
     { "key": "review", "icon": "⭐", "label": "쿠팡 리뷰", "value": "391건", "unit": "· 11,159점", "note": "오늘 7건 완료 · 1차 목표까지 8,841점" },
     { "key": "pay", "icon": "💳", "label": "네이버페이", "value": "18,424", "unit": "원", "note": "클릭 적립 누적" },
-    { "key": "arcade", "icon": "🎮", "label": "아케이드", "value": "DEVIL'S ARCADE 6종 배포", "unit": "", "note": "벽바둑2 · 흑과백 · 기억포커 · 만국기 · 결!합! · 인디언포커", "wide": true }
+    { "key": "arcade", "icon": "🎮", "label": "아케이드", "value": "DEVIL'S ARCADE 6종 배포", "unit": "", "note": "벽바둑2 · 흑과백 · 기억포커 · 만국기 · 인디언포커 · 틀린그림찾기", "wide": true }
   ],
   "goal": { "label": "1차 목표 20,000점", "current": 11159, "target": 20000 },
   "schedule": [
@@ -726,18 +669,30 @@ body::before{
 
 <script id="fallback-market" type="application/json">
 {
-  "updated_at": "2026-11-27T08:45:00+09:00",
+  "updated_at": "2026-11-27T21:15:00+09:00",
   "groups": [
     {
-      "id": "diaper",
-      "label": "하기스 5단계 팬티",
+      "id": "diaper_maxdry",
+      "label": "하기스 5단계 · 맥스드라이",
       "threshold": 599,
       "unit": "원/장",
       "qty_unit": "매",
-      "note": "알리 포함 · 장당 기준",
+      "note": "최저가 2개 · 알리 일반가 포함",
       "items": [
         { "name": "K-Venue 맥스드라이 88매", "vendor": "알리", "price": 49808, "qty": 88, "unit_price": 566, "measured_at": "2026-11-27T08:45:00+09:00", "url": "https://ko.aliexpress.com/item/1005008556351556.html" },
-        { "name": "K-Venue 보송보송 92매", "vendor": "알리", "price": 37012, "qty": 92, "unit_price": 402, "measured_at": "2026-11-27T08:45:00+09:00", "url": "https://ko.aliexpress.com/item/1005006940181611.html" }
+        { "name": "맥스드라이 남아 176매", "vendor": "쿠팡", "price": 102000, "qty": 176, "unit_price": 580, "measured_at": "2026-11-27T08:45:00+09:00", "url": "https://www.coupang.com/np/search?q=%ED%95%98%EA%B8%B0%EC%8A%A4+%EB%A7%A5%EC%8A%A4%EB%93%9C%EB%9D%BC%EC%9D%B4+%ED%8C%AC%ED%8B%B0+5%EB%8B%A8%EA%B3%84+%EB%82%A8%EC%95%84+176%EB%A7%A4" }
+      ]
+    },
+    {
+      "id": "diaper_other",
+      "label": "하기스 5단계 · 기타 라인업",
+      "threshold": 500,
+      "unit": "원/장",
+      "qty_unit": "매",
+      "note": "보송보송·매직컴포트 최저가 2개",
+      "items": [
+        { "name": "K-Venue 보송보송 92매", "vendor": "알리", "price": 37012, "qty": 92, "unit_price": 402, "measured_at": "2026-11-27T08:45:00+09:00", "url": "https://ko.aliexpress.com/item/1005006940181611.html" },
+        { "name": "보송보송 공용 184매", "vendor": "쿠팡", "price": 79520, "qty": 184, "unit_price": 432, "measured_at": "2026-11-27T08:45:00+09:00", "url": "https://www.coupang.com/np/search?q=%ED%95%98%EA%B8%B0%EC%8A%A4+%EB%B3%B4%EC%86%A1%EB%B3%B4%EC%86%A1+%ED%8C%AC%ED%8B%B0+5%EB%8B%A8%EA%B3%84+184%EB%A7%A4" }
       ]
     },
     {
@@ -746,12 +701,18 @@ body::before{
       "threshold": 600,
       "unit": "원/개",
       "qty_unit": "입",
-      "note": "국내 배송만 · 직구 제외",
+      "note": "최저가 2개 · 국내 배송만",
       "items": [
         { "name": "에스프레소 로스트 100입", "vendor": "쿠팡 국내로켓", "price": 58560, "qty": 100, "unit_price": 586, "measured_at": "2026-11-27T08:45:00+09:00", "url": "https://www.coupang.com/vp/products/8245793421?itemId=28754418495&vendorItemId=95693234658" },
         { "name": "에스프레소 로스트 빅팩 36입", "vendor": "네이버 가격비교", "price": 21300, "qty": 36, "unit_price": 592, "measured_at": "2026-11-27T08:45:00+09:00", "url": "https://www.coupang.com/vp/products/8245793421" }
       ]
     }
+  ],
+  "eomisae_deals": [
+    { "title": "고당도 영천 샤인머스켓 2kg", "vendor": "어미새", "price": 7160, "unit": "kg당 3,580원", "measured_at": "2026-11-27T18:18:00+09:00", "url": "https://eomisae.co.kr/rt/213288425" },
+    { "title": "구룡포 과메기 10마리 풀세트", "vendor": "어미새", "price": 19530, "unit": "야채·해초 포함", "measured_at": "2026-11-27T18:18:00+09:00", "url": "https://eomisae.co.kr/rt/213289095" },
+    { "title": "청우 초코파이 찰떡 40봉", "vendor": "G마켓", "price": 8400, "unit": "봉당 210원", "measured_at": "2026-11-27T08:32:00+09:00", "url": "https://eomisae.co.kr/rt/213231557" },
+    { "title": "오트몬드 언스위트 190ml 48개", "vendor": "어미새", "price": 12580, "unit": "개당 262원", "measured_at": "2026-11-27T08:32:00+09:00", "url": "https://eomisae.co.kr/rt/213243952" }
   ]
 }
 </script>
@@ -771,13 +732,8 @@ body::before{
     lounge: { x: 84, y: 50 }
   };
   var ZONE_NAME = { office: "집무실", work: "작업실", lounge: "라운지" };
-  var NOTE_KEY = "office_notes_v1";
-  var NOTE_OUT = "office_notes_outbox_v1";
-
   var FB_BASE = "https://seonongs-hq-default-rtdb.firebaseio.com";
   var FIREBASE_URL = FB_BASE + "/office_state.json";
-  var NOTES_ROOT = FB_BASE + "/office_notes";
-  var NOTES_URL = NOTES_ROOT + ".json";
   var MARKET_ROOT = FB_BASE + "/market_prices";
   var MARKET_URL = MARKET_ROOT + ".json";
 
@@ -1146,216 +1102,6 @@ body::before{
     });
   }
 
-  /* ---------- 회의실 메모 (Firebase 양방향) ---------- */
-  var notes = [];
-  var noteMigrated = false;
-  var noteEs = null;
-
-  function genUid(){ return "n" + Date.now().toString(36) + Math.random().toString(36).slice(2, 6); }
-  function hstr(s){
-    var h = 0, i;
-    for (i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) | 0;
-    return (h >>> 0).toString(36);
-  }
-  function noteSort(a, b){ return (b.at || 0) - (a.at || 0); }
-
-  function notesRead(){
-    try {
-      var arr = JSON.parse(localStorage.getItem(NOTE_KEY) || "[]");
-      if (!Array.isArray(arr)) return [];
-      return arr.map(function(n){
-        n = n || {};
-        var text = String(n.text == null ? "" : n.text);
-        var at = +n.at || 0;
-        return { uid: String(n.uid || ("l" + at + "-" + hstr(text))), text: text, done: !!n.done, at: at };
-      }).filter(function(n){ return n.text; });
-    } catch (e){ return []; }
-  }
-  function notesWrite(arr){
-    try { localStorage.setItem(NOTE_KEY, JSON.stringify(arr.slice(0, 80))); } catch (e){}
-  }
-  function notesMap(){
-    var m = {};
-    notes.forEach(function(n){ m[n.uid] = { text: n.text, done: !!n.done, at: n.at || 0 }; });
-    return m;
-  }
-
-  function outRead(){
-    try { var a = JSON.parse(localStorage.getItem(NOTE_OUT) || "[]"); return Array.isArray(a) ? a : []; }
-    catch (e){ return []; }
-  }
-  function outWrite(a){ try { localStorage.setItem(NOTE_OUT, JSON.stringify(a.slice(-40))); } catch (e){} }
-  function outPush(op){ var a = outRead(); a.push(op); outWrite(a); }
-
-  function fbReq(url, method, body){
-    var opt = { method: method, cache: "no-store" };
-    if (body !== undefined){ opt.headers = { "Content-Type": "application/json" }; opt.body = JSON.stringify(body); }
-    return fetch(url, opt).then(function(r){
-      if (!r.ok) throw new Error("HTTP " + r.status);
-      return r.text().then(function(t){ try { return t ? JSON.parse(t) : null; } catch (e){ return null; } });
-    });
-  }
-
-  function setNoteState(ok){
-    var k = $("notesK");
-    if (k) k.textContent = ok ? "FIREBASE 양방향" : "이 기기에 저장";
-    var chip = $("linkChip");
-    if (chip) chip.title = ok ? "Firebase Realtime DB와 양방향 동기화 중" : "오프라인 · 이 기기에 저장 중";
-  }
-
-  function renderNotes(){
-    var arr = notes.slice().sort(noteSort);
-    var box = $("nlist");
-    if (!box) return;
-    if (!arr.length){
-      box.innerHTML = '<div class="nempty">아직 메모가 없습니다. 형님 지시를 적어두세요.</div>';
-      return;
-    }
-    box.innerHTML = arr.map(function(n){
-      return '<div class="nitem' + (n.done ? " done" : "") + '" data-uid="' + esc(n.uid) + '">' +
-        '<button class="ck" type="button" aria-label="완료 표시">✓</button>' +
-        '<div class="nx">' + esc(n.text) + '</div>' +
-        '<button class="del" type="button" aria-label="삭제">✕</button>' +
-        '</div>';
-    }).join("");
-  }
-
-  /* Firebase 스냅샷을 화면에 반영 (미전송·직전 추가 항목은 보존) */
-  function noteApply(map){
-    var list = [];
-    Object.keys(map || {}).forEach(function(k){
-      var v = map[k];
-      if (!v || typeof v !== "object") return;
-      var text = String(v.text == null ? "" : v.text).trim();
-      if (!text) return;
-      list.push({ uid: k, text: text, done: !!v.done, at: +v.at || 0 });
-    });
-    var pend = {}, now = Date.now();
-    outRead().forEach(function(o){ pend[o.uid] = 1; });
-    notesRead().forEach(function(n){
-      if (list.some(function(x){ return x.uid === n.uid; })) return;
-      if (pend[n.uid] || n.at > now - 15000) list.push(n);
-    });
-    list.sort(noteSort);
-    notes = list;
-    notesWrite(list);
-    renderNotes();
-  }
-
-  function noteLoad(){
-    return fetchJSON(NOTES_URL)
-      .then(function(d){
-        setNoteState(true);
-        var map = (d && typeof d === "object" && !Array.isArray(d)) ? d : {};
-        if (!Object.keys(map).length && !noteMigrated){
-          noteMigrated = true;
-          var loc = notesRead();
-          if (loc.length){
-            loc.forEach(function(n){
-              fbReq(NOTES_ROOT + "/" + encodeURIComponent(n.uid) + ".json", "PUT",
-                { text: n.text, done: !!n.done, at: n.at }).catch(function(){});
-            });
-            notes = loc;
-            renderNotes();
-            return;
-          }
-        }
-        noteMigrated = true;
-        noteApply(map);
-      })
-      .catch(function(){
-        setNoteState(false);
-        var loc = notesRead();
-        if (!notes.length || notes.length !== loc.length) notes = loc;
-        renderNotes();
-      });
-  }
-
-  function noteFlush(){
-    var ops = outRead();
-    if (!ops.length) return Promise.resolve();
-    var done = [];
-    var chain = Promise.resolve();
-    ops.forEach(function(op){
-      chain = chain.then(function(){
-        var url = NOTES_ROOT + "/" + encodeURIComponent(op.uid) + ".json";
-        var p = op.op === "put" ? fbReq(url, "PUT", op.data)
-          : (op.op === "del" ? fbReq(url, "DELETE") : fbReq(url, "PATCH", op.data));
-        return p.then(function(){ done.push(op); }, function(err){ throw err; });
-      });
-    });
-    return chain.catch(function(){}).then(function(){
-      if (!done.length) return;
-      outWrite(outRead().filter(function(o){ return done.indexOf(o) < 0; }));
-      noteLoad();
-    });
-  }
-
-  function noteAdd(text){
-    var n = { uid: genUid(), text: text, done: false, at: Date.now() };
-    notes.push(n);
-    notes.sort(noteSort);
-    notesWrite(notes);
-    renderNotes();
-    fbReq(NOTES_ROOT + "/" + n.uid + ".json", "PUT", { text: n.text, done: false, at: n.at })
-      .then(function(){ setNoteState(true); })
-      .catch(function(){ outPush({ op: "put", uid: n.uid, data: { text: n.text, done: false, at: n.at } }); setNoteState(false); });
-  }
-
-  function noteSetDone(uid, done){
-    fbReq(NOTES_ROOT + "/" + encodeURIComponent(uid) + "/done.json", "PUT", !!done)
-      .then(function(){ setNoteState(true); })
-      .catch(function(){ outPush({ op: "patch", uid: uid, data: { done: !!done } }); setNoteState(false); });
-  }
-
-  function noteDel(uid){
-    fbReq(NOTES_ROOT + "/" + encodeURIComponent(uid) + ".json", "DELETE")
-      .then(function(){ setNoteState(true); })
-      .catch(function(){ outPush({ op: "del", uid: uid }); setNoteState(false); });
-  }
-
-  function noteStream(){
-    if (!window.EventSource || noteEs) return;
-    try { noteEs = new EventSource(NOTES_URL); } catch (e){ noteEs = null; return; }
-    function applyPath(path, data, isPatch){
-      var segs = String(path == null ? "/" : path).replace(/^\/+/, "").split("/").filter(function(s){ return s !== ""; });
-      if (segs.length && segs[0] === "office_notes") segs.shift();   /* 목 서버용 절대 경로 호환 */
-      if (!segs.length){
-        if (data && typeof data === "object") noteApply(data);
-        return;
-      }
-      var uid = segs[0], rest = segs.slice(1);
-      var cur = notesMap();
-      var node = cur[uid];
-      if (!rest.length){
-        if (data === null) delete cur[uid];
-        else if (typeof data === "object") cur[uid] = mergeDeep(node || {}, data);
-      } else if (rest[0] === "done"){
-        cur[uid] = mergeDeep(node || {}, { done: !!data });
-      } else if (rest[0] === "text"){
-        cur[uid] = mergeDeep(node || {}, { text: String(data == null ? "" : data) });
-      }
-      noteApply(cur);
-    }
-    noteEs.addEventListener("put", function(ev){
-      var m; try { m = JSON.parse(ev.data || "{}"); } catch (e){ return; }
-      setNoteState(true);
-      applyPath(m.path, m.data, false);
-    });
-    noteEs.addEventListener("patch", function(ev){
-      var m; try { m = JSON.parse(ev.data || "{}"); } catch (e){ return; }
-      setNoteState(true);
-      var segs = String(m.path == null ? "/" : m.path).replace(/^\/+/, "").split("/").filter(function(s){ return s !== ""; });
-      if (segs.length && segs[0] === "office_notes") segs.shift();
-      if (!segs.length){
-        var cur = notesMap();
-        Object.keys(m.data || {}).forEach(function(k){ cur[k] = mergeDeep(cur[k] || {}, m.data[k] || {}); });
-        noteApply(cur);
-      } else applyPath(m.path, m.data, true);
-    });
-    noteEs.addEventListener("error", function(){ setNoteState(false); });
-  }
-
   /* ---------- 이벤트 ---------- */
   document.querySelectorAll(".room").forEach(function(r){
     r.addEventListener("click", function(){ selectZone(r.getAttribute("data-zone")); });
@@ -1368,40 +1114,12 @@ body::before{
     b.classList.add("spin");
     liveTxt.textContent = "새로고침 중";
     load().then(function(){ renderStatus(); });
-    noteLoad();
     marketLoad();
     say("형님, 최신 버전으로 새로고침합니다.", 2600);
     setTimeout(function(){
       if (window.__PTR_TEST__){ window.__PTR_LAST__ = targetUrl(); return; }
       location.replace(targetUrl());
     }, 260);
-  });
-
-  $("nform").addEventListener("submit", function(e){
-    e.preventDefault();
-    var v = $("ninput").value.trim();
-    if (!v) return;
-    $("ninput").value = "";
-    noteAdd(v);
-  });
-
-  $("nlist").addEventListener("click", function(e){
-    var row = e.target.closest ? e.target.closest(".nitem") : null;
-    if (!row) return;
-    var uid = row.getAttribute("data-uid");
-    var n = notes.filter(function(x){ return x.uid === uid; })[0];
-    if (!n) return;
-    if (e.target.classList.contains("del")){
-      notes = notes.filter(function(x){ return x.uid !== uid; });
-      notesWrite(notes);
-      renderNotes();
-      noteDel(uid);
-    } else if (e.target.classList.contains("ck")){
-      n.done = !n.done;
-      notesWrite(notes);
-      renderNotes();
-      noteSetDone(uid, n.done);
-    }
   });
 
   window.addEventListener("resize", function(){
@@ -1453,22 +1171,19 @@ body::before{
     var html = "";
     data.groups.forEach(function(g){
       var items = (g.items || []).slice().sort(function(a, b){ return unitOf(a) - unitOf(b); });
-      html += '<div class="mkt-g"><div class="mkt-gh"><b>' + esc(g.label) + '</b>' +
-        '<span class="mkt-th">기준 ' + esc(String(g.threshold || 0)) + '원 이하</span></div>';
+      html += '<div class="mkt-g"><div class="mkt-gh"><b>' + esc(g.label) + '</b></div>';
       items.forEach(function(it){
         var u = unitOf(it);
-        var ok = u > 0 && u <= (+g.threshold || 0);
         var url = buyUrl(it.url);
         var px = '<b>' + esc(fmt(u)) + '</b><span>' + esc(g.unit || "원") + '</span>';
         var pxHtml = url
-          ? '<a class="mkt-px mkt-go' + (ok ? ' ok' : '') + '" href="' + esc(url) + '" target="_blank" rel="noopener noreferrer"' +
-            ' aria-label="' + esc(it.name) + ' 구매 페이지 열기">' + px + (ok ? '<i class="arw">↗</i>' : '') + '</a>'
+          ? '<a class="mkt-px mkt-go ok" href="' + esc(url) + '" target="_blank" rel="noopener noreferrer"' +
+            ' aria-label="' + esc(it.name) + ' 구매 페이지 열기">' + px + '<i class="arw">↗</i></a>'
           : '<span class="mkt-px">' + px + '</span>';
         html += '<div class="mkt-row">' +
           '<span class="mkt-nm"><b>' + esc(it.name) + '</b><span>' + esc(it.vendor || "") + ' · ' +
           esc(fmt(+it.price || 0)) + '원 · ' + esc(String(it.qty || 0)) + esc(g.qty_unit || "매") + '</span></span>' +
           pxHtml +
-          '<span class="mkt-bd ' + (ok ? "ok" : "wait") + '">' + (ok ? "기준 충족" : "대기") + '</span>' +
           '</div>';
       });
       var last = (g.items || []).reduce(function(m, x){
@@ -1478,6 +1193,24 @@ body::before{
       html += '<div class="mkt-ft">마지막 실측 ' + esc(fmtAt(last || data.updated_at) || "-") +
         ' · 단가 탭 시 구매처</div></div>';
     });
+    var deals = (data.eomisae_deals || []).map(function(d){ return d || {}; })
+      .filter(function(d){ return d.title && (+d.price > 0); });
+    if (deals.length){
+      deals.sort(function(a, b){ return (+a.price || 0) - (+b.price || 0); });
+      html += '<div class="mkt-deals"><div class="mkt-dh"><b>🛒 어미새 알짜 핫딜</b><span class="k">오늘 실측</span></div>';
+      deals.forEach(function(d){
+        var url = buyUrl(d.url);
+        var px = '<b>' + esc(fmt(+d.price || 0)) + '원</b>' + (d.unit ? '<span>· ' + esc(d.unit) + '</span>' : '');
+        var pxHtml = url
+          ? '<a class="mkt-px mkt-go ok" href="' + esc(url) + '" target="_blank" rel="noopener noreferrer"' +
+            ' aria-label="' + esc(d.title) + ' 딜 페이지 열기">' + px + '<i class="arw">↗</i></a>'
+          : '<span class="mkt-px">' + px + '</span>';
+        html += '<div class="mkt-row">' +
+          '<span class="mkt-nm"><b>' + esc(d.title) + '</b><span>' + esc(d.vendor || "어미새") + '</span></span>' +
+          pxHtml + '</div>';
+      });
+      html += '</div>';
+    }
     box.innerHTML = html;
   }
 
@@ -1528,22 +1261,16 @@ body::before{
 
   /* ---------- 시작 ---------- */
   apply(FALLBACK);
-  notes = notesRead();
-  renderNotes();
   load();
   connectStream();
-  noteLoad();
-  noteStream();
-  noteFlush();
   marketLoad();
   marketStream();
   setInterval(function(){ if (!streamOk) load(); }, 10000);
   setInterval(function(){
     if (document.hidden) return;
-    if (!noteEs || !noteEs.readyState) { noteLoad(); noteFlush(); }
     if (!marketEs || !marketEs.readyState) marketLoad();
   }, 30000);
-  window.addEventListener("online", function(){ noteFlush(); noteLoad(); marketLoad(); });
+  window.addEventListener("online", function(){ marketLoad(); });
   setTimeout(function(){
     if (state.butler && state.butler.bubble) say(state.butler.bubble, 6000);
   }, 1800);

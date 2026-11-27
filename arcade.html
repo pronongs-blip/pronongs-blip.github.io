@@ -1,0 +1,1275 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0a0d14">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="apple-mobile-web-app-title" content="오락실">
+<meta name="description" content="오락실 · DEVIL'S ARCADE. 두뇌 서바이벌 아케이드 6종 — 벽바둑 2 · 흑과 백 · 기억포커 · 유배지 만국기 · 인디언 포커 · 틀린 그림 찾기.">
+<title>오락실 · DEVIL'S ARCADE</title>
+<link rel="manifest" href="./manifest-arcade.json">
+<link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png">
+<link rel="icon" type="image/png" href="./apple-touch-icon.png">
+<style>
+:root{
+  --bg:#0a0d14; --panel:#121826; --panel2:#161e2e; --panel3:#1b2438;
+  --line:rgba(255,255,255,.10); --line2:rgba(255,255,255,.06);
+  --txt:#f3f6fc; --dim:#9aa8c0; --dim2:#7b8aa5;
+  --acc:#ffc247; --acc2:#5b8cff; --ok:#34d399;
+  --acc-rgb:255,194,71;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0}
+html{-webkit-text-size-adjust:100%}
+body{
+  min-height:100%;
+  color:var(--txt);
+  font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Malgun Gothic","Pretendard",system-ui,sans-serif;
+  font-size:15px;
+  background:var(--bg);
+  -webkit-font-smoothing:antialiased;
+  word-break:keep-all;
+  overflow-wrap:break-word;
+}
+body::before{
+  content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:radial-gradient(120% 70% at 50% -20%, #16203a 0%, rgba(10,13,20,0) 60%);
+}
+
+.portal{
+  position:relative;z-index:1;
+  width:100%;max-width:430px;margin:0 auto;
+  min-height:100vh;min-height:100dvh;
+  display:flex;flex-direction:column;
+  padding:calc(env(safe-area-inset-top,0px) + 28px) 16px calc(env(safe-area-inset-bottom,0px) + 14px);
+}
+
+/* ---------- 헤더 (비서실과 공통) ---------- */
+.top{
+  flex:0 0 auto;display:flex;align-items:center;gap:10px;
+  padding:9px 10px;border-radius:16px;
+  background:linear-gradient(180deg, rgba(22,30,46,.94), rgba(16,22,34,.94));
+  border:1px solid var(--line);
+}
+.mark{
+  flex:0 0 auto;width:40px;height:40px;border-radius:12px;
+  display:flex;align-items:center;justify-content:center;font-size:18px;
+  background:radial-gradient(circle at 30% 25%, #2a3550, #161e2e);
+  border:1px solid rgba(255,194,71,.28);color:var(--acc);
+}
+.mark svg{width:22px;height:22px}
+.brand{flex:1 1 auto;min-width:0}
+.brand h1{
+  margin:0;font-size:16.5px;line-height:1.2;font-weight:900;
+  letter-spacing:-.015em;color:#fff;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.brand p{
+  margin:3px 0 0;font-size:9px;font-weight:800;letter-spacing:.055em;color:var(--dim2);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.brand p b{color:#e2c98c;font-weight:900}
+.tools{flex:0 0 auto;display:flex;align-items:center;gap:6px}
+.rbtn{
+  flex:0 0 auto;width:34px;height:34px;border-radius:11px;cursor:pointer;text-decoration:none;
+  display:flex;align-items:center;justify-content:center;font-size:15px;line-height:1;
+  color:var(--txt);background:var(--panel3);border:1px solid var(--line);
+  transition:transform .2s, background .2s;font-family:inherit;
+}
+.rbtn:active{transform:scale(.94);background:#232f47}
+.rbtn.home{width:auto;gap:2px;padding:0 9px 0 6px;font-size:10.5px;font-weight:900;letter-spacing:-.01em;color:#cdd8ea}
+.rbtn.home .chev{font-size:13px;line-height:1;margin-top:-1px;color:#9aa8c0}
+.rbtn.spin{animation:spin .7s linear}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ---------- 게임 목록 ---------- */
+.stage{flex:1 1 auto;display:flex;flex-direction:column;justify-content:center;gap:8px;padding:10px 0 4px;min-height:0}
+.stage>section{flex:0 0 auto;display:flex;flex-direction:column;min-height:0}
+.shead{display:flex;align-items:baseline;justify-content:space-between;padding:0 2px 2px}
+.shead .lb{font-size:11px;font-weight:800;letter-spacing:.14em;color:var(--dim2);text-transform:uppercase}
+.shead .cnt{font-size:11px;font-weight:800;color:var(--dim2)}
+
+.cards{flex:0 0 auto;display:flex;flex-direction:column;gap:8px;min-height:0}
+.card{
+  position:relative;display:flex;align-items:center;gap:12px;
+  flex:0 0 auto;min-height:98px;padding:11px 13px 11px 12px;border-radius:16px;
+  text-decoration:none;color:inherit;
+  background:var(--panel);border:1px solid var(--line);
+  transition:background .15s ease,border-color .15s ease;
+}
+.card:active{background:var(--panel2);border-color:rgba(255,255,255,.2)}
+.card:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
+.ic{
+  flex:0 0 auto;width:44px;height:44px;border-radius:13px;
+  display:flex;align-items:center;justify-content:center;
+  background:rgba(var(--ac),.13);border:1px solid rgba(var(--ac),.30);color:rgb(var(--ac));
+}
+.ic svg{width:24px;height:24px}
+.card.c-warm{--ac:232,238,250}
+.card.c-cool{--ac:110,160,255}
+.card.c-mint{--ac:90,214,178}
+
+.body{flex:1 1 auto;min-width:0;display:flex;flex-direction:column;gap:3px}
+.line1{display:flex;align-items:center;gap:7px;min-width:0}
+.nm{font-size:16px;font-weight:900;letter-spacing:-.01em;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bdg{
+  flex:0 0 auto;font-size:9.5px;font-weight:900;line-height:1;letter-spacing:.02em;
+  padding:4px 6px;border-radius:5px;
+}
+.bdg.new{color:#1a1205;background:var(--acc)}
+.bdg.hot{color:#04121f;background:#7fc4ff}
+.bdg.cnt{color:#c9d5e8;background:rgba(255,255,255,.09)}
+.bdg[hidden]{display:none}
+.ds{font-size:12px;line-height:1.35;font-weight:600;color:var(--dim)}
+.mt{font-size:10.5px;font-weight:700;color:var(--dim2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mt .when[hidden]{display:none}
+.go{flex:0 0 auto;font-size:19px;font-weight:700;color:var(--dim2);line-height:1}
+
+/* ---------- 하단 ---------- */
+.foot{flex:0 0 auto;margin-top:auto;display:flex;align-items:center;justify-content:space-between;gap:8px;padding-top:9px}
+.rst{
+  -webkit-appearance:none;appearance:none;margin:0;padding:9px 14px;border-radius:10px;
+  min-height:38px;display:inline-flex;align-items:center;justify-content:center;
+  font-family:inherit;font-size:11px;font-weight:800;line-height:1.4;
+  color:var(--dim2);background:transparent;border:1px solid var(--line2);
+  cursor:pointer;touch-action:manipulation;transition:color .15s ease,border-color .15s ease;
+}
+.rst:active{color:#e6edf9;border-color:var(--line)}
+.rst:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
+.rst.hbtn{color:#cfe0ff;border-color:rgba(122,164,255,.38);background:rgba(122,164,255,.10);font-weight:800}
+.rst.hbtn:active{background:rgba(122,164,255,.2);color:#fff}
+
+/* ---------- 경기 기록 모달 ---------- */
+.hmodal{
+  position:fixed;inset:0;z-index:90;display:flex;align-items:flex-end;justify-content:center;
+  background:rgba(5,8,14,.82);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);
+}
+.hmodal.hide{display:none}
+.hsheet{
+  width:100%;max-width:430px;max-height:80vh;max-height:80dvh;display:flex;flex-direction:column;
+  background:#0d121c;border:1px solid rgba(255,255,255,.11);border-bottom:0;
+  border-radius:22px 22px 0 0;padding:16px 14px calc(env(safe-area-inset-bottom,0px) + 14px);
+  animation:hup .22s ease both;
+}
+@keyframes hup{from{transform:translateY(16px);opacity:.5}to{transform:none;opacity:1}}
+.hhead{display:flex;align-items:flex-start;gap:10px;flex:0 0 auto}
+.hhead h2{margin:0;font-size:17px;font-weight:900;letter-spacing:-.01em;color:#fff}
+.hhead p{margin:4px 0 0;font-size:10.5px;font-weight:700;color:var(--dim2)}
+.hx{
+  margin-left:auto;flex:0 0 auto;width:30px;height:30px;border-radius:999px;font-size:12px;font-weight:900;
+  color:#cfd9ea;background:rgba(255,255,255,.06);border:1px solid var(--line);line-height:1;
+}
+.hx:active{background:rgba(255,255,255,.14)}
+.hsum{display:flex;flex-wrap:wrap;gap:5px;margin:10px 0 0;flex:0 0 auto}
+.hsum:empty{display:none}
+.hsum .sm{display:inline-flex;align-items:center;gap:4px;font-size:9.5px;font-weight:800;
+  padding:4px 8px;border-radius:8px;color:#cfd9ea;background:rgba(255,255,255,.05);border:1px solid var(--line2);white-space:nowrap}
+.hsum .sm b{color:#fff;font-weight:900}
+.hsum .sm em{font-style:normal;color:#ffd98a;font-weight:900}
+.hsum .sm.hot{color:#ffe0a3;background:rgba(255,194,71,.10);border-color:rgba(255,194,71,.28)}
+.htabs{display:flex;gap:5px;margin:12px 0 10px;flex:0 0 auto;padding:4px;border-radius:12px;
+  background:rgba(255,255,255,.045);border:1px solid var(--line2)}
+.htabs .tab{
+  flex:1 1 0;height:32px;border-radius:9px;font-size:12px;font-weight:800;color:#b6c3d8;
+  display:flex;align-items:center;justify-content:center;gap:5px;
+  background:none;border:0;font-family:inherit;cursor:pointer;-webkit-appearance:none;appearance:none;
+}
+.htabs .tab.on{background:var(--acc);color:#1a1204}
+.htabs .tab b{font-size:10px;font-weight:900;opacity:.75}
+.hlist{flex:1 1 auto;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;
+  display:flex;flex-direction:column;gap:7px;padding-bottom:2px}
+.hrow{
+  display:flex;align-items:center;gap:9px;padding:9px 10px;border-radius:12px;
+  background:var(--panel);border:1px solid rgba(255,255,255,.08);flex:0 0 auto;
+}
+.hres{
+  flex:0 0 30px;height:30px;border-radius:9px;display:flex;align-items:center;justify-content:center;
+  font-size:12px;font-weight:900;letter-spacing:-.02em;
+}
+.hres.w{background:rgba(52,211,153,.16);color:#6ee7b7;border:1px solid rgba(52,211,153,.35)}
+.hres.l{background:rgba(255,120,150,.14);color:#ff9db8;border:1px solid rgba(255,120,150,.3)}
+.hres.d{background:rgba(122,164,255,.14);color:#b6ccff;border:1px solid rgba(122,164,255,.3)}
+.hbody{flex:1 1 auto;min-width:0;display:flex;flex-direction:column;gap:2px}
+.h1{display:flex;align-items:center;gap:5px;min-width:0}
+.h1 b{font-size:13px;font-weight:900;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hvs{
+  flex:0 0 auto;font-size:8.5px;font-weight:900;letter-spacing:.02em;padding:2px 5px;border-radius:5px;
+}
+.hvs.pvp{color:#8fb4ff;background:rgba(122,164,255,.14);border:1px solid rgba(122,164,255,.3)}
+.hvs.ai{color:#ffd88a;background:rgba(255,194,71,.13);border:1px solid rgba(255,194,71,.3)}
+.h2{font-size:10.5px;font-weight:700;color:#8c9ab2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ht{flex:0 0 auto;text-align:right;font-size:9.5px;font-weight:800;color:var(--dim2);line-height:1.35;font-variant-numeric:tabular-nums}
+.hempty{padding:26px 8px;text-align:center;font-size:12px;font-weight:700;color:var(--dim2);line-height:1.6}
+.hempty b{display:block;font-size:22px;margin-bottom:6px}
+
+/* ---------- 기록 초기화 확인 ---------- */
+.cmodal{position:fixed;inset:0;z-index:95;display:flex;align-items:center;justify-content:center;
+  padding:24px;background:rgba(5,8,14,.82);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
+.cmodal.hide{display:none}
+.cs{width:100%;max-width:330px;border-radius:18px;padding:20px 18px 16px;
+  background:#121826;border:1px solid rgba(255,255,255,.12);box-shadow:0 18px 40px rgba(0,0,0,.5);
+  animation:cpop .18s ease both}
+@keyframes cpop{from{transform:scale(.96);opacity:.4}to{transform:none;opacity:1}}
+.cs h2{margin:0;font-size:16.5px;font-weight:900;color:#fff;letter-spacing:-.01em}
+.cs p{margin:9px 0 0;font-size:12.5px;line-height:1.55;font-weight:700;color:#c3cee1}
+.cs p b{color:#ffb3c4}
+.cact{display:flex;gap:8px;margin-top:17px}
+.cbtn{flex:1 1 0;min-height:46px;border-radius:12px;font-family:inherit;font-size:13.5px;
+  font-weight:900;border:1px solid var(--line);background:var(--panel3);color:var(--txt);
+  cursor:pointer;touch-action:manipulation;-webkit-appearance:none;appearance:none}
+.cbtn:active{transform:scale(.98)}
+.cbtn.ghost{background:rgba(255,255,255,.05);color:#cfd9ea}
+.cbtn.danger{background:rgba(255,120,150,.16);border-color:rgba(255,120,150,.5);color:#ffd9e2}
+.atoast{position:fixed;left:50%;bottom:calc(env(safe-area-inset-bottom,0px) + 84px);z-index:200;
+  transform:translate(-50%,10px);padding:11px 16px;border-radius:12px;max-width:86vw;text-align:center;
+  background:rgba(22,30,46,.98);border:1px solid rgba(255,255,255,.16);color:#eaf1fc;
+  font-size:12.5px;font-weight:800;line-height:1.4;box-shadow:0 10px 26px rgba(0,0,0,.45);
+  opacity:0;pointer-events:none;transition:opacity .18s ease,transform .18s ease}
+.atoast.on{opacity:1;transform:translate(-50%,0)}
+
+/* ---------- 넓은 화면 ---------- */
+@media (min-width:760px){
+  .portal{max-width:860px;padding-top:calc(env(safe-area-inset-top,0px) + 48px);padding-bottom:40px}
+  .top{padding:10px 12px}
+  .mark{width:44px;height:44px;border-radius:13px;font-size:20px}
+  .mark svg{width:24px;height:24px}
+  .brand h1{font-size:19px}
+  .brand p{font-size:9.5px}
+  .rbtn{width:36px;height:36px;font-size:16px}
+  .stage{justify-content:flex-start;padding:34px 0 10px;gap:14px}
+  .stage>section{flex:0 0 auto}
+  .cards{flex:0 0 auto;display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  .card{flex:0 0 auto;min-height:152px;padding:22px 24px;gap:18px;border-radius:20px}
+  .card:hover{background:var(--panel2);border-color:rgba(255,255,255,.18)}
+  .ic{width:62px;height:62px;border-radius:17px}
+  .ic svg{width:33px;height:33px}
+  .nm{font-size:18.5px}
+  .ds{font-size:13.5px}
+  .mt{font-size:12px}
+  .go{font-size:22px}
+}
+
+@media (max-width:360px){
+  .portal{padding-left:13px;padding-right:13px}
+  .nm{font-size:14.5px}
+  .ds{font-size:11.5px}
+  .card{min-height:78px;padding:11px 12px}
+  .ic{width:42px;height:42px}
+  .ic svg{width:23px;height:23px}
+}
+@media (max-height:700px) and (max-width:759px){
+  .portal{padding-top:calc(env(safe-area-inset-top,0px) + 22px)}
+  .stage{justify-content:flex-start;padding-top:8px}
+  .card{min-height:76px;padding:8px 11px}
+  .cards{gap:7px}
+}
+@media (min-height:701px) and (max-height:780px) and (max-width:759px){
+  .card{min-height:88px}
+  .cards{gap:7px}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none !important}}
+</style>
+</head>
+<body>
+<main class="portal">
+
+  <header class="top">
+    <div class="mark" aria-hidden="true">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="2.4" y="7.2" width="19.2" height="9.6" rx="4.8"/>
+        <path d="M7 10.4v2.8M5.6 11.8h2.8"/>
+        <path d="M15.6 11.2h.01M17.6 12.8h.01"/>
+      </svg>
+    </div>
+    <div class="brand">
+      <h1>오락실</h1>
+      <p><b>DEVIL'S ARCADE</b> · 두뇌 서바이벌</p>
+    </div>
+    <div class="tools">
+      <a class="rbtn home" href="./index.html" aria-label="대문으로"><span class="chev">‹</span>대문</a>
+      <button class="rbtn" id="refreshBtn" type="button" aria-label="새로고침" title="새로고침">↻</button>
+    </div>
+  </header>
+
+  <div class="stage">
+    <section aria-label="게임">
+      <div class="shead"><span class="lb">GAMES</span><span class="cnt">6 TITLES · <span id="statPillTxt">READY</span></span></div>
+      <div class="cards">
+
+        <a class="card c-cool" href="./wall-baduk2.html" data-app-id="wall-baduk2" data-released="2026-11-21">
+          <span class="ic" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="3" width="18" height="18" rx="3"/>
+              <path d="M9 3v18M15 3v18M3 9h18M3 15h18"/>
+              <path d="M9.9 9.9h4.2v4.2H9.9z" fill="currentColor" stroke="none"/>
+            </svg>
+          </span>
+          <span class="body">
+            <span class="line1"><span class="nm">벽바둑 2</span><span class="bdg" data-slot="badge" hidden></span></span>
+            <span class="ds">벽으로 영역을 나누는 1:1 보드게임</span>
+            <span class="mt"><span class="when" data-slot="when" hidden></span></span>
+          </span>
+          <span class="go" aria-hidden="true">›</span>
+        </a>
+
+        <a class="card c-warm" href="./black-white.html" data-app-id="black-white" data-released="2026-11-21">
+          <span class="ic" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="1.7">
+              <circle cx="12" cy="12" r="8.5" stroke="#dbe6f9"/>
+              <path d="M12 3.5a8.5 8.5 0 0 0 0 17z" fill="#6ea0ff"/>
+            </svg>
+          </span>
+          <span class="body">
+            <span class="line1"><span class="nm">흑과 백</span><span class="bdg" data-slot="badge" hidden></span></span>
+            <span class="ds">색만 보고 겨루는 9라운드 심리전</span>
+            <span class="mt"><span class="when" data-slot="when" hidden></span></span>
+          </span>
+          <span class="go" aria-hidden="true">›</span>
+        </a>
+
+        <a class="card c-mint" href="./memory-poker.html" data-app-id="memory-poker" data-released="2026-11-22">
+          <span class="ic" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round">
+              <rect x="3.2" y="6" width="10" height="14" rx="2.2" transform="rotate(-9 8.2 13)"/>
+              <rect x="10.6" y="4" width="10" height="14" rx="2.2" transform="rotate(9 15.6 11)"/>
+            </svg>
+          </span>
+          <span class="body">
+            <span class="line1"><span class="nm">기억포커</span><span class="bdg" data-slot="badge" hidden></span></span>
+            <span class="ds">20초 암기 뒤 5장 포커 대결</span>
+            <span class="mt"><span class="when" data-slot="when" hidden></span></span>
+          </span>
+          <span class="go" aria-hidden="true">›</span>
+        </a>
+
+        <a class="card c-cool" href="./world-flags.html" data-app-id="world-flags" data-released="2026-11-25">
+          <span class="ic" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round">
+              <circle cx="12" cy="12" r="8.8"/>
+              <path d="M3.2 12h17.6"/>
+              <path d="M12 3.2c2.4 2.5 3.7 5.6 3.7 8.8s-1.3 6.3-3.7 8.8c-2.4-2.5-3.7-5.6-3.7-8.8S9.6 5.7 12 3.2z"/>
+            </svg>
+          </span>
+          <span class="body">
+            <span class="line1"><span class="nm">유배지 만국기</span><span class="bdg" data-slot="badge" hidden></span></span>
+            <span class="ds">30초 암기, 25개 중 5개 찾기</span>
+            <span class="mt"><span class="when" data-slot="when" hidden></span></span>
+          </span>
+          <span class="go" aria-hidden="true">›</span>
+        </a>
+
+        <a class="card c-warm" href="./indian-poker.html" data-app-id="indian-poker" data-released="2026-11-26">
+          <span class="ic" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round">
+              <rect x="2.9" y="5.6" width="11.6" height="15.2" rx="2.2" transform="rotate(-13 8.7 13.2)"/>
+              <rect x="10.3" y="3.4" width="10.8" height="15.2" rx="2.2" transform="rotate(9 15.7 11)" fill="#0a0d14"/>
+              <path d="M13.6 9.9a1.9 1.9 0 1 1 2.2 2.1c-.6.1-.9.5-.9 1.1" stroke-width="1.5" stroke-linecap="round"/>
+              <circle cx="14.9" cy="15.4" r=".95" fill="currentColor" stroke="none"/>
+            </svg>
+          </span>
+          <span class="body">
+            <span class="line1"><span class="nm">인디언 포커</span><span class="bdg" data-slot="badge" hidden></span></span>
+            <span class="ds">상대 카드만 보이는 칩 베팅 심리전</span>
+            <span class="mt"><span class="when" data-slot="when" hidden></span></span>
+          </span>
+          <span class="go" aria-hidden="true">›</span>
+        </a>
+
+        <a class="card c-cool" href="./spot-diff.html" data-app-id="spot-diff" data-released="2026-11-27">
+          <span class="ic" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="10.4" cy="9.9" r="6.3"/>
+              <path d="M15 14.5l5.2 5.2"/>
+              <circle cx="8.1" cy="8.4" r="1.15" fill="currentColor" stroke="none"/>
+              <circle cx="12.2" cy="11.2" r="1.15" fill="currentColor" stroke="none" opacity=".55"/>
+            </svg>
+          </span>
+          <span class="body">
+            <span class="line1"><span class="nm">틀린 그림 찾기</span><span class="bdg" data-slot="badge" hidden></span></span>
+            <span class="ds">그림 12가지에서 다른 곳 5곳 찾기</span>
+            <span class="mt"><span class="when" data-slot="when" hidden></span></span>
+          </span>
+          <span class="go" aria-hidden="true">›</span>
+        </a>
+
+      </div>
+    </section>
+  </div>
+
+  <footer class="foot">
+    <button class="rst hbtn" type="button" id="histBtn" aria-haspopup="dialog">📜 기록</button>
+    <button class="rst" type="button" id="resetStats" aria-haspopup="dialog" title="부부 통합 기록(양쪽 폰)까지 함께 지웁니다">기록 초기화</button>
+  </footer>
+
+</main>
+
+<!-- ================= 경기 기록 ================= -->
+<div class="hmodal hide" id="histModal" role="dialog" aria-modal="true" aria-labelledby="histTitle">
+  <div class="hsheet">
+    <div class="hhead">
+      <div>
+        <h2 id="histTitle">📜 경기 기록</h2>
+        <p id="histSub">최근 100경기 · 이 기기에만 저장</p>
+      </div>
+      <button class="hx" type="button" id="histClose" aria-label="기록 닫기">✕</button>
+    </div>
+    <div class="hsum" id="histSum"></div>
+    <div class="htabs" id="histTabs" role="tablist">
+      <button class="tab on" type="button" data-v="all" role="tab" aria-selected="true">전체 <b>0</b></button>
+      <button class="tab" type="button" data-v="local" role="tab" aria-selected="false">한 기기 <b>0</b></button>
+      <button class="tab" type="button" data-v="online" role="tab" aria-selected="false">온라인 <b>0</b></button>
+    </div>
+    <div class="hlist" id="histList"></div>
+  </div>
+</div>
+
+<!-- ================= 기록 초기화 확인 ================= -->
+<div class="cmodal hide" id="resetModal" role="dialog" aria-modal="true" aria-labelledby="resetTitle">
+  <div class="cs">
+    <h2 id="resetTitle">기록 초기화</h2>
+    <p>이 기기의 승부 기록과 <b>부부 통합 기록(양쪽 폰)</b>까지 모두 지웁니다. 되돌릴 수 없습니다.</p>
+    <div class="cact">
+      <button class="cbtn ghost" type="button" id="resetNo">취소</button>
+      <button class="cbtn danger" type="button" id="resetYes">모두 지우기</button>
+    </div>
+  </div>
+</div>
+
+<script>
+window.ARC = window.ARC || {
+  KEY: 'yg_arcade_stats_v1',
+  HKEY: 'yg_arcade_history_v1',
+  PKEY: 'yg_arcade_pending_v1',
+  DKEY: 'yg_arcade_dev_v1',
+  CAP: 200,
+  FB: (window.ARC_FB_BASE || 'https://seonongs-hq-default-rtdb.firebaseio.com'),
+  _agg: null,
+  _opens: null,
+  _cloud: false,
+  _clearing: false,
+  read: function () { try { return JSON.parse(localStorage.getItem(this.KEY) || '{}') || {}; } catch (e) { return {}; } },
+  /* 상대 구분: ai(혼자·AI 대전) / pvp(두 사람 — 한 기기·온라인 1:1) */
+  vsOf: function (mode) { return (mode === 'ai' || mode === 'solo' || !mode) ? 'ai' : 'pvp'; },
+  /* 기록은 두 사람 승부만 — AI 대전은 로컬·Firebase 어디에도 남기지 않는다 */
+  isPvp: function (vs, mode) {
+    if (vs === 'pvp') return true;
+    if (vs === 'ai' || vs === 'solo') return false;
+    var m = String(mode || '');
+    if (!m) return false;
+    return this.vsOf(m) === 'pvp';
+  },
+  dev: function () {
+    try {
+      var d = localStorage.getItem(this.DKEY);
+      if (!d || !/^[a-z0-9]{6,20}$/.test(d)) {
+        d = 'd' + Math.random().toString(36).slice(2, 10);
+        localStorage.setItem(this.DKEY, d);
+      }
+      return d;
+    } catch (e) { return 'd0'; }
+  },
+  canCloud: function () {
+    try {
+      if (/[?&]nofb=1/.test(location.search)) return false;
+      return location.protocol === 'http:' || location.protocol === 'https:';
+    } catch (e) { return false; }
+  },
+  _req: function (path, method, body) {
+    var opt = { method: method || 'GET', cache: 'no-store' };
+    if (body !== undefined) { opt.headers = { 'Content-Type': 'application/json' }; opt.body = JSON.stringify(body); }
+    return fetch(this.FB + path, opt).then(function (r) {
+      if (!r.ok) throw new Error('HTTP ' + r.status);
+      return r.text().then(function (t) { try { return t ? JSON.parse(t) : null; } catch (e) { return null; } });
+    });
+  },
+  _writeHist: function (arr) { try { localStorage.setItem(this.HKEY, JSON.stringify(arr.slice(0, this.CAP))); } catch (e) {} },
+  _pending: function () { try { var a = JSON.parse(localStorage.getItem(this.PKEY) || '[]'); return Array.isArray(a) ? a : []; } catch (e) { return []; } },
+  _queue: function (rec) {
+    try {
+      var a = this._pending();
+      for (var i = 0; i < a.length; i++) if (a[i] && a[i].uid === rec.uid) return;
+      a.push(rec);
+      localStorage.setItem(this.PKEY, JSON.stringify(a.slice(-60)));
+    } catch (e) {}
+  },
+  _flushPending: function () {
+    var self = this, list = this._pending();
+    if (!list.length) return Promise.resolve();
+    var done = [];
+    var chain = Promise.resolve();
+    list.forEach(function (rec) {
+      chain = chain.then(function () {
+        return self._req('/arcade_history/' + rec.uid + '.json', 'PUT', rec).then(function () { done.push(rec.uid); }, function () { throw 0; });
+      });
+    });
+    return chain.catch(function () {}).then(function () {
+      if (!done.length) return;
+      try {
+        localStorage.setItem(self.PKEY, JSON.stringify(self._pending().filter(function (r) { return done.join(' ').indexOf(r.uid) < 0; })));
+      } catch (e) {}
+    });
+  },
+  record: function (id, res, vs) {
+    if (!this.isPvp(vs)) return;
+    try {
+      var all = this.read(), s = all[id] || {};
+      s.wins = Math.max(0, +s.wins || 0);
+      s.losses = Math.max(0, +s.losses || 0);
+      s.draws = Math.max(0, +s.draws || 0);
+      if (res === 'win') s.wins++; else if (res === 'lose') s.losses++; else s.draws++;
+      var k = 'pvp';
+      var g = s[k] || {};
+      g.wins = Math.max(0, +g.wins || 0);
+      g.losses = Math.max(0, +g.losses || 0);
+      g.draws = Math.max(0, +g.draws || 0);
+      if (res === 'win') g.wins++; else if (res === 'lose') g.losses++; else g.draws++;
+      s[k] = g;
+      s.played = s.wins + s.losses + s.draws;
+      s.lastResult = res;
+      s.lastPlayed = Date.now();
+      all[id] = s;
+      localStorage.setItem(this.KEY, JSON.stringify(all));
+    } catch (e) {}
+  },
+  part: function (g) {
+    if (!g) return '';
+    var w = Math.max(0, +g.wins || 0), l = Math.max(0, +g.losses || 0), d = Math.max(0, +g.draws || 0);
+    if (!w && !l && !d) return '';
+    return w + '승 ' + l + '패' + (d ? ' ' + d + '무' : '');
+  },
+  _mx: function (a, b) { return Math.max(+a || 0, +b || 0); },
+  _grp: function (a, b) {
+    if (!a && !b) return undefined;
+    a = a || {}; b = b || {};
+    return { wins: this._mx(a.wins, b.wins), losses: this._mx(a.losses, b.losses), draws: this._mx(a.draws, b.draws) };
+  },
+  /* 두 사람 승부 몫 — 옛 AI 기록이 섞여 있으면 빼고 센다 */
+  _pvp: function (s) {
+    if (!s) return { wins: 0, losses: 0, draws: 0 };
+    if (s.pvp) return {
+      wins: Math.max(0, +s.pvp.wins || 0),
+      losses: Math.max(0, +s.pvp.losses || 0),
+      draws: Math.max(0, +s.pvp.draws || 0)
+    };
+    var ai = s.ai || {};
+    return {
+      wins: Math.max(0, (+s.wins || 0) - (+ai.wins || 0)),
+      losses: Math.max(0, (+s.losses || 0) - (+ai.losses || 0)),
+      draws: Math.max(0, (+s.draws || 0) - (+ai.draws || 0))
+    };
+  },
+  /* 로컬 전적 + 클라우드 집계(최댓값 병합 — 중복 없이 합산) */
+  statOf: function (id) {
+    var a = this._pvp(this.read()[id]);
+    var b = this._pvp((this._agg && this._agg.games && this._agg.games[id]) || null);
+    return { wins: this._mx(a.wins, b.wins), losses: this._mx(a.losses, b.losses), draws: this._mx(a.draws, b.draws) };
+  },
+  line: function (id) {
+    var s = this.statOf(id);
+    var w = s.wins, l = s.losses, d = s.draws;
+    if (!w && !l && !d) return '';
+    return '통산 ' + w + '승 ' + l + '패' + (d ? ' ' + d + '무' : '');
+  },
+  show: function (id, modal) {
+    var root = typeof modal === 'string' ? document.querySelector(modal) : modal;
+    if (!root) return;
+    var box = root.querySelector('.modal') || root.querySelector('.card') || root;
+    var txt = this.line(id);
+    var el = box.querySelector('.res-stat');
+    if (!txt) { if (el) el.remove(); return; }
+    if (!el) {
+      el = document.createElement('div');
+      el.className = 'res-stat';
+      el.innerHTML = '<span>내 전적</span><b></b>';
+      var foot = box.querySelector('.mrow, .endact, .rules-close');
+      if (foot && foot.parentNode === box) box.insertBefore(el, foot); else box.appendChild(el);
+    }
+    el.querySelector('b').textContent = txt;
+  },
+  norm: function (v, key) {
+    if (!v || typeof v !== 'object') return null;
+    var at = +v.playedAt || 0;
+    if (!at) return null;
+    var r = String(v.result || 'draw');
+    if (r === 'lose') r = 'loss';
+    if (r !== 'win' && r !== 'loss' && r !== 'draw') r = 'draw';
+    var rec = {
+      uid: String(v.uid || key || ('h' + at + '-' + String(v.id || v.game || ''))),
+      id: String(v.id || v.game || ''),
+      game: String(v.game || v.title || v.id || ''),
+      mode: String(v.mode || ''),
+      vs: (v.vs === 'pvp') ? 'pvp' : ((v.vs === 'ai') ? 'ai' : this.vsOf(String(v.mode || ''))),
+      myName: String(v.myName || ''),
+      oppName: String(v.oppName || ''),
+      result: r,
+      scoreText: String(v.scoreText || ''),
+      playedAt: at
+    };
+    /* AI 대전 기록은 읽지도, 다시 올리지도 않는다 */
+    return (rec.vs === 'pvp') ? rec : null;
+  },
+  history: function () {
+    try {
+      var a = JSON.parse(localStorage.getItem(this.HKEY) || '[]');
+      if (!Array.isArray(a)) return [];
+      var self = this, out = [];
+      a.forEach(function (x) { var r = self.norm(x); if (r) out.push(r); });
+      return out;
+    } catch (e) { return []; }
+  },
+  /* 경기 히스토리 — 최신순 최대 200건, 로컬 + Firebase 동시 저장 */
+  save: function (o) {
+    o = o || {};
+    if (!this.isPvp(o.vs, o.mode)) return;
+    var rec = null;
+    try {
+      var arr = this.history();
+      var r = o.result;
+      if (r === 'lose') r = 'loss';
+      if (r !== 'win' && r !== 'loss' && r !== 'draw') r = 'draw';
+      var mode = String(o.mode || '');
+      rec = {
+        uid: 'h' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6),
+        id: String(o.game || ''),
+        game: String(o.title || o.game || ''),
+        mode: mode,
+        vs: 'pvp',
+        myName: String(o.myName || ''),
+        oppName: String(o.oppName || ''),
+        result: r,
+        scoreText: String(o.scoreText || ''),
+        playedAt: Date.now(),
+        dev: this.dev()
+      };
+      arr.unshift(rec);
+      if (arr.length > this.CAP) arr.length = this.CAP;
+      this._writeHist(arr);
+    } catch (e) { return; }
+    if (!this.canCloud()) return;
+    var self = this;
+    this._req('/arcade_history/' + rec.uid + '.json', 'PUT', rec)
+      .then(function () { self._cloud = true; return self._pushStats(); })
+      .catch(function () { self._queue(rec); });
+  },
+  derive: function (list) {
+    var games = {}, players = {};
+    list.forEach(function (r) {
+      if (r.vs !== 'pvp') return;
+      var g = games[r.id] || (games[r.id] = { wins: 0, losses: 0, draws: 0, plays: 0, pvp: { wins: 0, losses: 0, draws: 0 }, ai: { wins: 0, losses: 0, draws: 0 } });
+      var k = (r.result === 'win') ? 'wins' : (r.result === 'loss' ? 'losses' : 'draws');
+      g[k]++; g.plays++;
+      g[r.vs][k]++;
+      var nm = r.myName || '';
+      if (nm) {
+        var p = players[nm] || (players[nm] = { wins: 0, losses: 0, draws: 0, plays: 0 });
+        p[k]++; p.plays++;
+      }
+    });
+    /* 연승 — 플레이어별 최근 결과 연속 수 */
+    var streak = {};
+    var byName = {};
+    list.forEach(function (r) { if (r.myName) (byName[r.myName] = byName[r.myName] || []).push(r); });
+    Object.keys(byName).forEach(function (nm) {
+      var arr = byName[nm].slice().sort(function (a, b) { return b.playedAt - a.playedAt; });
+      var res = arr[0] ? arr[0].result : '';
+      var n = 0;
+      for (var i = 0; i < arr.length && arr[i].result === res; i++) n++;
+      streak[nm] = { result: res, n: n };
+    });
+    Object.keys(players).forEach(function (nm) { players[nm].streak = streak[nm] || null; });
+    return { games: games, players: players, streak: streak };
+  },
+  _pushStats: function () {
+    if (!this.canCloud() || !this._agg) return Promise.resolve();
+    var self = this;
+    return this._req('/arcade_stats/games.json', 'PUT', this._agg.games)
+      .then(function () { return self._req('/arcade_stats/players.json', 'PUT', self._agg.players); })
+      .then(function () { return self._req('/arcade_stats/updatedAt.json', 'PUT', Date.now()); })
+      .catch(function () {});
+  },
+  open: function (id, clicks, lastOpened) {
+    if (!this.canCloud()) return;
+    var rec = { clicks: Math.max(0, +clicks || 0), lastOpened: +lastOpened || Date.now() };
+    this._req('/arcade_stats/opens/' + this.dev() + '/' + id + '.json', 'PUT', rec).catch(function () {});
+    if (this._opens) { var d = this.dev(); this._opens[d] = this._opens[d] || {}; this._opens[d][id] = rec.clicks; }
+  },
+  opensOf: function (id) {
+    var all = this._opens || {}, n = 0;
+    Object.keys(all).forEach(function (dev) {
+      var g = all[dev];
+      if (g && typeof g === 'object') n += Math.max(0, +g[id] || 0);
+    });
+    return n;
+  },
+  sync: function () {
+    if (!this.canCloud() || this._clearing) return Promise.resolve();
+    var self = this;
+    return Promise.all([
+      this._req('/arcade_history.json?t=' + Date.now()).catch(function () { return undefined; }),
+      this._req('/arcade_stats.json?t=' + Date.now()).catch(function () { return undefined; })
+    ]).then(function (res) {
+      var reachable = (res[0] !== undefined) || (res[1] !== undefined);
+      var hraw = (res[0] === undefined) ? null : res[0];
+      var sraw = (res[1] === undefined) ? null : res[1];
+      var cloud = [], map = (hraw && typeof hraw === 'object') ? hraw : {};
+      Object.keys(map).forEach(function (k) {
+        var r = self.norm(map[k], k);
+        if (r) cloud.push(r);
+      });
+      var seen = {}, merged = [];
+      cloud.concat(self.history()).forEach(function (r) {
+        if (seen[r.uid]) return;
+        seen[r.uid] = 1;
+        merged.push(r);
+      });
+      merged.sort(function (a, b) { return b.playedAt - a.playedAt; });
+      if (merged.length > self.CAP) merged.length = self.CAP;
+      self._writeHist(merged);
+
+      var agg = self.derive(merged);
+      var sg = (sraw && sraw.games) || null;
+      if (sg) {
+        Object.keys(sg).forEach(function (id) {
+          var a = agg.games[id] || { wins: 0, losses: 0, draws: 0, plays: 0, pvp: { wins: 0, losses: 0, draws: 0 }, ai: { wins: 0, losses: 0, draws: 0 } };
+          var b = sg[id] || {};
+          agg.games[id] = {
+            wins: self._mx(a.wins, b.wins), losses: self._mx(a.losses, b.losses), draws: self._mx(a.draws, b.draws),
+            plays: self._mx(a.plays, b.plays),
+            pvp: self._grp(a.pvp, b.pvp) || { wins: 0, losses: 0, draws: 0 },
+            ai: self._grp(a.ai, b.ai) || { wins: 0, losses: 0, draws: 0 }
+          };
+        });
+      }
+      self._agg = agg;
+      self._opens = (sraw && sraw.opens) || {};
+      self._cloud = reachable;
+
+      var have = {};
+      cloud.forEach(function (r) { have[r.uid] = 1; });
+      merged.forEach(function (r) { if (!have[r.uid]) self._queue(r); });
+      self._flushPending();
+      if (hraw) self._pushStats();
+      if (typeof window.ARC_ON_SYNC === 'function') { try { window.ARC_ON_SYNC(agg, merged); } catch (e) {} }
+    }).catch(function () {});
+  },
+  clearHistory: function () { try { localStorage.removeItem(this.HKEY); } catch (e) {} try { localStorage.removeItem(this.PKEY); } catch (e) {} },
+  clearCloud: function () {
+    var self = this;
+    /* 메모리에 남은 클라우드 집계까지 지워야 화면에서 기록이 되살아나지 않는다 */
+    self._agg = null; self._opens = {}; self._cloud = false;
+    if (!this.canCloud()) return Promise.resolve();
+    function fire(path, method, body) {
+      return self._req(path, method, body).then(function (v) { return v; }, function () { return null; });
+    }
+    self._clearing = true;
+    return fire('/arcade_history.json', 'DELETE')
+      .then(function () { return fire('/arcade_stats/games.json', 'PUT', {}); })
+      .then(function () { return fire('/arcade_stats/players.json', 'PUT', {}); })
+      .then(function () { return fire('/arcade_stats/opens.json', 'DELETE'); })
+      .then(function () { self._clearing = false; });
+  }
+};
+(function () {
+  function boot() { try { window.ARC.sync(); } catch (e) {} }
+  if (document.readyState === 'complete' || document.readyState === 'interactive') setTimeout(boot, 40);
+  else document.addEventListener('DOMContentLoaded', function () { setTimeout(boot, 40); });
+  window.addEventListener('pageshow', boot);
+  document.addEventListener('visibilitychange', function () { if (!document.hidden) boot(); });
+})();
+</script>
+
+<script>
+/* ============================================================
+   아케이드 이용 기록 · 동적 배지 시스템 (localStorage)
+   저장 키: yg_arcade_stats_v1
+   { "wall-baduk2": {clicks: 3, lastOpened: 1763....} , ... }
+   ============================================================ */
+(function () {
+  "use strict";
+  var KEY = "yg_arcade_stats_v1";
+  var cards = Array.prototype.slice.call(document.querySelectorAll(".card[data-app-id]"));
+  if (!cards.length) return;
+
+  var ids = [];
+  var byId = {};
+  cards.forEach(function (card) {
+    var id = card.getAttribute("data-app-id");
+    ids.push(id);
+    byId[id] = card;
+  });
+
+  var pillTxt = document.getElementById("statPillTxt");
+  var resetBtn = document.getElementById("resetStats");
+
+  function readStats() {
+    var out = {};
+    var raw = null;
+    try { raw = window.localStorage.getItem(KEY); } catch (e) { raw = null; }
+    var data = {};
+    if (raw) { try { data = JSON.parse(raw); } catch (e) { data = {}; } }
+    if (!data || typeof data !== "object") data = {};
+    ids.forEach(function (id) {
+      var s = data[id];
+      if (!s || typeof s !== "object") return;
+      var clicks = Math.floor(Number(s.clicks));
+      var last = Number(s.lastOpened);
+      if (!isFinite(clicks) || clicks < 0) clicks = 0;
+      if (!isFinite(last) || last <= 0) last = 0;
+      if (clicks > 0 || last > 0) {
+        var pv = pvpOf(s);
+        out[id] = { clicks: clicks, lastOpened: last,
+          wins: pv.wins, losses: pv.losses, draws: pv.draws };
+      }
+    });
+    mergeCloud(out);
+    return out;
+  }
+
+  /* Firebase 집계와 큰 값을 골라 합치기 — 기기를 바꾸거나 캐시가 날아가도 부부 통합 전적 유지 */
+  function mergeCloud(out) {
+    var agg = (window.ARC && window.ARC._agg) || null;
+    ids.forEach(function (id) {
+      var c = agg && agg.games && agg.games[id];
+      var opens = (window.ARC && window.ARC.opensOf) ? window.ARC.opensOf(id) : 0;
+      if (!c && !opens) return;
+      var s = out[id] || { clicks: 0, lastOpened: 0, wins: 0, losses: 0, draws: 0 };
+      if (opens > s.clicks) s.clicks = opens;
+      if (c) {
+        var cp = pvpOf(c);
+        s.wins = Math.max(s.wins, cp.wins);
+        s.losses = Math.max(s.losses, cp.losses);
+        s.draws = Math.max(s.draws, cp.draws);
+      }
+      if (s.clicks > 0 || s.wins + s.losses + s.draws > 0) out[id] = s;
+    });
+  }
+
+  /* 두 사람 승부 몫부터 — 옛 AI 기록이 섞여 있으면 빼고 센다 */
+  function pvpOf(s) {
+    if (!s || typeof s !== "object") return { wins: 0, losses: 0, draws: 0 };
+    var g = s.pvp;
+    if (g && typeof g === "object") {
+      return {
+        wins: Math.max(0, Math.floor(Number(g.wins) || 0)),
+        losses: Math.max(0, Math.floor(Number(g.losses) || 0)),
+        draws: Math.max(0, Math.floor(Number(g.draws) || 0))
+      };
+    }
+    var ai = s.ai || {};
+    return {
+      wins: Math.max(0, Math.floor(Number(s.wins) || 0) - Math.floor(Number(ai.wins) || 0)),
+      losses: Math.max(0, Math.floor(Number(s.losses) || 0) - Math.floor(Number(ai.losses) || 0)),
+      draws: Math.max(0, Math.floor(Number(s.draws) || 0) - Math.floor(Number(ai.draws) || 0))
+    };
+  }
+
+  /* 카드 전적 문자열(툴팁·기록용) */
+  function recOf(s) {
+    var w = s.wins || 0, l = s.losses || 0, d = s.draws || 0;
+    if (!w && !l && !d) return "";
+    return w + "승 " + l + "패" + (d ? " " + d + "무" : "");
+  }
+
+  function writeStats(all) {
+    try { window.localStorage.setItem(KEY, JSON.stringify(all)); } catch (e) { /* 사생활 보호 모드 등 */ }
+  }
+
+  function clearStats() {
+    try { window.localStorage.removeItem(KEY); } catch (e) { /* noop */ }
+  }
+
+  function releasedOf(card) {
+    var t = Date.parse((card.getAttribute("data-released") || "") + "T00:00:00");
+    return isFinite(t) ? t : 0;
+  }
+
+  function favoriteOf(stats) {
+    var best = null;
+    ids.forEach(function (id) {
+      var s = stats[id];
+      if (!s || s.clicks < 1) return;
+      if (!best) { best = id; return; }
+      var b = stats[best];
+      if (s.clicks !== b.clicks) { if (s.clicks > b.clicks) best = id; return; }
+      if (s.lastOpened !== b.lastOpened) { if (s.lastOpened > b.lastOpened) best = id; return; }
+      if (releasedOf(byId[id]) > releasedOf(byId[best])) best = id;
+    });
+    return best;
+  }
+
+  function pad2(n) { return (n < 10 ? "0" : "") + n; }
+
+  function fullTime(ts) {
+    if (!ts) return "";
+    var d = new Date(ts);
+    return d.getFullYear() + "-" + pad2(d.getMonth() + 1) + "-" + pad2(d.getDate()) +
+      " " + pad2(d.getHours()) + ":" + pad2(d.getMinutes());
+  }
+
+  function ago(ts) {
+    if (!ts) return "";
+    var now = Date.now();
+    var diff = now - ts;
+    if (diff < 0) diff = 0;
+    if (diff < 60000) return "방금 전";
+    if (diff < 3600000) return Math.floor(diff / 60000) + "분 전";
+    var a = new Date(ts), b = new Date(now);
+    var da = new Date(a.getFullYear(), a.getMonth(), a.getDate()).getTime();
+    var db = new Date(b.getFullYear(), b.getMonth(), b.getDate()).getTime();
+    var days = Math.round((db - da) / 86400000);
+    if (days <= 0) return "오늘";
+    if (days < 30) return days + "일 전";
+    return "오래 전";
+  }
+
+  function render() {
+    var stats = readStats();
+    var fav = favoriteOf(stats);
+    var total = 0;
+
+    cards.forEach(function (card) {
+      var id = card.getAttribute("data-app-id");
+      var s = stats[id] || { clicks: 0, lastOpened: 0 };
+      var plays = (s.wins || 0) + (s.losses || 0) + (s.draws || 0);
+      total += s.clicks;
+
+      var badge = card.querySelector('[data-slot="badge"]');
+      var when = card.querySelector('[data-slot="when"]');
+      var cls, text;
+      if (s.clicks < 1 && plays < 1) {
+        cls = "bdg new";
+        text = "NEW";
+      } else if (plays > 0) {
+        /* 두 사람 승패를 카드에 그대로 */
+        cls = "bdg cnt";
+        text = (s.wins || 0) + "승 " + (s.losses || 0) + "패" + (s.draws ? " " + s.draws + "무" : "");
+      } else if (id === fav) {
+        cls = "bdg hot";
+        text = "최다 · " + s.clicks + "회";
+      } else {
+        cls = "bdg cnt";
+        text = s.clicks + "회";
+      }
+      if (badge) {
+        if (badge.textContent !== text) badge.textContent = text;
+        if (badge.className !== cls) badge.className = cls;
+        badge.hidden = false;
+      }
+
+      if (when) {
+        var tail = s.lastOpened ? ("최근 " + (ago(s.lastOpened) || "오늘")) : "";
+        if (tail) {
+          if (when.textContent !== tail) when.textContent = tail;
+          when.title = (s.lastOpened ? "마지막 실행 " + fullTime(s.lastOpened) : "부부 통합 전적");
+          when.hidden = false;
+        } else {
+          when.hidden = true;
+          when.textContent = "";
+          when.title = "출시 " + (card.getAttribute("data-released") || "-") + " · 아직 실행 안 함";
+        }
+      }
+      card.setAttribute("data-clicks", String(s.clicks));
+    });
+
+    if (pillTxt) pillTxt.textContent = total > 0 ? "총 " + total + "회" : "READY";
+  }
+
+  function bump(id) {
+    var raw = {};
+    try { raw = JSON.parse(window.localStorage.getItem(KEY) || "{}") || {}; } catch (e) { raw = {}; }
+    var s = raw[id] || { clicks: 0, lastOpened: 0 };
+    s.clicks = Math.max(0, Math.floor(Number(s.clicks) || 0)) + 1;
+    s.lastOpened = Date.now();
+    raw[id] = s;
+    writeStats(raw);
+    if (window.ARC && ARC.open) ARC.open(id, s.clicks, s.lastOpened);
+    render();
+  }
+
+  cards.forEach(function (card) {
+    var id = card.getAttribute("data-app-id");
+    card.addEventListener("click", function () { bump(id); }, true);
+    card.addEventListener("auxclick", function (ev) { if (ev.button === 1) bump(id); });
+  });
+
+  window.addEventListener("pageshow", render);
+  window.addEventListener("focus", render);
+  window.addEventListener("arcade-sync", render);
+  document.addEventListener("visibilitychange", function () { if (!document.hidden) render(); });
+  window.addEventListener("storage", function (ev) { if (!ev.key || ev.key === KEY) render(); });
+  setInterval(function () { if (!document.hidden) render(); }, 30000);
+
+  /* ---------- 기록 초기화 — 시트에서 확인해야 지운다 ---------- */
+  var cModal = document.getElementById("resetModal");
+  var cYes = document.getElementById("resetYes");
+  var cNo = document.getElementById("resetNo");
+
+  function toast(msg) {
+    var t = document.getElementById("arcToast");
+    if (!t) {
+      t = document.createElement("div");
+      t.id = "arcToast";
+      t.className = "atoast";
+      t.setAttribute("role", "status");
+      document.body.appendChild(t);
+    }
+    t.textContent = msg;
+    t.classList.add("on");
+    if (t._tm) clearTimeout(t._tm);
+    t._tm = setTimeout(function () { t.classList.remove("on"); }, 2600);
+  }
+
+  function closeConfirm() {
+    if (!cModal) return;
+    cModal.classList.add("hide");
+    if (resetBtn) resetBtn.focus();
+  }
+
+  function doReset() {
+    clearStats();
+    try { window.localStorage.removeItem("yg_arcade_history_v1"); } catch (e) { /* noop */ }
+    try { window.localStorage.removeItem("yg_arcade_pending_v1"); } catch (e) { /* noop */ }
+    if (window.ARC) {
+      /* 메모리에 남은 클라우드 집계까지 즉시 비운다 — 안 지우면 화면에서 기록이 되살아난다 */
+      window.ARC._agg = null;
+      window.ARC._opens = {};
+      window.ARC._cloud = false;
+      try { ARC.clearHistory(); } catch (e) { /* noop */ }
+      try { ARC.clearCloud(); } catch (e) { /* noop */ }
+    }
+    render();
+    try { window.HIST && window.HIST.render(); } catch (e) { /* noop */ }
+    if (pillTxt) pillTxt.textContent = "READY";
+    toast("기록을 모두 지웠습니다 · 부부 통합 기록까지");
+  }
+
+  if (resetBtn) {
+    resetBtn.addEventListener("click", function () {
+      if (!cModal) { doReset(); return; }
+      cModal.classList.remove("hide");
+      if (cNo) cNo.focus();
+    });
+  }
+  if (cNo) cNo.addEventListener("click", closeConfirm);
+  if (cYes) cYes.addEventListener("click", function () { closeConfirm(); doReset(); });
+  if (cModal) cModal.addEventListener("click", function (e) { if (e.target === cModal) closeConfirm(); });
+  document.addEventListener("keydown", function (e) {
+    if (e.key === "Escape" && cModal && !cModal.classList.contains("hide")) closeConfirm();
+  });
+
+  render();
+})();
+</script>
+
+<script>
+/* ============================================================
+   경기 기록 모달 (yg_arcade_history_v1)
+   ============================================================ */
+(function () {
+  "use strict";
+  var KEY = "yg_arcade_history_v1";
+  var modal = document.getElementById("histModal");
+  var list = document.getElementById("histList");
+  var tabs = document.getElementById("histTabs");
+  var btn = document.getElementById("histBtn");
+  var closeBtn = document.getElementById("histClose");
+  if (!modal || !list || !tabs || !btn) return;
+
+  var filter = "all";
+  var RES = { win: ["w", "승"], loss: ["l", "패"], draw: ["d", "무"] };
+
+  /* 정규화된 두 사람 승부만 읽는다 — 옛 AI 기록은 여기서 걸러진다 */
+  function read() {
+    try {
+      if (window.ARC && window.ARC.history) return window.ARC.history();
+      var a = JSON.parse(window.localStorage.getItem(KEY) || "[]");
+      if (!Array.isArray(a)) return [];
+      return a.filter(function (e) { return e && e.vs !== "ai" && String(e.mode || "") !== "ai"; });
+    } catch (e) { return []; }
+  }
+  function pad2(n) { return (n < 10 ? "0" : "") + n; }
+  function dayOf(ts) { var d = new Date(ts); return pad2(d.getMonth() + 1) + "-" + pad2(d.getDate()); }
+  function timeOf(ts) { var d = new Date(ts); return pad2(d.getHours()) + ":" + pad2(d.getMinutes()); }
+  function esc(s) {
+    return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) {
+      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
+    });
+  }
+
+  function renderSum(all) {
+    var sub = document.getElementById("histSub");
+    var cloud = !!(window.ARC && window.ARC._cloud);
+    if (sub) sub.textContent = (cloud ? "부부 통합 전적 · Firebase 동기화" : "이 기기에만 저장") + " · " + all.length + "경기";
+    var sum = document.getElementById("histSum");
+    if (!sum) return;
+    var pv = { w: 0, l: 0, d: 0 };
+    all.forEach(function (e) {
+      if (!e || e.vs === "ai") return;
+      var r = e.result;
+      if (r === "win") pv.w++; else if (r === "loss" || r === "lose") pv.l++; else pv.d++;
+    });
+    var html = "";
+    if (pv.w + pv.l + pv.d) html += '<span class="sm"><b>' + pv.w + "승 " + pv.l + "패</b>" + (pv.d ? " " + pv.d + "무" : "") + '</span>';
+    var players = (window.ARC && window.ARC._agg && window.ARC._agg.players) || null;
+    if (players) {
+      var names = Object.keys(players).sort(function (a, b) { return (players[b].plays || 0) - (players[a].plays || 0); }).slice(0, 2);
+      names.forEach(function (nm) {
+        var p = players[nm] || {};
+        var st = p.streak || null;
+        var hot = !!(st && st.result === "win" && st.n >= 2);
+        var stx = (st && st.n >= 2)
+          ? '<em>' + (st.result === "win" ? "🔥" : "") + st.n + (st.result === "win" ? "연승" : (st.result === "loss" ? "연패" : "연무")) + '</em>'
+          : "";
+        html += '<span class="sm' + (hot ? " hot" : "") + '"><b>' + esc(nm) + '</b> ' + (p.wins || 0) + "승 " + (p.losses || 0) + "패 " + stx + '</span>';
+      });
+    }
+    sum.innerHTML = html;
+  }
+
+  function render() {
+    var all = read();
+    renderSum(all);
+    var cnt = { all: all.length, local: 0, online: 0 };
+    all.forEach(function (e) {
+      if (!e || e.vs === "ai") return;
+      if (String(e.mode || "") === "online") cnt.online += 1; else cnt.local += 1;
+    });
+
+    Array.prototype.forEach.call(tabs.querySelectorAll(".tab"), function (t) {
+      var v = t.getAttribute("data-v");
+      var on = (v === filter);
+      t.classList.toggle("on", on);
+      t.setAttribute("aria-selected", on ? "true" : "false");
+      var b = t.querySelector("b");
+      if (b) b.textContent = cnt[v] || 0;
+    });
+
+    var rows = all.filter(function (e) {
+      if (!e || e.vs === "ai") return false;
+      if (filter === "all") return true;
+      return (String(e.mode || "") === "online" ? "online" : "local") === filter;
+    });
+
+    if (!rows.length) {
+      list.innerHTML = '<div class="hempty"><b>📜</b>' +
+        (all.length ? "이 조건의 경기가 없습니다." : "아직 경기 기록이 없습니다.<br>게임을 한 판 끝내면 여기에 쌓입니다.") +
+        "</div>";
+      return;
+    }
+
+    var h = "";
+    rows.forEach(function (e) {
+      var r = RES[e.result] || RES.draw;
+      var line = [];
+      if (e.myName) line.push(String(e.myName) + (e.oppName ? " vs " + String(e.oppName) : ""));
+      if (e.scoreText) line.push(String(e.scoreText));
+      h += '<div class="hrow">' +
+        '<span class="hres ' + r[0] + '">' + r[1] + "</span>" +
+        '<span class="hbody"><span class="h1"><b>' + esc(e.game || e.id || "게임") + "</b></span>" +
+        '<span class="h2">' + esc(line.join(" · ")) + "</span></span>" +
+        '<span class="ht">' + dayOf(e.playedAt) + "<br>" + timeOf(e.playedAt) + "</span>" +
+        "</div>";
+    });
+    list.innerHTML = h;
+  }
+
+  function open() { modal.classList.remove("hide"); render(); }
+  function close() { modal.classList.add("hide"); }
+
+  btn.addEventListener("click", open);
+  if (closeBtn) closeBtn.addEventListener("click", close);
+  modal.addEventListener("click", function (e) { if (e.target === modal) close(); });
+  tabs.addEventListener("click", function (e) {
+    var t = e.target && e.target.closest ? e.target.closest(".tab") : null;
+    if (!t) return;
+    filter = t.getAttribute("data-v") || "all";
+    render();
+  });
+  document.addEventListener("keydown", function (e) {
+    if (e.key === "Escape" && !modal.classList.contains("hide")) close();
+  });
+
+  window.HIST = { render: render, open: open, close: close };
+  window.addEventListener("arcade-sync", render);
+  render();
+})();
+</script>
+
+<script>
+/* ============================================================
+   새로고침 (iOS 홈화면 웹앱 · 캐시 우회 리로드)
+   ============================================================ */
+(function () {
+  "use strict";
+  function targetUrl() {
+    var u = location.pathname + location.search;
+    u = u.replace(/([?&])v=\d+/g, function (t, s) { return s === "?" ? "?" : ""; });
+    u = u.replace(/\?&/, "?").replace(/[?&]$/, "");
+    return u + (u.indexOf("?") >= 0 ? "&" : "?") + "v=" + Date.now();
+  }
+  window.ARC_ON_SYNC = function () { try { window.dispatchEvent(new Event("arcade-sync")); } catch (e) {} };
+
+  var rf = document.getElementById("refreshBtn");
+  if (rf) rf.addEventListener("click", function () {
+    rf.classList.remove("spin");
+    void rf.offsetWidth;
+    rf.classList.add("spin");
+    if (window.ARC && ARC.sync) ARC.sync();
+    try { window.dispatchEvent(new Event("arcade-sync")); } catch (e) {}
+    setTimeout(function () {
+      if (window.__PTR_TEST__) { window.__PTR_LAST__ = targetUrl(); return; }
+      location.replace(targetUrl());
+    }, 260);
+  });
+})();
+</script>
+<script>
+/* ============================================================
+   iOS 홈화면 standalone PWA 내비게이션 가드
+   일반 <a> 기본 이동은 iOS가 인앱 브라우저(SFSafariViewController:
+   상단 X · 주소창 · 하단 나침반)로 띄우므로, 내부 링크는
+   preventDefault + location.assign 으로 같은 창에서 이동시킨다.
+   ============================================================ */
+(function () {
+  "use strict";
+  function isInternal(href) {
+    if (!href) return false;
+    if (/^(#|mailto:|tel:|sms:|javascript:|blob:|data:)/i.test(href)) return false;
+    var u;
+    try { u = new URL(href, location.href); } catch (e) { return false; }
+    return u.origin === location.origin;
+  }
+  function inApp(a, ev) {
+    if (!isInternal(a.getAttribute("href"))) return;
+    if (a.target && a.target !== "" && a.target !== "_self") return;
+    if (a.hasAttribute("download")) return;
+    if (ev.metaKey || ev.ctrlKey || ev.shiftKey || ev.altKey) return;
+    if (typeof ev.button === "number" && ev.button !== 0) return;
+    ev.preventDefault();
+    window.location.assign(a.getAttribute("href"));
+  }
+  function bind() {
+    var nodes = document.querySelectorAll("a[href]");
+    for (var i = 0; i < nodes.length; i++) {
+      var a = nodes[i];
+      if (a.getAttribute("data-inapp-nav") === "1") continue;
+      a.setAttribute("data-inapp-nav", "1");
+      a.addEventListener("click", function (ev) {
+        if (ev.defaultPrevented) return;
+        inApp(this, ev);
+      });
+    }
+  }
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", bind);
+  } else {
+    bind();
+  }
+  window.addEventListener("pageshow", function () { bind(); });
+})();
+</script>
+</body>
+</html>

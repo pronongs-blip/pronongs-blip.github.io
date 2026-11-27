@@ -3452,7 +3452,6 @@ window.ARC = window.ARC || {
    iOS 홈화면 standalone PWA 내비게이션 가드
    일반 <a> 기본 이동은 iOS가 인앱 브라우저(SFSafariViewController)로
    띄우므로, 내부 링크는 preventDefault + location.assign 으로 이동시킨다.
-   내부 링크에는 ?v= 시각 토큰을 붙여 캐시된 옛 페이지를 피한다.
    ============================================================ */
 (function () {
   "use strict";
@@ -3463,14 +3462,6 @@ window.ARC = window.ARC || {
     try { u = new URL(href, location.href); } catch (e) { return false; }
     return u.origin === location.origin;
   }
-  function cacheBust(href) {
-    try {
-      var u = new URL(href, location.href);
-      if (u.searchParams.get("v")) return href;
-      u.searchParams.set("v", String(Math.floor(Date.now() / 600000)));
-      return u.pathname + u.search + u.hash;
-    } catch (e) { return href; }
-  }
   function inApp(a, ev) {
     if (!isInternal(a.getAttribute("href"))) return;
     if (a.target && a.target !== "" && a.target !== "_self") return;
@@ -3478,7 +3469,7 @@ window.ARC = window.ARC || {
     if (ev.metaKey || ev.ctrlKey || ev.shiftKey || ev.altKey) return;
     if (typeof ev.button === "number" && ev.button !== 0) return;
     ev.preventDefault();
-    window.location.assign(cacheBust(a.getAttribute("href")));
+    window.location.assign(a.getAttribute("href"));
   }
   function bind() {
     var nodes = document.querySelectorAll("a[href]");

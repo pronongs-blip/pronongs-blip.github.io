@@ -2962,7 +2962,7 @@ window.ARC = window.ARC || {
   var Net = {
     pid: 'u' + Math.random().toString(36).slice(2, 9),
     room: null, role: null, peer: null, peerName: null,
-    cloud: false, connecting: false, bc: null, mq: null, broker: null,
+    cloud: false, connecting: false, bc: null, mq: null, broker: null, rival: null,
     seen: {}, seq: 0, joinTries: 0, joinTimer: null, lastErr: '',
     reset: function () {
       clearInterval(this.joinTimer);
@@ -2970,7 +2970,7 @@ window.ARC = window.ARC || {
       this.mq = null; this.cloud = false; this.connecting = false;
       try { if (this.bc) this.bc.close(); } catch (e) {}
       this.bc = null;
-      this.room = null; this.role = null; this.peer = null; this.peerName = null;
+      this.room = null; this.role = null; this.peer = null; this.peerName = null; this.rival = null;
       this.seen = {}; this.seq = 0; this.joinTries = 0; this.lastErr = '';
       badge();
     },
@@ -2993,7 +2993,7 @@ window.ARC = window.ARC || {
     },
     open: function () {
       var self = this;
-      this.seen = {}; this.seq = 0; this.peer = null; this.peerName = null;
+      this.seen = {}; this.seq = 0; this.peer = null; this.peerName = null; this.rival = null;
       this.cloud = false; this.connecting = true; this.lastErr = '';
       if (typeof BroadcastChannel !== 'undefined') {
         try {
@@ -3133,7 +3133,7 @@ window.ARC = window.ARC || {
   function onNet(m) {
     switch (m.t) {
       case 'join': {
-        if (Net.role !== 'host') return;
+        if (Net.role !== 'host') { Net.rival = m.from; return; }
         if (Net.peer && Net.peer !== m.from) { Net.send({ t: 'full', to: m.from }); return; }
         Net.peer = m.from;
         Net.peerName = clampName(m.name, DEF_B);
@@ -3146,6 +3146,7 @@ window.ARC = window.ARC || {
       }
       case 'welcome': {
         Net.peer = m.from;
+        S.mySeat = 1;
         Net.peerName = clampName(m.hostName, DEF_A);
         S.names[0] = Net.peerName;
         clearInterval(Net.joinTimer);
@@ -3180,6 +3181,7 @@ window.ARC = window.ARC || {
 
   function startOnline() {
     if (Net.role !== 'host') return;
+    S.mySeat = 0;
     hideEnd();
     S.score = [0, 0];
     S.round = 0;
@@ -3231,6 +3233,7 @@ window.ARC = window.ARC || {
     setMode('online');
     S.names[0] = clampName($('#myName').value, DEF_A);
     S.names[1] = S.names[1] || DEF_B;
+    S.mySeat = 1;
     var box = $('#moreBox'); if (box) box.open = false;
     connectAs('guest', QUICK_CODE);
     quickMsg('상대를 찾는 중…', true);
@@ -3242,8 +3245,9 @@ window.ARC = window.ARC || {
         quickMsg(Net.role === 'host' ? '상대 입장 완료 · 곧 시작합니다' : '입장 완료 · 곧 시작합니다', true);
         return;
       }
-      if (Net.role === 'guest' && Date.now() - t0 > 1800) {
+      if (Net.role === 'guest' && !Net.peer && Date.now() - t0 > 1800 && (!Net.rival || Net.pid < Net.rival)) {
         Net.role = 'host'; S.role = 'host'; S.mySeat = 0;
+        S.names[0] = clampName($('#myName').value, DEF_A);
         badge(); paintInvite();
         quickMsg('방을 열었습니다 · 상대가 ⚡ 바로 입장을 누르면 시작됩니다', true);
       }
@@ -3436,7 +3440,7 @@ window.ARC = window.ARC || {
 
   /* 테스트 훅 */
   window.SD = {
-    S: S, STAGES: STAGES,
+    S: S, STAGES: STAGES, net: Net,
     engine: { hitTest: hitTest, stage: stage, unclaimed: unclaimed },
     ctrl: {
       start: startPressed, mode: setMode, beginRound: beginRound, startPlay: startPlay,

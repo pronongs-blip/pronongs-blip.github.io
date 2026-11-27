@@ -2021,6 +2021,13 @@ body:not(.locked) .lock{display:none}
       b.setAttribute("aria-selected", on ? "true" : "false");
     });
     var diary = v === "diary", alb = v === "album", act = v === "act", st = v === "stats";
+    /* 통계·활동은 월 단위 집계 — 범위 칩이 숨겨지므로 범위를 전체로 되돌려 필터가 보이지 않게 남지 않도록 */
+    if((act || st) && state.range !== "all"){
+      state.range = "all";
+      Array.prototype.forEach.call($("filters").querySelectorAll(".chip[data-range]"), function(x){
+        x.classList.toggle("on", x.getAttribute("data-range") === "all");
+      });
+    }
     $("filters").hidden = !diary;
     $("list").hidden = !diary;
     $("album").hidden = !alb;

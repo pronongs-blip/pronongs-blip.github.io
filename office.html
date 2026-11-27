@@ -326,6 +326,57 @@ body::before{
   .mkt-px b{font-size:14px}
 }
 
+/* ---------- 👶 기저귀 재고 ---------- */
+.dp{padding:9px 11px 10px;overflow:hidden}
+.dp-top{display:flex;align-items:center;gap:7px;min-width:0}
+.dp-note{flex:1 1 auto;min-width:0;font-size:8.5px;font-weight:800;color:#606e86;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-variant-numeric:tabular-nums}
+.dp-note b{color:#9fc0ff;font-weight:900}
+.dp-edit{flex:0 0 auto;height:25px;padding:0 9px;border-radius:8px;cursor:pointer;
+  font:inherit;font-size:9.5px;font-weight:900;color:#cfd9ec;background:var(--panel3);
+  border:1px solid var(--line);white-space:nowrap}
+.dp-edit:active{background:#232f47}
+.dp-row{margin-top:8px;padding-top:8px;border-top:1px solid var(--line2)}
+.dp-rh{display:flex;align-items:center;gap:6px;min-width:0}
+.dp-rh b{flex:0 1 auto;min-width:0;font-size:11.5px;font-weight:900;color:#eef3ff;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dp-rate{flex:0 1 auto;min-width:0;font-size:8.5px;font-weight:800;color:var(--dim2);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-variant-numeric:tabular-nums}
+.dp-badge{margin-left:auto;flex:0 0 auto;font-size:8.5px;font-weight:900;letter-spacing:.02em;
+  padding:2px 6px;border-radius:999px;white-space:nowrap}
+.dp-badge.warn{color:#ffe2c4;background:rgba(255,159,107,.14);border:1px solid rgba(255,159,107,.42)}
+.dp-badge.red{color:#ffd2c8;background:rgba(255,92,92,.16);border:1px solid rgba(255,92,92,.48)}
+.dp-num{display:flex;align-items:baseline;gap:4px;margin-top:3px;font-variant-numeric:tabular-nums;min-width:0}
+.dp-num b{flex:0 0 auto;font-size:19px;font-weight:900;color:#fff;letter-spacing:-.02em;line-height:1.1}
+.dp-num span{flex:0 0 auto;font-size:9.5px;font-weight:800;color:var(--dim2);white-space:nowrap}
+.dp-num i{margin-left:auto;flex:0 1 auto;min-width:0;font-style:normal;font-size:10px;font-weight:900;
+  color:#c3d0e6;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dp-num i em{font-style:normal;font-weight:800;color:#8fa3c2}
+.dp-bar{margin-top:6px;height:5px;border-radius:999px;background:rgba(255,255,255,.07);overflow:hidden}
+.dp-bar em{display:block;height:100%;border-radius:999px;background:linear-gradient(90deg,#34d399,#6f9dff);transition:width .35s}
+.dp-bar.warn em{background:linear-gradient(90deg,#ffb347,#ff9f6b)}
+.dp-bar.red em{background:linear-gradient(90deg,#ff8a5c,#ff5c5c)}
+.dp-empty{padding:12px 2px 4px;font-size:10.5px;font-weight:700;color:#6d7b93}
+.dp-form{margin-top:10px;padding:9px;border-radius:12px;
+  background:rgba(111,157,255,.07);border:1px solid rgba(111,157,255,.24)}
+.dp-fh{font-size:9.5px;font-weight:900;color:#cfe0ff;line-height:1.4}
+.dp-fields{display:flex;gap:7px;margin-top:7px}
+.dp-f{flex:1 1 0;min-width:0;display:flex;flex-direction:column;gap:3px}
+.dp-f span{font-size:9px;font-weight:800;color:#93a6c4;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dp-f input{width:100%;height:36px;padding:0 9px;border-radius:9px;font:inherit;font-size:15px;
+  font-weight:900;color:#fff;background:#0d1420;border:1px solid var(--line);
+  -webkit-appearance:none;appearance:none;font-variant-numeric:tabular-nums}
+.dp-f input:focus{outline:none;border-color:rgba(111,157,255,.65)}
+.dp-btns{display:flex;gap:7px;margin-top:8px}
+.dp-btns button{flex:1 1 0;height:34px;border-radius:10px;font:inherit;font-size:11.5px;
+  font-weight:900;cursor:pointer;border:1px solid var(--line)}
+.dp-btns button:disabled{opacity:.6}
+.dp-save{color:#1c1503;background:linear-gradient(180deg,#ffd479,#ffc247);border-color:rgba(255,194,71,.62)}
+.dp-cancel{color:#cfd9ec;background:var(--panel3)}
+.dp-msg{margin-top:6px;font-size:9.5px;font-weight:800;color:#93a6c4;line-height:1.4}
+.dp-msg:empty{display:none}
+.dp-msg.err{color:#ffb4a4}
+
 /* ---------- 푸터 ---------- */
 .foot{margin-top:14px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:center;
   font-size:9px;font-weight:700;color:#5f6d85;text-align:center}
@@ -567,6 +618,32 @@ body::before{
     <div class="metrics" id="metrics"></div>
   </section>
 
+  <!-- 👶 기저귀 재고 관리 -->
+  <section class="sec" id="diaperSec">
+    <div class="sec-h"><h2>👶 기저귀 재고 관리</h2><span class="k" id="dpStamp">STOCK</span><span class="sp"></span></div>
+    <div class="card dp" id="dpCard">
+      <div class="dp-top">
+        <span class="dp-note" id="dpAsOf">재고를 불러오는 중입니다…</span>
+        <button class="dp-edit" id="dpEdit" type="button" aria-expanded="false" aria-controls="dpForm">✏️ 실재고 수정</button>
+      </div>
+      <div id="dpRows"><div class="dp-empty">재고 기준을 불러오는 중입니다…</div></div>
+      <form class="dp-form" id="dpForm" hidden>
+        <div class="dp-fh">실제 남은 개수를 넣고 저장하시면 오늘 날짜 기준으로 다시 셉니다.</div>
+        <div class="dp-fields">
+          <label class="dp-f"><span>맥스드라이 (개)</span>
+            <input id="dpMax" type="number" inputmode="numeric" min="0" max="9999" step="1" enterkeyhint="done"></label>
+          <label class="dp-f"><span>일반 (개)</span>
+            <input id="dpNorm" type="number" inputmode="numeric" min="0" max="9999" step="1" enterkeyhint="done"></label>
+        </div>
+        <div class="dp-btns">
+          <button class="dp-save" id="dpSave" type="submit">저장</button>
+          <button class="dp-cancel" id="dpCancel" type="button">취소</button>
+        </div>
+        <div class="dp-msg" id="dpMsg"></div>
+      </form>
+    </div>
+  </section>
+
   <!-- 실시간 시세판 -->
   <section class="sec">
     <div class="sec-h"><h2>📊 실시간 최저가 시세판</h2><span class="k" id="mktStamp">SYNC</span><span class="sp"></span>
@@ -644,6 +721,10 @@ body::before{
       ]
     }
   ],
+  "diaper_stock": {
+    "maxdry": { "label": "맥스드라이 5단계", "base": 50, "rateLabel": "주 10개", "perDay": 1.4286, "baseDate": "2026-11-28" },
+    "normal": { "label": "일반 5단계", "base": 80, "rateLabel": "하루 5개", "perDay": 5, "baseDate": "2026-11-28" }
+  },
   "metrics": [
     { "key": "review", "icon": "⭐", "label": "쿠팡 리뷰", "value": "391건", "unit": "· 11,159점", "note": "오늘 7건 완료 · 1차 목표까지 8,841점" },
     { "key": "pay", "icon": "💳", "label": "네이버페이", "value": "18,424", "unit": "원", "note": "클릭 적립 누적" },
@@ -904,6 +985,213 @@ body::before{
     }).join("");
   }
 
+  /* ---------- 👶 기저귀 재고 관리 ---------- */
+  var DP_URL = FB_BASE + "/office_state/diaper_stock.json";
+  var DP_ORDER = ["maxdry", "normal"];
+  var DP_HORIZON = 60;   /* 진행률 바 만점 기준: 60일치 */
+  var DP_DEF = {
+    maxdry: { label: "맥스드라이 5단계", rateLabel: "주 10개", perDay: 1.4286 },
+    normal: { label: "일반 5단계", rateLabel: "하루 5개", perDay: 5 }
+  };
+  var dpBusy = false;
+
+  function dpPad(n){ return (n < 10 ? "0" : "") + n; }
+
+  /* KST 오늘 (YYYY-MM-DD) */
+  function dpToday(){
+    var d = new Date(Date.now() + 9 * 3600 * 1000);
+    return d.getUTCFullYear() + "-" + dpPad(d.getUTCMonth() + 1) + "-" + dpPad(d.getUTCDate());
+  }
+
+  /* from → to 경과 일수 */
+  function dpDayDiff(from, to){
+    var a = String(from || "").split("-"), b = String(to || "").split("-");
+    if (a.length !== 3 || b.length !== 3) return null;
+    var ta = Date.UTC(+a[0], +a[1] - 1, +a[2]), tb = Date.UTC(+b[0], +b[1] - 1, +b[2]);
+    if (isNaN(ta) || isNaN(tb)) return null;
+    return Math.round((tb - ta) / 86400000);
+  }
+
+  function dpHint(d){
+    var t = String(d || "").split("-");
+    if (t.length !== 3 || isNaN(+t[1]) || isNaN(+t[2])) return "";
+    return (+t[1]) + "/" + dpPad(+t[2]);
+  }
+
+  /* 오늘(KST)로부터 n일 뒤 MM/DD */
+  function dpRunout(n){
+    var d = new Date(Date.now() + 9 * 3600 * 1000 + n * 86400000);
+    return dpPad(d.getUTCMonth() + 1) + "/" + dpPad(d.getUTCDate());
+  }
+
+  /* 화면용 데이터 — Firebase 원본 우선, 없으면 병합본(내장 폴백) */
+  function dpSource(){
+    if (raw && isObj(raw.diaper_stock)) return raw.diaper_stock;
+    if (state && isObj(state.diaper_stock)) return state.diaper_stock;
+    return {};
+  }
+
+  function dpKeys(src){
+    var out = DP_ORDER.filter(function(k){ return isObj(src[k]); });
+    Object.keys(src).forEach(function(k){
+      if (out.indexOf(k) < 0 && isObj(src[k])) out.push(k);
+    });
+    return out;
+  }
+
+  function dpCalc(st){
+    var base = Math.max(0, Math.round(+st.base || 0));
+    var perDay = +st.perDay || 0;
+    if (perDay < 0) perDay = 0;
+    var days = dpDayDiff(st.baseDate, dpToday());
+    if (days === null || days < 0) days = 0;
+    var remF = perDay > 0 ? Math.max(0, base - days * perDay) : base;
+    var rem = Math.max(0, Math.round(remF));
+    var left = perDay > 0 ? Math.max(0, Math.round(remF / perDay)) : null;
+    var pct = left === null ? 100 : (left / DP_HORIZON) * 100;
+    pct = Math.max(0, Math.min(100, pct));
+    return {
+      base: base, perDay: perDay, days: days,
+      rem: rem, left: left, pct: pct,
+      runout: left === null ? "" : dpRunout(left)
+    };
+  }
+
+  function renderDiaper(){
+    var box = $("dpRows");
+    if (!box) return;
+    var src = dpSource();
+    var keys = dpKeys(src);
+    var note = $("dpAsOf");
+    if (!keys.length){
+      box.innerHTML = '<div class="dp-empty">저장된 재고 기준이 없습니다. <b>실재고 수정</b>으로 등록해 주십시오.</div>';
+      if (note) note.textContent = "기준 없음";
+      return;
+    }
+    var warn = 0, red = 0, basis = "";
+    box.innerHTML = keys.map(function(k){
+      var st = src[k] || {};
+      var c = dpCalc(st);
+      var level = "";
+      var badge = "";
+      if (c.left !== null){
+        if (c.left <= 3){
+          red++;
+          level = " red";
+          badge = '<span class="dp-badge red">' + (c.left <= 0 ? "소진" : "D-" + c.left + " 급함") + '</span>';
+        } else if (c.left <= 7){
+          warn++;
+          level = " warn";
+          badge = '<span class="dp-badge warn">D-' + c.left + ' 임박</span>';
+        }
+      }
+      var rate = st.label ? (st.rateLabel || "") : "";
+      if (!rate && c.perDay > 0) rate = "하루 " + c.perDay + "개";
+      var basisTxt = dpHint(st.baseDate);
+      var sub = (rate ? esc(rate) : "") + (basisTxt ? (rate ? " · " : "") + "기준 " + esc(basisTxt) : "");
+      if (basisTxt && !basis) basis = basisTxt;
+      var right = c.left === null ? "" :
+        '<i>' + esc(c.runout) + ' 소진 <em>· ' + esc(String(c.left)) + '일</em></i>';
+      return '<div class="dp-row">' +
+        '<div class="dp-rh"><b>' + esc(st.label || k) + '</b>' +
+        (sub ? '<span class="dp-rate">' + sub + '</span>' : '') +
+        badge + '</div>' +
+        '<div class="dp-num"><b>' + esc(String(c.rem)) + '</b><span>개 남음</span>' + right + '</div>' +
+        '<div class="dp-bar' + level + '"><em style="width:' + c.pct.toFixed(1) + '%"></em></div>' +
+        '</div>';
+    }).join("");
+    if (note){
+      var toolow = red + warn;
+      if (toolow) note.innerHTML = '<b>⚠ ' + toolow + '품목 7일 이하</b>' +
+        (red ? ' · ' + red + '품목 소진 임박' : '') + ' · 자동 차감';
+      else note.textContent = (basis ? "기준 " + basis + " · " : "") + "매일 자동 차감";
+    }
+  }
+
+  function dpNum(v){
+    var s = String(v == null ? "" : v).trim();
+    if (!/^\d{1,4}$/.test(s)) return null;
+    return parseInt(s, 10);
+  }
+
+  function dpMsg(text, kind){
+    var el = $("dpMsg");
+    if (!el) return;
+    el.textContent = text || "";
+    el.className = "dp-msg" + (kind ? " " + kind : "");
+  }
+
+  function dpOpenForm(){
+    var form = $("dpForm");
+    if (!form) return;
+    var src = dpSource();
+    var cm = dpCalc(src.maxdry || DP_DEF.maxdry);
+    var cn = dpCalc(src.normal || DP_DEF.normal);
+    $("dpMax").value = String(cm.rem);
+    $("dpNorm").value = String(cn.rem);
+    dpMsg("");
+    form.hidden = false;
+    $("dpEdit").setAttribute("aria-expanded", "true");
+  }
+
+  function dpCloseForm(){
+    var form = $("dpForm");
+    if (!form) return;
+    form.hidden = true;
+    $("dpEdit").setAttribute("aria-expanded", "false");
+    dpMsg("");
+  }
+
+  function dpSave(ev){
+    if (ev) ev.preventDefault();
+    if (dpBusy) return;
+    var mv = dpNum($("dpMax").value);
+    var nv = dpNum($("dpNorm").value);
+    if (mv === null || nv === null){
+      dpMsg("0~9999 사이 숫자를 넣어 주십시오.", "err");
+      return;
+    }
+    var src = dpSource();
+    var today = dpToday();
+    var body = {};
+    Object.keys(src).forEach(function(k){ if (isObj(src[k])) body[k] = cloneData(src[k]); });
+    function put(key, val, def){
+      var cur = isObj(body[key]) ? body[key] : {};
+      cur.label = cur.label || def.label;
+      cur.rateLabel = cur.rateLabel || def.rateLabel;
+      if (!(+cur.perDay > 0)) cur.perDay = def.perDay;
+      cur.base = val;
+      cur.baseDate = today;
+      body[key] = cur;
+    }
+    put("maxdry", mv, DP_DEF.maxdry);
+    put("normal", nv, DP_DEF.normal);
+    dpBusy = true;
+    var btn = $("dpSave");
+    if (btn){ btn.disabled = true; btn.textContent = "저장 중…"; }
+    dpMsg("저장 중입니다…");
+    fetch(DP_URL + "?t=" + Date.now(), {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body)
+    }).then(function(r){
+      if (!r.ok) throw new Error("HTTP " + r.status);
+      return r.text();
+    }).then(function(){
+      raw = setPath(cloneData(raw || {}), "/diaper_stock", body, false);
+      srcName = "firebase";
+      applyRaw(raw);
+      renderStatus();
+      dpCloseForm();
+      say("형님, 실재고를 저장했습니다. 오늘 기준으로 다시 셉니다.", 3600);
+    }).catch(function(err){
+      dpMsg("저장 실패 (" + String((err && err.message) || err) + "). 잠시 후 다시 시도해 주십시오.", "err");
+    }).then(function(){
+      dpBusy = false;
+      if (btn){ btn.disabled = false; btn.textContent = "저장"; }
+    });
+  }
+
   function renderStatus(){
     document.querySelectorAll(".room").forEach(function(r){
       var z = r.getAttribute("data-zone");
@@ -1008,6 +1296,7 @@ body::before{
     renderMetrics();
     renderSchedule();
     renderLogs();
+    renderDiaper();
     renderStatus();
     var zone = (state.butler && state.butler.zone) || "lounge";
     if (!selected){
@@ -1130,6 +1419,18 @@ body::before{
   document.addEventListener("visibilitychange", function(){
     if (!document.hidden) load();
   });
+
+  /* 기저귀 재고 — 실재고 수정 */
+  if ($("dpEdit")){
+    $("dpEdit").addEventListener("click", function(){
+      if ($("dpForm").hidden) dpOpenForm(); else dpCloseForm();
+    });
+  }
+  if ($("dpForm")){
+    $("dpForm").addEventListener("submit", dpSave);
+    $("dpMax").addEventListener("input", function(){ if (!$("dpMsg").classList.contains("err")) dpMsg(""); });
+  }
+  if ($("dpCancel")) $("dpCancel").addEventListener("click", dpCloseForm);
 
   /* ---------- 실시간 저가 시세판 ---------- */
   var market = null;

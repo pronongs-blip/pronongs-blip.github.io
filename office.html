@@ -194,11 +194,14 @@ body::before{
 .char .body{transform-origin:50% 60%;animation:breathe 3.8s ease-in-out infinite}
 @keyframes breathe{0%,100%{transform:scale(1,1)}50%{transform:scale(1.018,.982)}}
 .char .stk{fill:none;stroke:url(#beigeG);stroke-width:16;stroke-linecap:round}
-.char .eyes{transform-origin:54px 39px;animation:blink 5.4s infinite}
-@keyframes blink{0%,91%,100%{transform:scaleY(1)}94%{transform:scaleY(.08)}96%{transform:scaleY(1)}}
-.char .eye{fill:#3a3020}
-.char .gleam{fill:rgba(255,255,255,.8)}
-.char .blush{fill:rgba(205,130,100,.32)}
+.char .suit .shirt{fill:url(#shirtG);stroke:rgba(18,24,36,.28);stroke-width:.55}
+.char .suit .tie{fill:url(#tieG);stroke:rgba(230,214,178,.55);stroke-width:.55}
+.char .suit .pin{fill:url(#goldG)}
+.char .suit .badge{fill:url(#goldG);stroke:rgba(80,50,8,.55);stroke-width:.35}
+.char .face .brow{stroke:#eadcb9;stroke-width:1.9;stroke-linecap:round}
+.char .shades .lens{fill:url(#lensG);stroke:#e6d6b2;stroke-width:1;stroke-linejoin:round}
+.char .shades .bridge{stroke:#e6d6b2;stroke-width:1.5;stroke-linecap:round}
+.char .face .mouth{stroke:#eadcb9;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 .char .sh{fill:rgba(0,0,0,.4);animation:shad 3.8s ease-in-out infinite}
 @keyframes shad{0%,100%{opacity:.4;transform:scaleX(1)}50%{opacity:.25;transform:scaleX(.9)}}
 .char.walk{animation:step .3s ease-in-out infinite}
@@ -410,20 +413,83 @@ body::before{
                 <stop offset=".5" stop-color="#e8dcc4"/>
                 <stop offset="1" stop-color="#cfbc96"/>
               </linearGradient>
+              <linearGradient id="tieG" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0" stop-color="#4e6183"/>
+                <stop offset=".5" stop-color="#26334c"/>
+                <stop offset="1" stop-color="#111926"/>
+              </linearGradient>
+              <linearGradient id="lensG" x1="0" y1="0" x2=".6" y2="1">
+                <stop offset="0" stop-color="#3e4d69"/>
+                <stop offset=".4" stop-color="#101520"/>
+                <stop offset="1" stop-color="#03050a"/>
+              </linearGradient>
+              <linearGradient id="goldG" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0" stop-color="#ffeec0"/>
+                <stop offset=".5" stop-color="#f0c465"/>
+                <stop offset="1" stop-color="#a97526"/>
+              </linearGradient>
+              <linearGradient id="shirtG" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0" stop-color="#ffffff"/>
+                <stop offset="1" stop-color="#e0e6f1"/>
+              </linearGradient>
+              <radialGradient id="faceGlow" cx=".5" cy=".5" r=".5">
+                <stop offset="0" stop-color="#d6ba84" stop-opacity=".20"/>
+                <stop offset=".62" stop-color="#d6ba84" stop-opacity=".07"/>
+                <stop offset="1" stop-color="#d6ba84" stop-opacity="0"/>
+              </radialGradient>
+              <clipPath id="lensL"><path d="M41.4 43.0 L40.8 37.0 L42.4 34.0 L52.8 33.2 L53.0 42.4 Z"/></clipPath>
+              <clipPath id="lensR"><path d="M69.6 43.0 L70.2 37.0 L68.6 34.0 L58.2 33.2 L58.0 42.4 Z"/></clipPath>
             </defs>
             <ellipse class="sh" cx="54" cy="96" rx="18" ry="4"/>
             <g class="body">
               <path class="stk" d="M26 20 H82"/>
               <path class="stk" d="M82 20 V84"/>
-              <path class="stk" d="M36 58 H75"/>
-              <g class="eyes">
-                <circle class="eye" cx="47" cy="39" r="5"/>
-                <circle class="eye" cx="64" cy="39" r="5"/>
-                <circle class="gleam" cx="48.6" cy="37.2" r="1.5"/>
-                <circle class="gleam" cx="65.6" cy="37.2" r="1.5"/>
+              <path class="stk" d="M36 61.5 H75"/>
+
+              <!-- 무전기 안테나 -->
+              <g class="ant">
+                <path d="M84.4 18.0 L90.2 11.8" fill="none" stroke="#1a2231" stroke-width="2" stroke-linecap="round"/>
+                <circle cx="90.6" cy="11.3" r="1.7" fill="url(#goldG)"/>
               </g>
-              <circle class="blush" cx="38" cy="48" r="3.2"/>
-              <circle class="blush" cx="71.5" cy="48" r="2.4"/>
+
+              <!-- 인이어 무전기 + 연결선 -->
+              <g class="ear">
+                <rect x="75.2" y="33.8" width="4.6" height="6.4" rx="2.3" fill="#1b2331" stroke="#f0c465" stroke-width=".5" stroke-opacity=".6"/>
+                <circle cx="77.5" cy="35.9" r=".85" fill="#f0c465" opacity=".85"/>
+                <path d="M77.5 40.2 C 80.4 44.6 77.2 47.6 80.2 53.2" fill="none" stroke="#1b2331" stroke-width="1.4" stroke-linecap="round"/>
+              </g>
+
+              <!-- 정장: 화이트 셔츠 V 칼라 · 다크 넥타이 · 골드 타이핀 · 배지 -->
+              <g class="suit">
+                <path class="shirt" d="M49.0 53.9 L55.5 60.6 L62.0 53.9 Z"/>
+                <path class="tie" d="M52.4 55.4 L58.6 55.4 L57.7 61.8 L53.3 61.8 Z"/>
+                <path class="tie" d="M53.5 61.6 L57.5 61.6 L59.5 73.0 L55.5 79.4 L51.5 73.0 Z"/>
+                <path d="M55.5 62.2 V78.2" fill="none" stroke="#7d8fae" stroke-width=".9" opacity=".35"/>
+                <rect class="pin" x="52.6" y="67.0" width="5.9" height="1.5" rx=".75"/>
+                <path class="badge" d="M37.4 56.4 H41.8 V61.0 L39.6 63.4 L37.4 61.0 Z"/>
+                <path d="M39.6 58.6 l.65 1.2 1.2 .36 -1.2 .36 -.65 1.2 -.65 -1.2 -1.2 -.36 1.2 -.36 Z" fill="#4a3106" opacity=".7"/>
+              </g>
+
+              <!-- 얼굴 -->
+              <g class="face">
+                <ellipse cx="55.5" cy="38.6" rx="21" ry="13.4" fill="url(#faceGlow)"/>
+                <path class="brow" d="M42.6 31.6 L51.6 30.2" fill="none"/>
+                <path class="brow" d="M68.4 31.6 L59.4 30.2" fill="none"/>
+                <g class="shades">
+                  <path class="lens" d="M41.4 43.0 L40.8 37.0 L42.4 34.0 L52.8 33.2 L53.0 42.4 Z"/>
+                  <path class="lens" d="M69.6 43.0 L70.2 37.0 L68.6 34.0 L58.2 33.2 L58.0 42.4 Z"/>
+                  <path class="bridge" d="M53.2 35.4 L57.8 35.4" fill="none"/>
+                  <g clip-path="url(#lensL)">
+                    <path d="M43.4 41.8 L47.4 34.2 L49.0 34.2 L45.0 41.8 Z" fill="#ffffff" opacity=".62"/>
+                    <path d="M49.6 41.0 L51.2 37.4 L51.9 37.4 L50.3 41.0 Z" fill="#ffffff" opacity=".3"/>
+                  </g>
+                  <g clip-path="url(#lensR)">
+                    <path d="M61.6 41.8 L65.6 34.2 L67.2 34.2 L63.2 41.8 Z" fill="#ffffff" opacity=".62"/>
+                    <path d="M67.8 41.0 L69.4 37.4 L70.1 37.4 L68.5 41.0 Z" fill="#ffffff" opacity=".3"/>
+                  </g>
+                </g>
+                <path class="mouth" d="M49.6 46.8 Q55.0 49.9 60.6 46.3 L61.8 45.3" fill="none"/>
+              </g>
             </g>
           </svg>
         </div>
@@ -481,7 +547,7 @@ body::before{
 <script id="fallback-state" type="application/json">
 {
   "version": 1,
-  "updated_at": "2026-11-27T14:10:00+09:00",
+  "updated_at": "2026-11-27T14:42:27+09:00",
   "butler": {
     "name": "행동대장",
     "shape": "ㅋ",
@@ -492,7 +558,7 @@ body::before{
   },
   "zoneBubbles": {
     "office": "브리핑룸입니다. 오늘 8카드 전달 완료했습니다.",
-    "work": "작업실입니다. 03:00 적립·10:00 시세 감시 정상 가동 중입니다.",
+    "work": "작업실입니다. 03:00 적립·08:00 시세 감시 정상 가동 중입니다.",
     "lounge": "라운지입니다. 지시만 주십시오, 형님."
   },
   "zones": [
@@ -514,7 +580,7 @@ body::before{
       "tag": "3 TASKS",
       "lines": [
         "03:00 네이버페이 클릭 적립 (무음 자동)",
-        "10:00 기저귀·캡슐 시세 감시 · 금 10:00 쿠팡 주간 리뷰",
+        "08:00 기저귀·캡슐 시세 감시 · 금 10:00 쿠팡 주간 리뷰",
         "금 17:00 키즈노트 은우 주간 식판 리포트"
       ]
     },
@@ -538,8 +604,8 @@ body::before{
   "goal": { "label": "1차 목표 20,000점", "current": 11159, "target": 20000 },
   "schedule": [
     { "time": "03:00", "label": "네이버페이 적립", "days": [0,1,2,3,4,5,6], "zone": "work", "tag": "매일" },
+    { "time": "08:00", "label": "기저귀·캡슐 시세 감시", "days": [0,1,2,3,4,5,6], "zone": "work", "tag": "매일" },
     { "time": "08:45", "label": "모닝 브리핑", "days": [0,1,2,3,4,5,6], "zone": "office", "tag": "매일" },
-    { "time": "10:00", "label": "기저귀·캡슐 시세 감시", "days": [0,1,2,3,4,5,6], "zone": "work", "tag": "매일" },
     { "time": "10:00", "label": "쿠팡 주간 리뷰", "days": [5], "zone": "work", "tag": "금" },
     { "time": "17:00", "label": "키즈노트 은우 식판", "days": [5], "zone": "work", "tag": "금" },
     { "time": "21:00", "label": "UFC 전담 브리핑", "date": "2026-12-06", "zone": "office", "tag": "12/06" }

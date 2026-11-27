@@ -74,7 +74,6 @@ body::before{
   color:var(--txt);background:var(--panel3);border:1px solid var(--line);
   transition:transform .2s, background .2s;
 }
-.rbtn.nav{background:rgba(111,157,255,.10);border-color:rgba(111,157,255,.30)}
 .rbtn:active{transform:scale(.94);background:#232f47}
 .rbtn.spin{animation:spin .7s linear}
 @keyframes spin{to{transform:rotate(360deg)}}
@@ -428,7 +427,6 @@ body{overscroll-behavior-y:contain}
       <p><b>행동대장 HQ</b> · SECRETARIAT</p>
     </div>
     <div class="tools">
-      <a class="rbtn nav" href="./index.html" aria-label="오락실로 이동" title="오락실">🕹️</a>
       <button class="rbtn" id="refresh" type="button" aria-label="새로고침" title="새로고침">↻</button>
     </div>
   </header>
@@ -657,8 +655,6 @@ body{overscroll-behavior-y:contain}
     <span class="sync">마지막 동기화 <b id="syncAt">--:--:--</b></span>
     <span class="dot"></span>
     <span id="srcNote">Firebase 실시간 · 10초 폴백</span>
-    <span class="dot"></span>
-    <a href="./index.html">🏠 오락실</a>
   </footer>
 </div>
 

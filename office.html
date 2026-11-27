@@ -287,6 +287,7 @@ body::before{
   color:#a3b3cc;padding:3px 8px;border-radius:999px;background:rgba(111,157,255,.08);
   border:1px dashed rgba(111,157,255,.38);white-space:nowrap;
 }
+.chip-link.on{color:#cfe6da;background:rgba(52,211,153,.10);border:1px solid rgba(52,211,153,.34)}
 .nform{display:flex;gap:6px;margin-top:9px}
 .nform input{
   flex:1 1 auto;min-width:0;height:36px;padding:0 10px;border-radius:10px;font:inherit;font-size:12px;
@@ -525,7 +526,7 @@ body::before{
     <div class="card notes">
       <div class="notes-h">
         <h2>형님 전용 명령 노트</h2>
-        <span class="chip-link" id="linkChip">🔗 합동 연결 준비중 · MQTT/DB 확장 슬롯</span>
+        <span class="chip-link on" id="linkChip">🔥 Firebase 실시간 연결됨</span>
       </div>
       <form class="nform" id="nform" autocomplete="off">
         <input id="ninput" type="text" maxlength="120" placeholder="할 일·지시를 적어두세요 (이 기기에 저장)" aria-label="회의실 메모 입력">
@@ -538,7 +539,7 @@ body::before{
   <footer class="foot">
     <span class="sync">마지막 동기화 <b id="syncAt">--:--:--</b></span>
     <span class="dot"></span>
-    <span>office-state.json · 30초 자동 갱신</span>
+    <span id="srcNote">Firebase 실시간 · 10초 폴백</span>
     <span class="dot"></span>
     <a href="./index.html">🏠 아케이드</a>
   </footer>
@@ -547,7 +548,7 @@ body::before{
 <script id="fallback-state" type="application/json">
 {
   "version": 1,
-  "updated_at": "2026-11-27T14:42:27+09:00",
+  "updated_at": "2026-11-27T14:48:48+09:00",
   "butler": {
     "name": "행동대장",
     "shape": "ㅋ",
@@ -615,7 +616,7 @@ body::before{
     { "time": "10:15", "text": "쿠팡 주간 리뷰 7건 작성 완료 (+382점)", "zone": "work" },
     { "time": "08:45", "text": "금요 아침 브리핑 8카드 전달", "zone": "office" }
   ],
-  "link": { "state": "preparing", "label": "합동 연결 준비중", "detail": "MQTT/DB 확장 슬롯" }
+  "link": { "state": "live", "label": "Firebase 실시간 연결됨", "detail": "Realtime DB · SSE" }
 }
 </script>
 
@@ -636,10 +637,16 @@ body::before{
   var ZONE_NAME = { office: "집무실", work: "작업실", lounge: "라운지" };
   var NOTE_KEY = "office_notes_v1";
 
+  var FIREBASE_URL = "https://seonongs-hq-default-rtdb.firebaseio.com/office_state.json";
+
   var FALLBACK = JSON.parse(document.getElementById("fallback-state").textContent);
   var state = FALLBACK;
   var selected = null;
-  var live = false;
+  var raw = null;             /* 마지막으로 받은 원본(Firebase/로컬) */
+  var srcName = "inline";     /* inline | local | firebase */
+  var fbOk = false;           /* Firebase 조회·스트림 정상 여부 */
+  var streamOk = false;       /* SSE 수신 중 여부 */
+  var es = null;
   var charEl = document.getElementById("char");
   var bubbleEl = document.getElementById("bubble");
   var bubbleTimer = null;
@@ -810,9 +817,38 @@ body::before{
       var p = document.querySelector(".brand p");
       p.innerHTML = "<b>" + esc(state.butler.name) + " HQ</b> · PERSONAL SECRETARIAT";
     }
-    liveTxt.textContent = live ? "LIVE" : "내장 데이터";
-    $("live").classList.toggle("off", !live);
-    $("live").title = live ? "office-state.json 연결됨" : "내장 데이터로 표시 중";
+    var badge, badgeTitle;
+    if (srcName === "firebase"){
+      badge = fbOk ? "LIVE (Firebase)" : "LIVE (재연결)";
+      badgeTitle = fbOk ? "Firebase 실시간 DB 연결됨 · 변경 즉시 반영" : "Firebase 재연결 중 · 마지막 수신 데이터 표시";
+    } else if (srcName === "local"){
+      badge = "LIVE";
+      badgeTitle = "office-state.json 연결됨 (Firebase 대체)";
+    } else {
+      badge = "내장 데이터";
+      badgeTitle = "내장 데이터로 표시 중";
+    }
+    liveTxt.textContent = badge;
+    $("live").classList.toggle("off", srcName === "inline");
+    $("live").title = badgeTitle;
+    var chip = $("linkChip");
+    if (chip){
+      if (srcName === "firebase"){
+        chip.textContent = "🔥 Firebase 실시간 연결됨";
+        chip.classList.add("on");
+      } else if (srcName === "local"){
+        chip.textContent = "🔗 로컬 스냅샷 표시 중";
+        chip.classList.remove("on");
+      } else {
+        chip.textContent = "내장 데이터 표시 중";
+        chip.classList.remove("on");
+      }
+    }
+    var sn = $("srcNote");
+    if (sn){
+      sn.textContent = srcName === "firebase" ? "Firebase 실시간 · 10초 폴백"
+        : (srcName === "local" ? "office-state.json · 30초 갱신" : "내장 데이터");
+    }
     $("syncAt").textContent = timeNow();
   }
 
@@ -823,36 +859,149 @@ body::before{
   }
 
   /* ---------- 데이터 ---------- */
+  function isObj(v){ return !!v && typeof v === "object" && !Array.isArray(v); }
+
+  /* patch 데이터를 base 위에 병합(배열은 통째로 교체) */
+  function mergeDeep(base, patch){
+    if (Array.isArray(patch)) return patch.slice();
+    if (!isObj(patch)) return patch;
+    var out = {}, k;
+    if (isObj(base)) for (k in base) if (Object.prototype.hasOwnProperty.call(base, k)) out[k] = base[k];
+    for (k in patch) if (Object.prototype.hasOwnProperty.call(patch, k)){
+      var pv = patch[k], bv = out[k];
+      out[k] = (isObj(pv) && isObj(bv)) ? mergeDeep(bv, pv) : (Array.isArray(pv) ? pv.slice() : pv);
+    }
+    return out;
+  }
+
+  function cloneData(v){
+    if (Array.isArray(v)) return v.map(cloneData);
+    if (isObj(v)){
+      var o = {}, k;
+      for (k in v) if (Object.prototype.hasOwnProperty.call(v, k)) o[k] = cloneData(v[k]);
+      return o;
+    }
+    return v;
+  }
+
+  /* Firebase 경로(/a/b) 값을 obj에 반영 */
+  function setPath(obj, path, val, merge){
+    var parts = String(path == null ? "" : path).split("/").filter(function(s){ return s !== ""; });
+    if (!parts.length) return (merge && isObj(obj) && isObj(val)) ? mergeDeep(obj, val) : val;
+    var root = isObj(obj) ? obj : {};
+    var cur = root, i;
+    for (i = 0; i < parts.length - 1; i++){
+      var k = parts[i];
+      if (!isObj(cur[k])) cur[k] = {};
+      cur = cur[k];
+    }
+    var last = parts[parts.length - 1];
+    cur[last] = (merge && isObj(cur[last]) && isObj(val)) ? mergeDeep(cur[last], val) : val;
+    return root;
+  }
+
+  function view(rawObj){ return mergeDeep(FALLBACK, rawObj || {}); }
+
   function apply(next){
     if (!next || typeof next !== "object" || !next.zones) return false;
+    var prevZone = (state.butler && state.butler.zone) || null;
+    var prevBubble = (state.butler && state.butler.bubble) || null;
     state = next;
     renderMetrics();
     renderSchedule();
     renderLogs();
     renderStatus();
+    var zone = (state.butler && state.butler.zone) || "lounge";
     if (!selected){
-      var zone = (state.butler && state.butler.zone) || "lounge";
       selectZone(zone, { instant: true });
       if (state.butler && state.butler.bubble) say(state.butler.bubble, 5200);
+      return true;
+    }
+    /* 실시간 갱신: 캐릭터 위치·말풍선이 바뀌면 같은 몸으로 바로 이동 */
+    if (zone !== prevZone){
+      moveChar(zone);
+      var pushed = (state.butler && state.butler.bubble && state.butler.bubble !== prevBubble) ? state.butler.bubble : "";
+      var bub = pushed || (state.zoneBubbles || {})[zone] || (state.butler && state.butler.bubble) || "";
+      if (bub) say(bub, 4600);
+      var curZone = (state.zones || []).filter(function(z){ return z.id === selected; })[0];
+      if (curZone) $("zdBadge").textContent = (selected === zone) ? "현재 위치" : (curZone.tag || "이동");
+    } else if (state.butler && state.butler.bubble && state.butler.bubble !== prevBubble){
+      say(state.butler.bubble, 5200);
     }
     return true;
   }
 
+  function applyRaw(obj){
+    raw = obj;
+    return apply(view(raw));
+  }
+
+  function fetchJSON(url){
+    var u = url + (url.indexOf("?") < 0 ? "?" : "&") + "t=" + Date.now();
+    return fetch(u, { cache: "no-store" }).then(function(r){
+      if (!r.ok) throw new Error("HTTP " + r.status);
+      return r.json();
+    });
+  }
+
+  /* 1순위 Firebase → 2순위 office-state.json → 3순위 인라인 */
   function load(){
-    return fetch("./office-state.json?t=" + Date.now(), { cache: "no-store" })
-      .then(function(r){
-        if (!r.ok) throw new Error("HTTP " + r.status);
-        return r.json();
-      })
-      .then(function(json){
-        live = true;
-        apply(json);
-        renderStatus();
+    return fetchJSON(FIREBASE_URL)
+      .then(function(d){
+        if (!isObj(d) || !d.zones) throw new Error("empty");
+        fbOk = true;
+        srcName = "firebase";
+        return applyRaw(d);
       })
       .catch(function(){
-        live = false;
-        renderStatus();
-      });
+        if (srcName === "firebase" && raw){ fbOk = false; return false; }  /* 이미 받은 Firebase 데이터는 유지 */
+        return fetchJSON("./office-state.json")
+          .then(function(d){
+            if (!isObj(d) || !d.zones) throw new Error("empty");
+            srcName = "local";
+            return applyRaw(d);
+          })
+          .catch(function(){ srcName = "inline"; return false; });
+      })
+      .then(function(v){ renderStatus(); return v; });
+  }
+
+  /* ---------- Firebase REST 스트리밍(SSE) ---------- */
+  function onStream(kind, ev){
+    var msg;
+    try { msg = JSON.parse(ev.data); } catch (e){ return; }
+    if (!isObj(msg)) return;
+    var path = msg.path || "/", data = msg.data;
+    if ((path === "/" || path === "") && kind === "put"){
+      if (!isObj(data)) return;
+      raw = data;
+    } else if ((path === "/" || path === "") && kind === "patch"){
+      if (!isObj(data)) return;
+      raw = mergeDeep(raw || {}, data);
+    } else {
+      raw = setPath(cloneData(raw || {}), path, data, kind === "patch");
+    }
+    srcName = "firebase";
+    fbOk = true;
+    applyRaw(raw);
+    renderStatus();
+  }
+
+  function connectStream(){
+    if (!window.EventSource || es) return;
+    try { es = new EventSource(FIREBASE_URL); } catch (e){ es = null; return; }
+    es.addEventListener("open", function(){
+      streamOk = true;
+      fbOk = true;
+      if (!raw) load();
+      renderStatus();
+    });
+    es.addEventListener("put", function(ev){ onStream("put", ev); });
+    es.addEventListener("patch", function(ev){ onStream("patch", ev); });
+    es.addEventListener("error", function(){
+      streamOk = false;
+      renderStatus();
+    });
   }
 
   /* ---------- 회의실 메모 ---------- */
@@ -892,11 +1041,8 @@ body::before{
     b.classList.remove("spin");
     void b.offsetWidth;
     b.classList.add("spin");
-    var prev = liveTxt.textContent;
     liveTxt.textContent = "동기화 중";
-    load().then(function(){
-      if (!live && prev === "LIVE") $("syncAt").textContent = timeNow();
-    });
+    load().then(function(){ renderStatus(); });
   });
 
   $("nform").addEventListener("submit", function(e){
@@ -940,7 +1086,8 @@ body::before{
   apply(FALLBACK);
   renderNotes();
   load();
-  setInterval(load, 30000);
+  connectStream();
+  setInterval(function(){ if (!streamOk) load(); }, 10000);
   setTimeout(function(){
     if (state.butler && state.butler.bubble) say(state.butler.bubble, 6000);
   }, 1800);

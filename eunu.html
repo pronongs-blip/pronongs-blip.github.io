@@ -988,7 +988,7 @@ body:not(.locked) .lock{display:none}
        (상위 photos 경로 목록은 보안 규칙상 읽을 수 없을 수 있다) */
     var cand = days().filter(function(x){
       var n = x.lunchNote || "";
-      return /식판\s*사진/.test(n) && !/미등록/.test(n);
+      return /식판/.test(n) && !/미등록/.test(n);
     }).map(function(x){ return x.d; });
     cand.sort(); cand.reverse();
     if(!cand.length){ state.albumIndex = []; return Promise.resolve(state.albumIndex); }

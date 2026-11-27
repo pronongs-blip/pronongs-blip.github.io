@@ -10,6 +10,7 @@
 <meta name="apple-mobile-web-app-title" content="오락실">
 <meta name="description" content="오락실 · DEVIL'S ARCADE. 두뇌 서바이벌 아케이드 6종 — 벽바둑 2 · 흑과 백 · 기억포커 · 유배지 만국기 · 결! 합! · 인디언 포커.">
 <title>오락실 · DEVIL'S ARCADE</title>
+<link rel="manifest" href="./manifest-arcade.json">
 <link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png">
 <link rel="icon" type="image/png" href="./apple-touch-icon.png">
 <style>
@@ -1151,6 +1152,51 @@ window.ARC = window.ARC || {
       location.replace(targetUrl());
     }, 260);
   });
+})();
+</script>
+<script>
+/* ============================================================
+   iOS 홈화면 standalone PWA 내비게이션 가드
+   일반 <a> 기본 이동은 iOS가 인앱 브라우저(SFSafariViewController:
+   상단 X · 주소창 · 하단 나침반)로 띄우므로, 내부 링크는
+   preventDefault + location.assign 으로 같은 창에서 이동시킨다.
+   ============================================================ */
+(function () {
+  "use strict";
+  function isInternal(href) {
+    if (!href) return false;
+    if (/^(#|mailto:|tel:|sms:|javascript:|blob:|data:)/i.test(href)) return false;
+    var u;
+    try { u = new URL(href, location.href); } catch (e) { return false; }
+    return u.origin === location.origin;
+  }
+  function inApp(a, ev) {
+    if (!isInternal(a.getAttribute("href"))) return;
+    if (a.target && a.target !== "" && a.target !== "_self") return;
+    if (a.hasAttribute("download")) return;
+    if (ev.metaKey || ev.ctrlKey || ev.shiftKey || ev.altKey) return;
+    if (typeof ev.button === "number" && ev.button !== 0) return;
+    ev.preventDefault();
+    window.location.assign(a.getAttribute("href"));
+  }
+  function bind() {
+    var nodes = document.querySelectorAll("a[href]");
+    for (var i = 0; i < nodes.length; i++) {
+      var a = nodes[i];
+      if (a.getAttribute("data-inapp-nav") === "1") continue;
+      a.setAttribute("data-inapp-nav", "1");
+      a.addEventListener("click", function (ev) {
+        if (ev.defaultPrevented) return;
+        inApp(this, ev);
+      });
+    }
+  }
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", bind);
+  } else {
+    bind();
+  }
+  window.addEventListener("pageshow", function () { bind(); });
 })();
 </script>
 </body>

@@ -10,6 +10,7 @@
 <meta name="apple-mobile-web-app-title" content="인디언 포커">
 <meta name="description" content="내 카드는 모르고 상대 카드만 보이는 1:1 심리전. 1~10 카드와 칩 베팅, 10 폴드 페널티.">
 <title>인디언 포커 · Indian Poker</title>
+<link rel="manifest" href="./manifest-arcade.json">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect x='8' y='8' width='84' height='84' rx='18' fill='%230a0d14'/%3E%3Crect x='22' y='24' width='56' height='52' rx='8' fill='%23ffc247'/%3E%3Ctext x='50' y='62' font-size='34' font-weight='bold' text-anchor='middle' fill='%231a1204'%3E%3F%3C/text%3E%3C/svg%3E">
 <style>
   /* ============================================================
@@ -3197,6 +3198,51 @@ window.ARC = window.ARC || {
 
   boot();
   try { window.AA && AA.init('ip'); } catch (e) {}
+})();
+</script>
+<script>
+/* ============================================================
+   iOS 홈화면 standalone PWA 내비게이션 가드
+   일반 <a> 기본 이동은 iOS가 인앱 브라우저(SFSafariViewController:
+   상단 X · 주소창 · 하단 나침반)로 띄우므로, 내부 링크는
+   preventDefault + location.assign 으로 같은 창에서 이동시킨다.
+   ============================================================ */
+(function () {
+  "use strict";
+  function isInternal(href) {
+    if (!href) return false;
+    if (/^(#|mailto:|tel:|sms:|javascript:|blob:|data:)/i.test(href)) return false;
+    var u;
+    try { u = new URL(href, location.href); } catch (e) { return false; }
+    return u.origin === location.origin;
+  }
+  function inApp(a, ev) {
+    if (!isInternal(a.getAttribute("href"))) return;
+    if (a.target && a.target !== "" && a.target !== "_self") return;
+    if (a.hasAttribute("download")) return;
+    if (ev.metaKey || ev.ctrlKey || ev.shiftKey || ev.altKey) return;
+    if (typeof ev.button === "number" && ev.button !== 0) return;
+    ev.preventDefault();
+    window.location.assign(a.getAttribute("href"));
+  }
+  function bind() {
+    var nodes = document.querySelectorAll("a[href]");
+    for (var i = 0; i < nodes.length; i++) {
+      var a = nodes[i];
+      if (a.getAttribute("data-inapp-nav") === "1") continue;
+      a.setAttribute("data-inapp-nav", "1");
+      a.addEventListener("click", function (ev) {
+        if (ev.defaultPrevented) return;
+        inApp(this, ev);
+      });
+    }
+  }
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", bind);
+  } else {
+    bind();
+  }
+  window.addEventListener("pageshow", function () { bind(); });
 })();
 </script>
 </body>

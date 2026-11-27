@@ -360,9 +360,9 @@ body::before{
 .dp-form{margin-top:10px;padding:9px;border-radius:12px;
   background:rgba(111,157,255,.07);border:1px solid rgba(111,157,255,.24)}
 .dp-fh{font-size:9.5px;font-weight:900;color:#cfe0ff;line-height:1.4}
-.dp-fields{display:flex;gap:7px;margin-top:7px}
-.dp-f{flex:1 1 0;min-width:0;display:flex;flex-direction:column;gap:3px}
-.dp-f span{font-size:9px;font-weight:800;color:#93a6c4;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dp-fields{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin-top:7px}
+.dp-f{min-width:0;display:flex;flex-direction:column;gap:3px}
+.dp-f span{font-size:8.5px;font-weight:800;color:#93a6c4;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .dp-f input{width:100%;height:36px;padding:0 9px;border-radius:9px;font:inherit;font-size:15px;
   font-weight:900;color:#fff;background:#0d1420;border:1px solid var(--line);
   -webkit-appearance:none;appearance:none;font-variant-numeric:tabular-nums}
@@ -620,7 +620,7 @@ body::before{
 
   <!-- 👶 기저귀 재고 관리 -->
   <section class="sec" id="diaperSec">
-    <div class="sec-h"><h2>👶 기저귀 재고 관리</h2><span class="k" id="dpStamp">STOCK</span><span class="sp"></span></div>
+    <div class="sec-h"><h2>📦 소모품 재고 관리</h2><span class="k" id="dpStamp">STOCK</span><span class="sp"></span></div>
     <div class="card dp" id="dpCard">
       <div class="dp-top">
         <span class="dp-note" id="dpAsOf">재고를 불러오는 중입니다…</span>
@@ -634,6 +634,8 @@ body::before{
             <input id="dpMax" type="number" inputmode="numeric" min="0" max="9999" step="1" enterkeyhint="done"></label>
           <label class="dp-f"><span>일반 (개)</span>
             <input id="dpNorm" type="number" inputmode="numeric" min="0" max="9999" step="1" enterkeyhint="done"></label>
+          <label class="dp-f"><span>커피캡슐 (개)</span>
+            <input id="dpCap" type="number" inputmode="numeric" min="0" max="9999" step="1" enterkeyhint="done"></label>
         </div>
         <div class="dp-btns">
           <button class="dp-save" id="dpSave" type="submit">저장</button>
@@ -723,7 +725,8 @@ body::before{
   ],
   "diaper_stock": {
     "maxdry": { "label": "맥스드라이 5단계", "base": 50, "rateLabel": "주 10개", "perDay": 1.4286, "baseDate": "2026-11-28" },
-    "normal": { "label": "일반 5단계", "base": 80, "rateLabel": "하루 5개", "perDay": 5, "baseDate": "2026-11-28" }
+    "normal": { "label": "일반 5단계", "base": 80, "rateLabel": "하루 5개", "perDay": 5, "baseDate": "2026-11-28" },
+    "capsule": { "label": "스타벅스 캡슐", "base": 30, "rateLabel": "주 10개", "perDay": 1.4286, "baseDate": "2026-11-28", "warnDays": 14, "urgentDays": 7 }
   },
   "metrics": [
     { "key": "review", "icon": "⭐", "label": "쿠팡 리뷰", "value": "391건", "unit": "· 11,159점", "note": "오늘 7건 완료 · 1차 목표까지 8,841점" },
@@ -987,11 +990,12 @@ body::before{
 
   /* ---------- 👶 기저귀 재고 관리 ---------- */
   var DP_URL = FB_BASE + "/office_state/diaper_stock.json";
-  var DP_ORDER = ["maxdry", "normal"];
+  var DP_ORDER = ["maxdry", "normal", "capsule"];
   var DP_HORIZON = 60;   /* 진행률 바 만점 기준: 60일치 */
   var DP_DEF = {
     maxdry: { label: "맥스드라이 5단계", rateLabel: "주 10개", perDay: 1.4286 },
-    normal: { label: "일반 5단계", rateLabel: "하루 5개", perDay: 5 }
+    normal: { label: "일반 5단계", rateLabel: "하루 5개", perDay: 5 },
+    capsule: { label: "스타벅스 캡슐", rateLabel: "주 10개", perDay: 1.4286, warnDays: 14, urgentDays: 7 }
   };
   var dpBusy = false;
   var dpLastDay = "";
@@ -1051,9 +1055,14 @@ body::before{
     var left = perDay > 0 ? Math.max(0, Math.round(remF / perDay)) : null;
     var pct = left === null ? 100 : (left / DP_HORIZON) * 100;
     pct = Math.max(0, Math.min(100, pct));
+    /* 품목별 경고 임계치 — 없으면 기본 7일 구매 / 3일 급함 */
+    var warnDays = +st.warnDays > 0 ? Math.round(+st.warnDays) : 7;
+    var urgentDays = +st.urgentDays > 0 ? Math.round(+st.urgentDays) : 3;
+    if (urgentDays > warnDays) urgentDays = warnDays;
     return {
       base: base, perDay: perDay, days: days,
       rem: rem, left: left, pct: pct,
+      warnDays: warnDays, urgentDays: urgentDays,
       runout: left === null ? "" : dpRunout(left)
     };
   }
@@ -1076,15 +1085,17 @@ body::before{
       var c = dpCalc(st);
       var level = "";
       var badge = "";
+      /* 구매 주기가 긴 품목(캡슐 등, warnDays 14)은 '비상/구매' 문구를 쓴다 */
+      var longCycle = c.warnDays > 7;
       if (c.left !== null){
-        if (c.left <= 3){
+        if (c.left <= c.urgentDays){
           red++;
           level = " red";
-          badge = '<span class="dp-badge red">' + (c.left <= 0 ? "소진" : "D-" + c.left + " 급함") + '</span>';
-        } else if (c.left <= 7){
+          badge = '<span class="dp-badge red">' + (c.left <= 0 ? "소진" : "D-" + c.left + (longCycle ? " 비상" : " 급함")) + '</span>';
+        } else if (c.left <= c.warnDays){
           warn++;
           level = " warn";
-          badge = '<span class="dp-badge warn">D-' + c.left + ' 임박</span>';
+          badge = '<span class="dp-badge warn">D-' + c.left + (longCycle ? " 구매" : " 임박") + '</span>';
         }
       }
       var rate = st.label ? (st.rateLabel || "") : "";
@@ -1103,10 +1114,11 @@ body::before{
         '</div>';
     }).join("");
     if (note){
-      var toolow = red + warn;
-      if (toolow) note.innerHTML = '<b>⚠ ' + toolow + '품목 7일 이하</b>' +
-        (red ? ' · ' + red + '품목 소진 임박' : '') + ' · 자동 차감';
-      else note.textContent = (basis ? "기준 " + basis + " · " : "") + "매일 자동 차감";
+      if (red || warn){
+        note.innerHTML = red
+          ? '<b>⚠ ' + red + '품목 비상</b>' + (warn ? ' · ' + warn + '품목 구매' : '') + ' · 자동 차감'
+          : '<b>⚠ ' + warn + '품목 구매 필요</b> · 자동 차감';
+      } else note.textContent = (basis ? "기준 " + basis + " · " : "") + "매일 자동 차감";
     }
   }
 
@@ -1129,8 +1141,10 @@ body::before{
     var src = dpSource();
     var cm = dpCalc(src.maxdry || DP_DEF.maxdry);
     var cn = dpCalc(src.normal || DP_DEF.normal);
+    var cc = dpCalc(src.capsule || DP_DEF.capsule);
     $("dpMax").value = String(cm.rem);
     $("dpNorm").value = String(cn.rem);
+    $("dpCap").value = String(cc.rem);
     dpMsg("");
     form.hidden = false;
     $("dpEdit").setAttribute("aria-expanded", "true");
@@ -1149,7 +1163,8 @@ body::before{
     if (dpBusy) return;
     var mv = dpNum($("dpMax").value);
     var nv = dpNum($("dpNorm").value);
-    if (mv === null || nv === null){
+    var cv = dpNum($("dpCap").value);
+    if (mv === null || nv === null || cv === null){
       dpMsg("0~9999 사이 숫자를 넣어 주십시오.", "err");
       return;
     }
@@ -1162,12 +1177,15 @@ body::before{
       cur.label = cur.label || def.label;
       cur.rateLabel = cur.rateLabel || def.rateLabel;
       if (!(+cur.perDay > 0)) cur.perDay = def.perDay;
+      if (!(+cur.warnDays > 0) && def.warnDays) cur.warnDays = def.warnDays;
+      if (!(+cur.urgentDays > 0) && def.urgentDays) cur.urgentDays = def.urgentDays;
       cur.base = val;
       cur.baseDate = today;
       body[key] = cur;
     }
     put("maxdry", mv, DP_DEF.maxdry);
     put("normal", nv, DP_DEF.normal);
+    put("capsule", cv, DP_DEF.capsule);
     dpBusy = true;
     var btn = $("dpSave");
     if (btn){ btn.disabled = true; btn.textContent = "저장 중…"; }
@@ -1430,7 +1448,10 @@ body::before{
   }
   if ($("dpForm")){
     $("dpForm").addEventListener("submit", dpSave);
-    $("dpMax").addEventListener("input", function(){ if (!$("dpMsg").classList.contains("err")) dpMsg(""); });
+    ["dpMax", "dpNorm", "dpCap"].forEach(function(id){
+      var el = $(id);
+      if (el) el.addEventListener("input", function(){ if (!$("dpMsg").classList.contains("err")) dpMsg(""); });
+    });
   }
   if ($("dpCancel")) $("dpCancel").addEventListener("click", dpCloseForm);
 

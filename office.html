@@ -359,22 +359,6 @@ body::before{
   .mkt-px b{font-size:14px}
 }
 
-/* ---------- 당겨서 새로고침 ---------- */
-.ptr{
-  position:fixed;left:0;right:0;top:0;z-index:70;pointer-events:none;
-  display:flex;align-items:center;justify-content:center;gap:6px;
-  height:42px;padding-top:env(safe-area-inset-top,0px);box-sizing:content-box;
-  transform:translateY(-110%);transition:transform .18s ease, background .18s ease;
-  background:linear-gradient(180deg,rgba(22,30,46,.98),rgba(16,22,34,.96));
-  border-bottom:1px solid var(--line);
-  font-size:11px;font-weight:900;letter-spacing:.01em;color:#ffd98a;
-}
-.ptr.on{transform:translateY(0)}
-.ptr.ready{background:linear-gradient(180deg,#ffd77a,#ffb928);color:#1c1503;border-bottom-color:rgba(0,0,0,.2)}
-.ptr-i{display:block;font-size:14px;line-height:1;transition:transform .2s ease}
-.ptr.ready .ptr-i{transform:rotate(180deg)}
-body{overscroll-behavior-y:contain}
-
 /* ---------- 푸터 ---------- */
 .foot{margin-top:14px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:center;
   font-size:9px;font-weight:700;color:#5f6d85;text-align:center}
@@ -416,7 +400,6 @@ body{overscroll-behavior-y:contain}
 </style>
 </head>
 <body>
-<div class="ptr" id="ptr" aria-hidden="true"><span class="ptr-i">↻</span><span class="ptr-t">놓으면 최신 버전으로 새로고침</span></div>
 <div class="wrap">
 
   <!-- 상단 바 -->
@@ -1375,11 +1358,15 @@ body{overscroll-behavior-y:contain}
     b.classList.remove("spin");
     void b.offsetWidth;
     b.classList.add("spin");
-    liveTxt.textContent = "동기화 중";
+    liveTxt.textContent = "새로고침 중";
     load().then(function(){ renderStatus(); });
     noteLoad();
     marketLoad();
-    say("형님, 최신 데이터로 동기화했습니다.", 2600);
+    say("형님, 최신 버전으로 새로고침합니다.", 2600);
+    setTimeout(function(){
+      if (window.__PTR_TEST__){ window.__PTR_LAST__ = targetUrl(); return; }
+      location.replace(targetUrl());
+    }, 260);
   });
 
   $("nform").addEventListener("submit", function(e){
@@ -1512,53 +1499,13 @@ body{overscroll-behavior-y:contain}
     marketEs.addEventListener("error", function(){ setMarketState(false); });
   }
 
-  /* ---------- 당겨서 새로고침 (iOS 홈화면 웹앱) ---------- */
-  (function(){
-    var bar = $("ptr");
-    if (!bar) return;
-    var sy = 0, sx = 0, dy = 0, active = false, ready = false;
-    var TH = 70;
-    function topY(){
-      return window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop || 0;
-    }
-    function targetUrl(){
-      var u = location.pathname + location.search;
-      u = u.replace(/([?&])v=\d+/g, function(t, s){ return s === "?" ? "?" : ""; });
-      u = u.replace(/\?&/, "?").replace(/[?&]$/, "");
-      return u + (u.indexOf("?") >= 0 ? "&" : "?") + "v=" + Date.now();
-    }
-    function clear(){ bar.classList.remove("on", "ready"); ready = false; }
-    document.addEventListener("touchstart", function(e){
-      if (e.touches.length !== 1 || topY() > 0){ active = false; return; }
-      active = true; ready = false;
-      sy = e.touches[0].clientY; sx = e.touches[0].clientX;
-    }, { passive: true });
-    document.addEventListener("touchmove", function(e){
-      if (!active || e.touches.length !== 1){ return; }
-      dy = e.touches[0].clientY - sy;
-      var dx = e.touches[0].clientX - sx;
-      if (topY() > 0){ active = false; clear(); return; }
-      if (dy <= 0 || Math.abs(dy) <= Math.abs(dx)){ clear(); return; }
-      bar.classList.add("on");
-      ready = dy >= TH;
-      bar.classList.toggle("ready", ready);
-      var t = bar.querySelector(".ptr-t");
-      if (t) t.textContent = ready ? "놓으면 최신 버전으로 새로고침" : "아래로 당기세요";
-    }, { passive: true });
-    document.addEventListener("touchend", function(){
-      if (!active) return;
-      var go = ready && dy >= TH;
-      active = false; ready = false;
-      if (!go){ clear(); return; }
-      var t = bar.querySelector(".ptr-t");
-      if (t) t.textContent = "새로고침 중…";
-      bar.classList.add("on", "ready");
-      if (window.__PTR_TEST__){ window.__PTR_LAST__ = targetUrl(); return; }
-      location.replace(targetUrl());
-    }, { passive: true });
-    document.addEventListener("touchcancel", function(){ active = false; clear(); }, { passive: true });
-    window.PTR = { target: targetUrl, isReady: function(){ return ready; } };
-  })();
+  /* ---------- 새로고침 (iOS 홈화면 웹앱 캐시 우회) ---------- */
+  function targetUrl(){
+    var u = location.pathname + location.search;
+    u = u.replace(/([?&])v=\d+/g, function(t, s){ return s === "?" ? "?" : ""; });
+    u = u.replace(/\?&/, "?").replace(/[?&]$/, "");
+    return u + (u.indexOf("?") >= 0 ? "&" : "?") + "v=" + Date.now();
+  }
 
   /* ---------- 시작 ---------- */
   apply(FALLBACK);
